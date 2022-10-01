@@ -1,11 +1,13 @@
 数据类型
 不同数据用不同内存大小存储以减少内存损耗，C#中有值类型和引用类型
+
 值类型
 bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 值类型可以看成一个1|0数组（点阵列），不同的位置存储不同的信息
 其中数字相关类型，以下格式为 名称(位数,符号[1|0],小数位数)
 直接存放在栈中
 继承system.ValueType
+
 整型
 可存储的值为2的位数次方，若有符号则符号占1位，存储的正数永远比负数少1，因为0需要占据一个位置
 整形命名规则上u开头一般都无符号，s开头一般都有符号
@@ -15,6 +17,7 @@ ushort(16,0)
 int(32,1)
 uint(32,0)
 ulong(64,0)
+
 浮点型
 使用科学计数法存储，1位存储符号，1位存储指数符号，一部分存储指数，剩余部分存储精度
 指数负数永远比正数少1，即0划归指数负数部分
@@ -23,6 +26,7 @@ double(64,1,[15-16])    10位指数 52位精度
 float(32,1,[6-7])     7位指数 23位精度
 //decimal的存储方法暂不明确，按mysql的存储方式，则是整数部分小数部分分开存储，每9位十进制数存于4字节（32）位中
 //decimal(128,1,?)
+
 引用类型
 在栈中存放值的地址，在堆中存放值
 继承system.Object
@@ -33,6 +37,8 @@ pos = Vecotr3.zero; //由于Vector3是值类型，所以transform.position 不�
 Material mat = transform.GetComponent<MeshRender>().material;
 mat.color = Color.red;//此时MeshRender的颜色也被改变
 
+
+
 装箱|拆箱
 装箱就是把值类型转为引用类型的操作，下面代码就是i的装箱操作
 int i = 0;
@@ -42,15 +48,23 @@ int i = 0;
 System.Object obj = i;
 int j = (int)obj;
 
+
+
 break
 C#没有break all
+
+
 
 = 和 ++|--
 c = [++|--]a 先自增或自减再赋值
 c = a[++|--] 先赋值再自增或自减
 
+
+
 全等和不全等
 C#变量类型是明确规定的，不同的变量类型直接不可以使用逻辑运算符
+
+
 
 左移且赋值及右移且赋值
 是2进制位数的左移或右移
@@ -58,6 +72,8 @@ a = 4;
 a <<= 2; 即 00100 -> 10000 -> a = 16
 a = 4;
 a >> 2; 即 00100 -> 00001 -> a = 1
+
+
 
 数组
 dateType[] name
@@ -68,16 +84,21 @@ C#中数组是单一类型数据且长度固定的"集合"（非集合）
 在秩中加入逗号可以定义数组维度，int[,] n 即为一个二维数组
 >> 深入学习 指针数组、结构数组
 
+
+
 集合
 集合较之数组，长度可变，且可存储引用类型，更为灵活，但开销也变得更大
+
 泛型和非泛型
 非泛型集合的value是object，所以在存储|读取值类型时会发生大量装箱|拆箱操作，且无法验证数据类型，所以在涉及值类型存储时推荐使用泛型集合
+
 常见非泛型集合如下
 ArrayList   根据索引获取数据
 HashTable   根据键获取数据
 SortedList    即可使用键访问数据，也可使用索引访问数据
 Query   队列，先进先出
 Stack   堆栈，后进先出
+
 常见泛型集合如下
 SortedList<TKey,TValue>   SortedList的泛型等效类
 List<T>   ArrayList的泛型等效类
@@ -86,6 +107,7 @@ Queue<T>    Queue的泛型等效类
 Dictionary<TKey,TValue>   字典
 BitArray    点阵列，存储[1|0]这样二进制数据的集合，使用索引访问元素
 >>  深入学习：各类型的底层实现
+
 值的获取修改等
 使用索引取值的，当无索引会报错
 使用索引存值的，当索引重复会报错
@@ -97,8 +119,9 @@ void TrimToSize()   只能在非泛式集合中使用，设置集合容量为当
 void TrimExcess()   只能在泛式集合中使用，功能同上
 void Remove()   键值时匹配键，索引时匹配值，删除第1个匹配的元素，不存在时不报错
 void RemoveAt()   索引时匹配索引，不存在时报错
-void Add(TKey,TValue)   索引时不存在TKey，键值时若重复TKey会报错  
+void Add(TKey,TValue)   索引时不存在TKey，键值时若重复TKey会报错
 >> 深入学习：其他内容
+
 哈希表Hashtable
 IsFixedSize   是否固定大小
 IsReadOnly    是否只读
@@ -109,18 +132,44 @@ void Add(object key,object value)
 bool ContainsKey(object key)
 bool ContainsValue(object value)
 排序类似堆栈，后添加的在表最前
+
 队列[Query|Query[T]]方法汇总
 void Enqueue(T)   T入队
 T Dequeue()   T出队，返回T
+
 堆栈[Stack|Stack[T]]
 T Peek()    返回Stack顶部对象，不删除
 T Pop()   返回并删除Stack顶部对象（弹出元素）
 void Push(T)    推入元素
+
 字典 Dictionary<TKey,TValue>
 在索引号并非int类型时使用
 键值
 使用索引获取值，索引值先通过散列函数寻找哈希桶中的值，然后根据哈希桶对应的值在单链表中寻找索引中对应的元素
 >> 深入学习：哈希函数构建及解决哈希冲突的其他方法
+
+
+
+String
+"1" 的类型是string '1'的类型是char
+实际是一个char的数组，通过String[n]的索引形式获取对应的char，string == char[]
+通过new string(char[] array)构造
+通过string.join("分隔符",string[] array)构造
+>> 深入学习 通过String.Format()构造
+
+比较字符串
+int Compare   String.Compare(str1,str2,true|false)|String.Compare(str1,index1,str2,index2,length,true|false)，true|false是否区分大小写，index及length可比较相应位数
+int CompareTo   str1.CompareTo(str2)，区分大小写
+int CompareOrdinal    String.CompareOrdinal(str1,str2)，str1的char总值 - str2的char总值，String.CompareOrdinal("ab","cd") -> -4
+bool Equals    String.Equals(str1,str2)|str1.Equals(str2)，区分大小写
+
+字符串检索
+bool StartsWith   str1.StartsWith(string)
+bool EndsWith   str1.EndsWith(string)
+int IndexOf   str1.IndexOf(string,index1,length)
+int LastIndexOf   str1.LastIndexOf(string,index1,length)，从后往前检索，index不变
+int IndexOfAny    str1.IndexOfAny(char[],index1,length)
+int LastIndexOfAny    str1.LastIndexOfAny(char[],index1,length)，从后往前检索，index不变
 
 
 
