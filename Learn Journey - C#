@@ -66,6 +66,7 @@ C#中数组是单一类型数据且长度固定的"集合"（非集合）
 为赋值的数组无法隐式转换为bool类型或被调用
 数组有定义的长度，访问超出定义长度的键时会报错
 在秩中加入逗号可以定义数组维度，int[,] n 即为一个二维数组
+>> 深入学习 指针数组、结构数组
 
 集合
 集合较之数组，长度可变，且可存储引用类型，更为灵活，但开销也变得更大
@@ -82,20 +83,46 @@ SortedList<TKey,TValue>   SortedList的泛型等效类
 List<T>   ArrayList的泛型等效类
 Stack<T>    Stack的泛型等效类
 Queue<T>    Queue的泛型等效类
-Dictionary<TKey,TValue>   使用索引获取值，索引值先通过散列函数寻找哈希桶中的值，然后根据哈希桶对应的值在单链表中寻找索引中对应的元素
+Dictionary<TKey,TValue>   字典
 BitArray    点阵列，存储[1|0]这样二进制数据的集合，使用索引访问元素
 >>  深入学习：各类型的底层实现
 值的获取修改等
 使用索引取值的，当无索引会报错
 使用索引存值的，当索引重复会报错
+Count   集合中包含的元素个数
+void Clear()    清除集合中所有元素
+bool Contains(T)    判断集合中是否存在T
+T[] ToArray()   复制集合中的元素到一个新数组中
+void TrimToSize()   只能在非泛式集合中使用，设置集合容量为当前元素的个数，即释放空项的内存占用，手动回收内存
+void TrimExcess()   只能在泛式集合中使用，功能同上
+void Remove()   键值时匹配键，索引时匹配值，删除第1个匹配的元素，不存在时不报错
+void RemoveAt()   索引时匹配索引，不存在时报错
+void Add(TKey,TValue)   索引时不存在TKey，键值时若重复TKey会报错  
 >> 深入学习：其他内容
+哈希表Hashtable
+IsFixedSize   是否固定大小
+IsReadOnly    是否只读
+Item    
+Keys    获取哈希表中键的集合
+Value   获取哈希表中值的集合
+void Add(object key,object value)
+bool ContainsKey(object key)
+bool ContainsValue(object value)
+排序类似堆栈，后添加的在表最前
 队列[Query|Query[T]]方法汇总
-void Clear()    清除队列中所以元素
-bool Contains(T)    判断队列中是否存在T
 void Enqueue(T)   T入队
 T Dequeue()   T出队，返回T
-T[] ToArray()   复制队列中的元素到一个新数组中
-void TrimToSize()   
+堆栈[Stack|Stack[T]]
+T Peek()    返回Stack顶部对象，不删除
+T Pop()   返回并删除Stack顶部对象（弹出元素）
+void Push(T)    推入元素
+字典 Dictionary<TKey,TValue>
+在索引号并非int类型时使用
+键值
+使用索引获取值，索引值先通过散列函数寻找哈希桶中的值，然后根据哈希桶对应的值在单链表中寻找索引中对应的元素
+>> 深入学习：哈希函数构建及解决哈希冲突的其他方法
+
+
 
 
 
