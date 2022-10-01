@@ -1,0 +1,10 @@
+
+
+Navigation
+导航路径因先设置Navigation Static属性，后在Navigation-Object窗口中为其关联对应的区域。
+深入学习：导航算法
+
+Animator
+模型（fbx）文件可以包含多个动画切片，可以通过Animator Controller控制各个切片的切换，具体方法为在Animator右侧创建pram，并在右侧Layer窗口中制作关联，连接箭头可以点击并关联相应的pram进行控制。
+深入学习：尝试自己制作游戏相关的人物动画
+
