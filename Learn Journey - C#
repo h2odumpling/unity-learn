@@ -214,7 +214,7 @@ srting Replace    str1.Replace(char,char)|str1.Replace(string,string)
 string ToUpper
 string ToLower
 
-
+>> 深入学习：StringBuilder类
 
 
 
