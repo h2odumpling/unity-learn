@@ -151,6 +151,7 @@ void Push(T)    推入元素
 
 
 String
+引用类型，但通过值传递，a = "1"; b = a; a="c"; 此时a引用"c"，b引用"1"
 "1" 的类型是string '1'的类型是char
 实际是一个char的数组，通过String[n]的索引形式获取对应的char，string == char[]
 通过new string(char[] array)构造
@@ -170,6 +171,50 @@ int IndexOf   str1.IndexOf(string,index1,length)
 int LastIndexOf   str1.LastIndexOf(string,index1,length)，从后往前检索，index不变
 int IndexOfAny    str1.IndexOfAny(char[],index1,length)
 int LastIndexOfAny    str1.LastIndexOfAny(char[],index1,length)，从后往前检索，index不变
+
+字符串格式化
+string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
+C|c   货币
+D|d   十进制
+E|e   指数 如1.23456E+005
+F|f   固定小数位，精度最高15位（使用双精度，单精度只有7位）
+G|g   常用格式
+N|n   逗号分隔千分位
+P|p   百分号形式
+R|r   圆整，无视有效数字，精度最高17位（使用双精度，单精度只有9位）
+X|x   十六进制
+当string时间，如System.DateTime.now
+D   *年*月*日
+d   */*/*
+T   *:*:*
+t   *:*
+Y|y   *年*月
+M|m   *月*日
+
+字符串连接
+string Contact    string.Contact([string[]|string|char[]|char],*)
+string Join   string.Join("delimiter",[string[]|string|char[]|char],*)
+
+字符分隔
+string[] splite
+
+字符串插入
+string insert   str1.Insert(index,string)
+
+字符串删除
+string Remove   str1.Remove(index,length)
+string Trim   str1.Trim([char[]|char],*)
+string TrimStart
+string TrimEnd
+
+字符串替换
+srting Replace    str1.Replace(char,char)|str1.Replace(string,string)
+
+更改大小写
+string ToUpper
+string ToLower
+
+
 
 
 
