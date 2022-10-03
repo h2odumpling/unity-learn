@@ -53,20 +53,7 @@ void function Insert (int[] _arr){
 
 二分查找
 必须在有序队列中进行
-void function Quick(int[] _arr, int tar, int start, int end){
-  int mid = start + end)/2;
-  if(start < end){
-    return false;
-  }
-  if(_arr[mid] > tar){
-    return Quick(_arr, tar, start, mid-1);
-  }else if(_arr[mid] == tar){
-    return mid;
-  }else{
-    return Quick(_arr, tar, mid+1, end);
-  }
-}
-void function Quick(int[] _arr, int tar){
+int function Quick(int[] _arr, int tar){
   int left = 0;
   int right = _arr.Length;
   int mid = 0;
@@ -80,7 +67,7 @@ void function Quick(int[] _arr, int tar){
       left = mid + 1;
     }
   }
-  return false;
+  return -1;
 }
 
 
