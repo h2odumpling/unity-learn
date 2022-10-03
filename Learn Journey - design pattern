@@ -44,3 +44,7 @@ public class prod2 : BaseProd{
     //do prod2
   }
 }
+
+
+
+>> 深入学习：其他设计模式
