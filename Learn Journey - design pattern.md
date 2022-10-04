@@ -1,4 +1,4 @@
-单例
+# 单例
 public class Singleton{
   static Singleton ins;
   public static Singleton ins{
@@ -14,7 +14,7 @@ public class Singleton{
 
 
 
-简单工厂
+# 简单工厂
 public class SimpleFactory{
   public static Factory MakeProduct(string type){
     Factory factory = Null;
