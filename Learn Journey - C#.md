@@ -354,3 +354,317 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
 * {n1,n2}   n1-n2次
 
 >> 深入学习：正则表达式的数学算法
+ 
+ 
+ 
+
+# Action|Func
+ 当需要实例化一个函数时可用Action或Func方法
+ ## Action  当没有返回参数时使用
+ ```
+ static void ThreadMethod(object obj)
+ {
+     Console.WriteLine("做点什么");
+ }
+
+
+ static void main()
+ {
+     Action<object> a = ThreadMethod; 
+ }
+ ```
+ ## Func  当有返回参数时使用
+ ```
+ static string ThreadMethod(object obj)
+ {
+     Console.WriteLine("做点什么");
+     return "";
+ }
+
+
+ static void main()
+ {
+     Func<object,string> a = ThreadMethod; 
+ }
+ ```
+ 
+ 
+ 
+# C#线程
+ 当某个方法比较耗时时才考虑开启线程处理
+ 
+### 前台线程与后台线程
+ 一个进程如果有前台线程，即使main线程被关闭，也仍会运行直到所有前台线程结束
+ 如果一个进程的所有前台进程全部结束，则所有相关后台进程会被强制关闭
+ 
+### 线程的优先级
+ 优先级高的线程会被优先执行，优先级一样的线程按分配同时执行
+
+ 创建线程有4种方式，begingInvoke(委托)、Thread类、ThreadPool(线程池)、Task(任务)
+
+## BeginInvoke  委托开启线程
+ ```
+static int ThreadMethod(int i)
+ {
+     Console.WriteLine("做点什么");
+     return 100;
+ }
+
+ static void Callback(IAsyncResult ar)  //回调函数的参数必须为object
+ {
+     object obj = ar.AsyncState; //可通过ar获取BeginInvoke时传递给回调函数的参数
+ }
+
+ static void main()
+ {
+     Func<int,int> a = ThreadMethod;
+     IAsyncResult ar = a.BeginInvoke(100, Callback, null);  //先传递函数所需参数，后传递回调函数及回调函数的参数，ar可以获取当前委托的状态
+ }
+ ```
+ ### 监听委托结束发方法
+ 通过 ar.AsyncWaitHandle.WaitOne()等待线程结束
+ ```
+ Func<int,int> a = ThreadMethod;
+ IAsyncResult ar = a.BeginInvoke(100, Callback, null); //ar剋有
+
+ bool isEnded = ar.AsyncWaitHandle.WaitOne(1000); //等待线程执行或等待1000毫秒
+ if (isEnded)
+ {
+     int result = a.EndInvoke(ar); //可以通过EndInvoke方法获取a执行完毕的结果
+ }
+ ```
+ 通过回调函数
+ ```
+ a.BeginInvoke(100,ar => {
+     int res = a.EndInvoke(ar); //获取函数处理完成结果
+ },null);
+ ```
+ 
+ ## Thread类
+ 通过静态函数创建
+ 默认创建是前台线程，可设置isBackground = true变为后台进程
+ #### Priority  线程优先级
+ * Highest
+ * AboveNormal
+ * Normal
+ * BelowNormal
+ * Lowest
+ ```
+ static void ThreadMethod(object obj)
+ {
+     Console.WriteLine("做点什么");
+     int id = Thread.CurrentThread.ManagedThreadId; //可通过Thread.CurrentThread.ManagedThreadId获取当前线程id
+ }
+
+ static void main()
+ {
+     Thread th = new Thread(ThreadMethod);//创建完成时不开启线程
+     th.IsBackground = true;//设置后台进程
+     th.Priority = ThreadPriority.Normal;//设置优先级
+     th.Start("ss");//开启线程，函数参数可以在这里传递，调用后线程是Unstarted状态，要等cpu分配并开始后，才是Running状态
+ }
+ ```
+ 通过类方法创建
+ ```
+ //类
+ class MyThread
+ {
+     private string name;
+     private int id;
+
+     public MyThread(string name, int id)
+     {
+         this.name = name;
+         this.id = id;
+     }
+
+     public void ThreadMethod()
+     {
+         Console.WriteLine("做点什么");
+     }
+ }
+ ```
+ ```
+ //创建Thread
+ static void main()
+ {
+     MyThread my = new MyThread("name",100);
+
+     Thread th = new Thread(my.ThreadMethod);
+     th.Start();
+ }
+ ```
+ 
+ ### Abort()
+ 终止线程并抛出异常，可以用try catch捕获
+ 
+ ### Join()
+ 在线程内调用Join会暂停当前线程等待其他线程执行完毕
+ ```
+ t.Join() //等待t线程执行完毕后，当前线程才会继续执行
+ ```
+ 
+ ## ThreadPool  线程池
+ 全部为后台线程，且不能修改，也无法修改优先级或者名称
+ 当需要执行很多不同的小任务时，可以通过线程池预先创建线程，当线程需要被调用时，可以直接使用
+ 双核cpu 默认设置为1023个工作线程和1000个IO线程
+ 可配置最大线程数
+ ```
+ static void ThreadMethod(object obj) //必须带有object参数
+ {
+     Console.WriteLine("做点什么");
+ }
+
+ static void main()
+ {
+     ThreadPool.QueueUserWorkItem(ThreadMethod,34);//可在这里传参
+ }
+ ```
+ 
+ ## Task 任务
+ 任务开启
+ ```
+static void ThreadMethod()
+{
+    int? id = Task.CurrentId; //可通过Task.CUrrentId获取当前任务id
+    Console.WriteLine("做点什么");
+}
+
+static void main()
+{
+    //通过Task类创建
+    Task t = new Task(ThreadMethod);
+
+    //通过TaskFactory类创建
+    TaskFactory fac = new TaskFactory();
+    Task tt = fac.StartNew(ThreadMethod);
+}
+ ```
+ 
+ ## 连续任务
+ 当任务1需要等待任务2完成后才能开始时，可以使用连续任务
+ ```
+ static void ThreadMethod_1()
+ {
+     Console.WriteLine("做点什么");
+ }
+ static void ThreadMethod_2(Task t) //此处t为上一个任务
+ {
+     Console.WriteLine("做点什么");
+ }
+
+ static void main()
+ {
+     Task t1 = new Task(ThreadMethod_1);
+     Task t2 = t1.ContinueWith(ThreadMethod_2);
+     Task t3 = t1.ContinueWith(ThreadMethod_2);
+     Task t4 = t2.ContinueWith(ThreadMethod_2);
+ }
+ ```
+ 
+ ## 任务的层次结构
+ 如果在一个任务中启动新任务，则构建为父子任务，当子任务还没有完成时，父任务即使已经执行完也会处于WaitingForChildrenToComplete状态，当子任务执行完毕，父任务会改为RunToCompletion
+ 
+ ## 线程争用
+ 当多个线程同时对一个引用类型进行操作时，会出现线程争用情况
+ #### 出现原理
+ ```
+ class MyThread
+ {
+     private int id = 5;
+
+     public void ThreadMethod()
+     {
+         id++;
+         if (id == 5)
+         {
+             Console.WriteLine("发生线程争用"); //有一个线程执行id = 5时，另一个线程执行if判断
+         }
+         id = 5;
+     }
+ }
+ ```
+ ```
+ static void ChangeState(object obj)
+ {
+     MyThread m = obj as MyThread;
+     while (true)
+     {
+         m.ThreadMethod();
+     }
+ }
+
+ static void main()
+ {
+     MyThread m = new MyThread();
+     Thread t = new Thread(ChangeState);
+     new Thread(ChangeState).Start(m);
+     t.Start(m);
+ }
+ ```
+  #### 解决方案
+ 添加线程锁
+ ```
+ static void ChangeState(object obj)
+ {
+     MyThread m = obj as MyThread;
+     while (true)
+     {
+         lock (m)  //锁定引用类型对象m
+         {
+             m.ThreadMethod();
+         }
+     }
+ }
+
+ static void main()
+ {
+     MyThread m = new MyThread();
+     Thread t = new Thread(ChangeState);
+     new Thread(ChangeState).Start(m);
+     t.Start(m);
+ }
+ ```
+ 
+ ## 死锁
+ ```
+ //ThreadMethod_1 抢到m1锁，ThreadMethod_2抢到m2锁，导致无人可以继续执行，从而死锁
+ static void ThreadMethod_1()
+ {
+     while (true){
+         lock (m1)
+         {
+             lock (m2)
+             {
+                 Console.WriteLine("做点什么");
+             }
+         }
+     }
+ }
+ 
+ static void ThreadMethod_2(Task t) //此处t为上一个任务
+ {
+     while (true)
+     {
+         lock (m2)
+         {
+             lock (m1)
+             {
+                 Console.WriteLine("做点什么");
+             }
+         }
+     }
+ }
+
+ static void main()
+ {
+     Thread t1 = new Thread(ThreadMethod_1);
+     t1.Start();
+     Thread t2 = new Thread(ThreadMethod_2);
+     t2.Start();
+ }
+ ```
+ #### 解决方案
+ 添加锁时，所有锁按同一顺序添加
+ 
+ 
