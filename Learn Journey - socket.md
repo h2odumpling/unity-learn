@@ -1,11 +1,12 @@
-Socket
+# Socket
 Socket继承自UNIX一切都是文件的原理，即是 打开->读|写->关闭 的模式
 
-Socket(AddressFamily,SocketType,ProtocolType)   Socket基本函数
+
+## Socket(AddressFamily,SocketType,ProtocolType)   Socket基本函数
 AddressFamily,SocketType,ProtocolType 有些互相匹配，当不匹配的参数用于创建socket时，会报错
 参考资料：https://learn.microsoft.com/zh-cn/dotnet/api/system.net.sockets.sockettype
 
-AddressFamily   协议族，规定通信中的地址，在Socket创建时设置的只读属性，在c#中是继承自AddressFamily的枚举
+### AddressFamily   协议族，规定通信中的地址，在Socket创建时设置的只读属性，在c#中是继承自AddressFamily的枚举
 协议族
 InterNetWork    IPv4
 InterNetWork6   IPv6
@@ -42,7 +43,7 @@ Unspecified   未指定的地址族
 VoiceView   VoiceView
 >> 深入学习：其他协议族
 
-ScoketType    Socket类型，在c#中是继承自ScoketType的枚举
+### ScoketType    Socket类型，在c#中是继承自ScoketType的枚举
 类型
 无需建立连接，且可通信多个主机
 Dgram   需ProtocolType.Udp和AddressFamily.InterNetWork，支持数据报，即最大长度固定（通常很小）的无连接、不可靠消息。消息可能会丢失或重复，并且在数据到达时不按顺序排列。
@@ -54,7 +55,7 @@ Stream    提供可靠、双向、基于连接的字节流，数据不重复，�
 Raw   可以使用ProtocolType.Icmp及ProtocolType.Igmp，支持对基础传输协议的访问，在发送时必须提供完整的IP头，接收数据在返回时也会保持IP头及选项不变。
 Unknown   未知的Socket类型
 
-ProtocoType   指定协议，在c#中是继承自ProtocolType的枚举
+### ProtocoType   指定协议，在c#中是继承自ProtocolType的枚举
 常见协议
 Tcp   传输控制
 Udp   用户数据报
@@ -83,31 +84,31 @@ Spxll   顺序表交换第二版
 Unknown   未知
 Unspecified   未指定
 
-Bind    用于给Socket对象绑定地址及端口（仅服务端）
-Listen|Connect    服务端用Listen监听对象，客户端用Connect发出连接请求
-Accept    当服务端监听到请求后就会调用，表示连接成功建立
+## Bind    用于给Socket对象绑定地址及端口（仅服务端）
+## Listen|Connect    服务端用Listen监听对象，客户端用Connect发出连接请求
+## Accept    当服务端监听到请求后就会调用，表示连接成功建立
 
-Send|Recive
+## Send|Recive
 Recive函数负责内容读取，返回读取实际字节数，读取到文件结尾时返回0，出错时返回负值，常见的有EINTR表示中断，ECONNREST表示连接问题
 Send函数负责内容发送，返回发送字节数（有可能发送了部分或全部），失败时返回负值，常见的有EPIPE表示连接问题
 
-Close   完成连接，关闭Socket对象
+## Close   完成连接，关闭Socket对象
 
 
 
-TCP/IP
+# TCP/IP
 Transmission Control Protocol/Intternet Protocol    传输控制协议
 
-TCP三次握手
+## TCP三次握手
 客户端 SYN=1 seq=(random)J   SYN 1表示客户端想要建立连接
 服务端 SYN=1 ACK=J+1 seq=(random)K   服务的接收后返回ACK供客户端验证
 客户端 ACK=K+1   客户端验证ACK值为J+1后发送ACK供服务端验证
 
-SYN攻击
+### SYN攻击
 客户端发送SYN=1给服务端后，服务端会处于半连接状态并一直发送接受请求SYN=1 ACK=J+1 seq=K至超时，因为只要模拟不同IP大量发送SYN给服务端，就能大量占用未连接队列，导致正常连接无法接入
 TCP握手中断，会一直发送相应信息至超时
 
-TCP四次挥手
+## TCP四次挥手
 客户端 FIN=M   表示客户端想要主动中止连接
 服务端 ACK=M+1   表示接收到客户端的中止请求，并提供ACK用以验证
 服务端 FIN=N   表示服务端同意中止连接
@@ -116,12 +117,5 @@ TCP四次挥手
 
 
 
-
-
-
-
-
-
-
-UDP
+# UDP
 用户数据报协议
