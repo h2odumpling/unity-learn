@@ -11,9 +11,9 @@ bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 ### 整型
 可存储的值为2的位数次方，若有符号则符号占1位，存储的正数永远比负数少1，因为0需要占据一个位置
 整形命名规则上u开头一般都无符号，s开头一般都有符号
-*byte(8,0)
-*sbyte(8,1)
-*ushort(16,0)
+* byte(8,0)
+* sbyte(8,1)
+* ushort(16,0)
 int(32,1)
 uint(32,0)
 ulong(64,0)
