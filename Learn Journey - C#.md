@@ -14,48 +14,56 @@ bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 * byte(8,0)
 * sbyte(8,1)
 * ushort(16,0)
-int(32,1)
-uint(32,0)
-ulong(64,0)
+* int(32,1)
+* uint(32,0)
+* ulong(64,0)
 
 ### 浮点型
 使用科学计数法存储，1位存储符号，1位存储指数符号，一部分存储指数，剩余部分存储精度
 指数负数永远比正数少1，即0划归指数负数部分
 精度范围是浮动的，以float为例精度23位最大可存储8388608，若实际精度首位是9，则只有6位精度
-double(64,1,[15-16])    10位指数 52位精度
-float(32,1,[6-7])     7位指数 23位精度
-//decimal的存储方法暂不明确，按mysql的存储方式，则是整数部分小数部分分开存储，每9位十进制数存于4字节（32）位中
-//decimal(128,1,?)
+* double(64,1,[15-16])    10位指数 52位精度
+* float(32,1,[6-7])     7位指数 23位精度
+* //decimal的存储方法暂不明确，按mysql的存储方式，则是整数部分小数部分分开存储，每9位十进制数存于4字节（32）位中
+* //decimal(128,1,?)
 
 ### n.toString("format")
-C   货币
-D[n]   十进制，n为小数位数，默认0
-E   科学型 25000 -> 	2.500000E+005 实际转为一个浮点数的表现形式
-F[n]   固定小数位，默认2
-G   常规
-N   带有逗号和小数点的数字
-X   十六进制
+* C   货币
+* D[n]   十进制，n为小数位数，默认0
+* E   科学型 25000 -> 	2.500000E+005 实际转为一个浮点数的表现形式
+* F[n]   固定小数位，默认2
+* G   常规
+* N   带有逗号和小数点的数字
+* X   十六进制
 
 ## 引用类型
 在栈中存放值的地址，在堆中存放值
 继承system.Object
 较值类型存储较慢
 变更引用类型会影响所有引用了这个值的对象，下面举两例
+···
 Vector3 pos = transform.position;
 pos = Vecotr3.zero; //由于Vector3是值类型，所以transform.position 不会改变
+···
+···
 Material mat = transform.GetComponent<MeshRender>().material;
 mat.color = Color.red;//此时MeshRender的颜色也被改变
+···
  
   
   
 # 装箱|拆箱
-装箱就是把值类型转为引用类型的操作，下面代码就是i的装箱操作
+## 装箱就是把值类型转为引用类型的操作，下面代码就是i的装箱操作
+ ···
 int i = 0;
 System.Object obj = i;
-拆箱就是把引用类型转为值类型的操作，下面代码就是obj的拆箱操作
+ ···
+## 拆箱就是把引用类型转为值类型的操作，下面代码就是obj的拆箱操作
+ ···
 int i = 0;
 System.Object obj = i;
 int j = (int)obj;
+ ···
 
 
 
