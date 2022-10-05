@@ -67,7 +67,6 @@ bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out�
 
 ## 引用类型
 在栈中存放值的地址，在堆中存放值
-继承system.Object
 较值类型存储较慢
 变更引用类型会影响所有引用了这个值的对象，下面举两例
 ```
@@ -214,7 +213,7 @@ newPerson.DoB();    //调用父方法DoB，因为DoB没有被重写，只是被�
 ```
 
 ### interface
-相当于规则，只能包含方法、属性、索引、事件，不能拥有成员、变量、字段，继承接口的类需要实现接口中的所有要求
+相当于规则，只能包含方法Method、属性、索引Index、事件Event，不能拥有成员、变量、字段，继承接口的类需要实现接口中的所有要求
 ```
 interface IPerson   //一般interface用大写I开头
 {
@@ -616,7 +615,7 @@ Count   集合中包含的元素个数
 # String
 引用类型，但通过值传递，a = "1"; b = a; a="c"; 此时a引用"c"，b引用"1"，因此每次修改字符串都会在内存中新建一个新字符串并更改引用，在需多次修改字符串时，推荐使用StringBulider
 "1" 的类型是string '1'的类型是char
-实际是一个char的数组，通过String[n]的索引形式获取对应的char，string == char[]
+像一个char的数组，通过String[n]的索引形式获取对应的char
 通过new string(char[] array)构造
 通过string.join("分隔符",string[] array)构造
  
@@ -672,7 +671,7 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 
 ## 字符串删除
 * string Remove   str1.Remove(index,length)
-* string Trim   str1.Trim([char[]|char],*)
+* string Trim   str1.Trim([char[]|char],..*)
 * string TrimStart
 * string TrimEnd
 
@@ -683,9 +682,6 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * string ToUpper
 * string ToLower
 
->> 深入学习：StringBuilder类
- 
-
  
 # StringBulider
  引用类型
@@ -694,7 +690,7 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
  ```
  StringBuilder builder = new StringBuilder("sss");
  builder.Append("dd"); //sssdd
- builder.AppendFormat("aaa{0}", "bb"); //aaabbsssdd
+ builder.AppendFormat("aaa{0}", "bb"); //sssddaaabb
  ```
 
 
@@ -780,7 +776,7 @@ Close   fs.Close() 关闭文件
 * string Replace    替换
 * string[] Split    分隔
  
-Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
+Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
 
 ### RegexOptions
 * Complied    对表达式进行编译，原会直接进行解释操作，而编译会先将正则表达式由正则表达式引擎缓存，因此在多次调用时可以提高性能，但会提高初次调用的成本
@@ -789,7 +785,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
 * ExplicitCapture   仅捕获显式命名组，内联组元素(?n)可禁止自动捕获也可达到类似效果 b(a) 会捕获ba及a，使用显示捕获则只返回 ba
 * IgnoreCase    无视大小写
 * IgnorePattenWhitespace    去除正则表达式中的非转义空白符号，且#开始至\n都会被认为是该正则表达式的注释，可用内联(?x)达到同样效果
-* Multiline   ^$可用来匹配换行符n，^s 匹配 aaa\nsss 是无符号匹配的，Muliline后可以获得匹配
+* Multiline   ^$可用来匹配换行符n，^s 匹配 aaa\nsss 是无匹配的，Muliline后可以获得匹配
 * None    默认，无意义
 * RightToLeft   从右往左
 * Singleline    .可以匹配任意字符，原.只能匹配除换行符\n外的任意字符
@@ -1163,7 +1159,7 @@ static int ThreadMethod(int i)
      IAsyncResult ar = a.BeginInvoke(100, Callback, null);  //先传递函数所需参数，后传递回调函数及回调函数的参数，ar可以获取当前委托的状态
  }
  ```
- ### 监听委托结束发方法
+ ### 监听委托结束的方法
  通过 ar.AsyncWaitHandle.WaitOne()等待线程结束
  ```
  Func<int,int> a = ThreadMethod;
