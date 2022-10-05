@@ -1,5 +1,22 @@
+# 访问修饰符
+* public  对外可见
+* private  只有类中函数可以访问
+* internal  在域名空间内可以访问
+* pretected  只有自己的继承类可以访问
+
+# struct
+用于打包封装比较小的数据集，可完成class的大部分内容
+
+# enum  枚举类型
+为了限制变量的可能性
+默认是整数类型，也可以更改
+```
+enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以设置值
+```
+
 # 数据类型
 不同数据用不同内存大小存储以减少内存损耗，C#中有值类型和引用类型
+C#中所有数据类型都继承自object，因此所有数据类型都可以使用toString方法
 
 ## 值类型
 bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
@@ -17,6 +34,16 @@ bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 * int(32,1)
 * uint(32,0)
 * ulong(64,0)
+
+#### 字符串转为整型的几种方法
+```
+int some = Convert.ToInt32("1000"); //当str无法转换为整形时会报错
+
+int some2 = Int32.Parse("1000");    //当str无法转化为整形时会报错
+
+int some3;
+bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out后的参数赋值
+```
 
 ### 浮点型
 使用科学计数法存储，1位存储符号，1位存储指数符号，一部分存储指数，剩余部分存储精度
@@ -49,7 +76,128 @@ pos = Vecotr3.zero; //由于Vector3是值类型，所以transform.position 不�
 Material mat = transform.GetComponent<MeshRender>().material;
 mat.color = Color.red;//此时MeshRender的颜色也被改变
 ```
- 
+### class
+相较于interface可多包含字段、成员、变量、抽象方法
+只能继承一个类，可继承多个接口
+```
+public class Person    //默认为internal
+ {
+     int a = 1;  //字段，无访问修饰默认为private
+     
+     public int c { get; set; }  //属性，默认get，set是public方法
+     
+     public int b
+     {
+         get
+         {
+             return b + 10;
+         }
+         set
+         {
+             a = value;
+         }
+     }//属性，get或set其中一个改为方法，其他一个也需要改为方法，可在其中访问类中private变量
+     
+     public Person(int vv) //class 的构造函数，当没有构造函数时，默认有一个空的构造函数
+     {
+         a = vv;
+     }
+
+     public int getA()  //方法，无访问修饰默认为private
+     {
+         return a;
+     }
+
+     public static int getB()  //静态方法相当于存储于类，因此只能通过类访问，不能通过实例化对象访问
+     {
+         return 1;
+     }
+ }
+```
+抽象类
+```
+abstract public class Person    //默认为internal
+{
+    abstract public void Zzz();
+}
+
+public class FromPerson : Person
+{
+    public override void Zzz()  //抽象类中的抽象方法必须在继承类中实现
+    {
+        Console.WriteLine("做点什么");
+    }
+}
+```
+
+### interface
+相当于规则，只能包含方法、属性、索引、事件，不能拥有成员、变量、字段，继承接口的类需要实现接口中的所有要求
+```
+interface IPerson   //一般interface用大写I开头
+{
+    public int a();
+}
+
+public class FromInterface : IPerson
+{
+    public int a()
+    {
+        return 1;
+    }
+}
+```
+
+
+
+# 隐式转换和显式转换
+## 隐式转换
+一般用于小的向大的转换，例如int向long，子类向基类转换等
+```
+int i = 0;
+long l = i; //int向long隐式转换
+
+FromPerson fp = new FromPerson();
+Person p = fp;  //FromPerson向Person隐式转换
+```
+## 显式转换
+一般用于大的向小的转换
+显式转换一般伴随着数据丢失
+```
+double n = 1.1;
+int m = (int)n; //double向int显式转换，转换完后m为10，丢失了小数点后的精度
+
+Person p2 = new Person();
+try
+{
+    FromPerson fp2 = (FromPerson)p2;    //Person向FromPerson显式转换，显示转换经常报错，因此最好进行trycatch
+}
+catch(Exception e)
+{
+    Console.WriteLine(e.Message);
+}
+```
+### as
+只能用于引用类型或非空类型
+对于显式转换，try catch是比较消耗资源的方法，因此一般会用as代替，当无法转换时返回null
+```
+FromPerson fp3 = p2 as FromPerson;
+```
+
+
+
+# Nullable
+声明变量时可以声明其可能为空，这样在赋值其他可能为空也可能为值类型时就不会报错
+```
+object obj = null;
+
+int? nullableValue = (int)obj;
+System.Nullable<int> nullableValue2 = (int)obj;     //与int?等价
+
+Console.WriteLine( nullableValue.Value ); //当nullableValue为null时会出错
+Console.WriteLine(nullableValue.HasValue); //可以获取当前值是否有值，null时返回false
+Console.WriteLine( nullableValue.GetValueOrDefault() ); //当nullableValue为null时会返回对应类型的默认值，如int为0
+```
+
   
   
 # 装箱|拆箱
@@ -168,11 +316,17 @@ Count   集合中包含的元素个数
 
 
 # String
-引用类型，但通过值传递，a = "1"; b = a; a="c"; 此时a引用"c"，b引用"1"
+引用类型，但通过值传递，a = "1"; b = a; a="c"; 此时a引用"c"，b引用"1"，因此每次修改字符串都会在内存中新建一个新字符串并更改引用，在需多次修改字符串时，推荐使用StringBulider
 "1" 的类型是string '1'的类型是char
 实际是一个char的数组，通过String[n]的索引形式获取对应的char，string == char[]
 通过new string(char[] array)构造
 通过string.join("分隔符",string[] array)构造
+ 
+### 在string前加@可防止其转为Unicode编码
+ ```
+ string str1 = @"C:\path\file";
+ string str2 = "C:\\path\\file";
+ ```
 >> 深入学习 通过String.Format()构造
 
 ## 比较字符串
@@ -232,6 +386,18 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * string ToLower
 
 >> 深入学习：StringBuilder类
+ 
+
+ 
+# StringBulider
+ 引用类型
+ 修改时会变更对应的内存中堆的数据，而非新建内存堆后重新引用
+ ## Append | AppendFormat
+ ```
+ StringBuilder builder = new StringBuilder("sss");
+ builder.Append("dd"); //sssdd
+ builder.AppendFormat("aaa{0}", "bb"); //aaabbsssdd
+ ```
 
 
 
