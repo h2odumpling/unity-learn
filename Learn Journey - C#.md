@@ -1,8 +1,10 @@
 # 访问修饰符
+按需求扩大访问范围
 * public  对外可见
 * private  只有类中函数可以访问
-* internal  在域名空间内可以访问
+* internal  在一个程序集内可以访问  在一个程序集内可以有多个namespace，调用时可以using namespace
 * pretected  只有自己的继承类可以访问
+* internal protected  即可在继承类可见，又可在程序集可见
 
 # struct
 用于打包封装比较小的数据集，可完成class的大部分内容
@@ -114,11 +116,16 @@ public class Person    //默认为internal
      }
  }
 ```
-抽象类
+
+#### 抽象类
 ```
 abstract public class Person    //默认为internal
 {
     abstract public void Zzz();
+    virtual public int zzzz()   //virtual 子类可以直接继承，也可以使用override重写
+    {
+        return 1;
+    }
 }
 
 public class FromPerson : Person
@@ -128,6 +135,82 @@ public class FromPerson : Person
         Console.WriteLine("做点什么");
     }
 }
+```
+
+#### 封印类
+```
+sealed class Selfme  //sealed 无法被继承
+{
+
+}
+```
+
+#### 继承
+类继承的实例化的顺序，会先调用父类的构造函数，后调用子类的构造函数
+一个类可以拥有多个构造函数
+```
+public class Person    //默认为internal
+{
+    public Person()
+    {
+    }
+
+    public Person(int a)
+    {
+    }
+}
+
+public class FromPerson : Person
+{
+    public FromPerson()  //未指定默认继承默认的构造函数
+    {
+    }
+
+    public FromPerson(int a) : base(a)  //指定继承父类的构造函数
+    {
+    }
+
+    public FromPerson(string a): this()  //指定继承自己的构造函数
+    {
+    }
+}
+```
+
+#### new 和 override的区别
+```
+public class Person    //默认为internal
+{
+    virtual public void DoA()
+    {
+        Console.WriteLine("DoA");
+    }
+
+    virtual public void DoB()
+    {
+        Console.WriteLine("DoB");
+    }
+}
+
+public class FromPerson : Person
+{
+    public override void DoA()
+    {
+        Console.WriteLine("ReDoA");
+    }
+
+    new public void DoB()
+    {
+        Console.WriteLine("ReDoB");
+    }
+}
+```
+```
+Person newPerson = new FromPerson();
+
+newPerson.DoA();    //调用子方法DoA，因为已经被重写
+newPerson.DoB();    //调用父方法DoB，因为DoB没有被重写，只是被隐藏
+
+((FromPerson)newPerson).DoB();    //调用子方法DoB，显示转换后相当于又隐藏了父的DoB类
 ```
 
 ### interface
@@ -145,6 +228,165 @@ public class FromInterface : IPerson
         return 1;
     }
 }
+```
+
+#### 索引器
+为了使一个类实现类似数组的操作方式
+```
+public class Person    //默认为internal
+{
+    private string[] arr;
+    
+    public Person(string[] arr)
+    {
+        this.arr = arr;
+    }
+
+    public string this[int index]
+    {
+        get
+        {
+            string temp;
+            if (index >= 0 && index< arr.Length)
+            {
+                temp = arr[index];
+            }
+            else
+            {
+                temp = "";
+            }
+            return temp;
+        }
+        set
+        {
+            if(index >= 0 && index < arr.Length)
+            {
+                arr[index] = value;
+            }
+        }
+    }
+    
+    public int this[string name]  //索引的重载
+    {
+        get
+        {
+            int index = 0;
+            while(index < arr.Length)
+            {
+                if (arr[index] == name)
+                {
+                    return index;
+                }
+                index++;
+            }
+            return -1;
+        }
+    }
+}
+```
+```
+Person person = new Person();
+
+person[0] = "ss";
+person[1] = "ss";
+
+Console.WriteLine(person[0]);
+Console.WriteLine(person[1]);
+
+console.WriteLine(person["ss"]);
+```
+
+#### 泛型在Class内的实现
+极大提高代码重用性，且数据类型是安全的，且提高性能，有助于减少程序体积
+```
+class MyClass<T>
+{
+    public T[] array;
+
+    public MyClass(int size)
+    {
+        array = new T[size];
+    }
+
+    public T getValue(int index)
+    {
+        return array[index];
+    }
+
+    public void setValue(int index,T value)
+    {
+        array[index] = value;
+    }
+}
+```
+```
+MyClass<int> myClassInt = new MyClass<int>(5);
+
+for (i = 0; i < myClassInt.Size; i++)
+{
+    myClassInt.setValue(i, 20 * i);
+}
+
+for (i = 0; i < myClassInt.Size; i++)
+{
+    myClassInt.getValue(i);
+}
+
+MyClass<string> myClassString = new MyClass<string>(5);
+
+for (i = 0; i <  myClassString.Size; i++)
+{
+    myClassString.setValue(i, "ss");
+}
+
+for(i = 0; i < myClassString.Size; i++)
+{
+    myClassString.getValue(i);
+}
+```
+多重泛型类
+```
+class MyClass<T,K> where T : struct where K : class  //可通过where 限制泛型的类型，struct 限制只能是值类型，class 限定只能是class 或子类
+{
+}
+```
+泛型类的继承
+```
+class MyClass<T,K> where T : struct where K : class
+{
+}
+
+class MyClassChild<K> : MyClass<int,K> where K : class  //可直接指定父类泛型中的类型，也可以继续继承
+{
+}
+```
+泛型方法的实现
+```
+class MyClass<T,K>
+{
+    public void Action(T value)    //T继承类的泛型，在类创建时已经确定
+    {
+    }
+
+    public static void Action2<Z>()       //泛型方法，调用时才确定泛型的类型
+    {
+    }
+    
+    public void Action<T>(ref T p1,ref T p2)        //使用方法的引用传递ref，实现泛型方法
+    {
+    }
+}
+```
+```
+MyClass<int, string>.Action2<int>();
+
+string a = "v";
+string b = "d";
+MyClass<int, int>.Action<string> (ref a,ref b);        //使用引用传递时，必须带ref一起进行变量的引用传递
+```
+* 引用传递实现
+```
+
 ```
 
 
@@ -198,6 +440,58 @@ Console.WriteLine(nullableValue.HasValue); //可以获取当前值是否有值�
 Console.WriteLine( nullableValue.GetValueOrDefault() ); //当nullableValue为null时会返回对应类型的默认值，如int为0
 ```
 
+
+
+# 多态
+### 静态多态
+在编译时已经实现的多态功能
+
+* 方法多态
+```
+public class Person    //默认为internal
+{
+    public static void DoA()    //根据参数不同实现多态
+    {
+    }
+
+    public static void DoA(int n)    
+    {
+    }
+}
+```
+```
+Person.DoA();
+
+Person.DoA(1);
+```
+
+* 运算符多态
+```
+public class Person    //默认为internal
+{
+    public int Value { get; set; }
+
+    public static Person operator +(Person d1, Person d2)  //重载运算符，Person类相加时会返回运算后的Person类
+    {
+        Person a = new Person();
+        a.Value = d1.Value + d2.Value;
+        return a;
+    }
+}
+```
+```
+Person newPerson1 = new Person();
+Person newPerson2 = new Person();
+
+newPerson1.Value = 1;
+newPerson2.Value = 2;
+Person ss = newPerson1 + newPerson2;
+```
+
+### 动态多态
+通过override实现
+toString方法可以被重写
+
   
   
 # 装箱|拆箱
@@ -227,7 +521,7 @@ c = a[++|--] 先赋值再自增或自减
 
 
 # 全等和不全等
-C#变量类型是明确规定的，不同的变量类型直接不可以使用逻辑运算符
+C#变量类型是明确规定的，不同的变量类型之间不可以使用逻辑运算符
 
 
 
@@ -286,6 +580,10 @@ Count   集合中包含的元素个数
 * void RemoveAt()   索引时匹配索引，不存在时报错
 * void Add(TKey,TValue)   索引时不存在TKey，键值时若重复TKey会报错
 >> 深入学习：其他内容
+ 
+#### list[T]
+* void Add   添加单个元素
+* void AddRange  添加多个元素
 
 #### 哈希表Hashtable
 * IsFixedSize   是否固定大小
@@ -400,7 +698,7 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
  ```
 
 
-
+ 
 # 文件及文件夹操作
 
 ## 文件夹操作
@@ -415,6 +713,8 @@ Directory.Exists(@"path")|new DirectoryInfo(@"path").Exists
 Directory.Move(@"pathFrom",@"pathTo")|new DirectoryInfo(@"path").MoveTor(@"pathTo")
 * 设置文件夹
 Directory.Create(@"path").Attributes = FileAttributes.[ReadOnly|Hidden|Temporary(临时)|Encrypted(加密)]
+* 搜索文件夹，返回相关的FileInfo实例
+Directory.GetFiles(@"path","searchStr");
 
 ## 文件操作
 File类及FileInfo类同上
@@ -426,6 +726,21 @@ File.Copy(@"pathFrom",@"pathTo")|new FileInfo(@"path").CopyTo(@"pathTo")
 FlieStream
 推荐在using内使用FileStream，using等效于try{}finally{}，并在finally内调用的Dispose方法清理资源
 using( FileStream fs = File.Open(path,FileMode,FileAccess,FileShare) ){}
+或者可按需使用StreamReader或StreamWriter
+```
+using (FileStream fs = File.Open(@"path", FileMode.Open, FileAccess.Read))
+{
+    byte[] buffer = new byte[4096];
+    int start = 0;
+    int length = 10;
+    fs.Read(buffer,start,length);
+} 
+ 
+using (StreamReader sr = File.OpenText(@"path"))
+{
+    sr.ReadLine();  //每次执行读一行，当没有数据时返回null
+}
+```
 
 ### FileMode
 * Append    打开并追加，需要与FileMode = Write，一起使用
@@ -523,9 +838,154 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
  
  
  
+# delegate、event 委托和事件
+ 
+## delegate 委托
+委托是实现事件和回调函数的基础
+类似依赖注入
+ 
+### 委托的静态调用
+ ```
+ delegate int numberChange(int n);
+ ```
+ ```
+ static int num;
 
+ public static int AddNum(int n)
+ {
+     num +=n;
+     return num;
+
+ }
+ 
+ void main
+ {
+     numberChange nc = new numberChange(AddNum);
+     nc(25);
+ }
+ ```
+ 
+ ### 委托调用实例化方法
+  ```
+ delegate int numberChange(int n);
+
+ public class Mc
+ {
+     static int num;
+     public int AddNum(int n)
+     {
+         num += n;
+         return num;
+     }
+ }
+ ```
+ ```
+ Mc mc = new Mc();
+ numberChange nc = new numberChange(mc.AddNum);
+ nc(25);
+ ```
+### 多重委托
+多个同类委托可以相加减，会依次执行委托
+ ```
+ public class Mc
+ {
+     static int num;
+     public static int AddNum(int n)
+     {
+         num += n;
+         return num;
+     }
+
+     public static int AddNum2(int n)
+     {
+         num += n;
+         return num;
+     }
+ }
+ ```
+ ```
+ numberChange nc1 = new numberChange(Mc.AddNum);
+ numberChange nc2 = new numberChange(Mc.AddNum2);
+ numberChange nc3 = nc1 + nc2;
+
+ nc3(25); //先执行 nc1 后执行 nc2
+ 
+ nc3 += nc1;
+ nc3 -= nc1; //委托相减会先减去后添加的委托
+ 
+ nc3(25); //先执行nc1 再执行nc2
+ 
+ nc3 -= nc1;
+ nc3 -= nc2;
+ 
+ nc3 -= nc2; //不会报错，相当于没有效果
+ 
+ nc3(25); //当委托列表为空时报错
+ ```
+ 
+ ### 泛型在委托上的实现
+ ```
+ delegate T NumberChange<T>(T obj);
+ ```
+ ```
+ NumberChange<int> nc = new NumberChange<int>(Mc.AddNum);
+ nc(25);
+ ```
+ 
+ ## event 事件
+ 可在事件上绑定委托
+ ```
+ public class Mc
+ {
+     static int num;
+     public delegate int numberChange(int n);
+     public event numberChange NC;
+
+     public Mc(int n)
+     {
+         SetNumber(n);
+     }
+
+     protected virtual void OnNumChange()
+     {
+         if(NC != null)
+         {
+             NC(25);
+         }
+         else
+         {
+             Console.WriteLine("Event havn't been binded");
+         }
+     }
+
+     public void SetNumber(int n)
+     {
+         if(num != n)
+         {
+             num = n;
+             OnNumChange();  //触发事件
+         }
+     }
+
+     public static int AddNum(int n)
+     {
+         num += n;
+         return num;
+     }
+ }
+ ```
+ ```
+ Mc mc = new Mc(5);  //事件未绑定，输出信息
+ mc.NC += new Mc.numberChange(Mc.AddNum);
+ mc.SetNumber(10);   //触发事件
+ ```
+ 可参考继承EventHandler
+ 
+
+ 
 # Action|Func
  当需要实例化一个函数时可用Action或Func方法
+ 
  ## Action  当没有返回参数时使用
  ```
  static void ThreadMethod(object obj)
@@ -539,6 +999,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
      Action<object> a = ThreadMethod; 
  }
  ```
+ 
  ## Func  当有返回参数时使用
  ```
  static string ThreadMethod(object obj)
@@ -554,6 +1015,121 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|*)
  }
  ```
  
+ 
+ 
+ # 异常处理
+ catch 异常非常消耗性能，因此一般只捕获对应异常
+ 
+ ## 常见异常类型
+ * ArgumentException  参数异常
+ * ArgumentNullException  参数为空异常
+ * ArgumentOutOfRangeException  参数超出范围异常
+ * DirectoryNotFoundException  路径未找到异常
+ * FileNotFoundException  文件未找到异常
+ * InvalidOperationException  非法运算符异常
+ * NotImplementedException  未实现异常
+ >> 深入学习：其他异常类型
+ 
+ ## 异常处理
+ ```
+ int x = 0;
+ try
+ {
+     int y = 100 / x;
+ }catch(DirectoryNotFoundException e)
+ {
+     Console.WriteLine(e.Message);
+ }
+ catch(DivideByZeroException e)
+ {
+     Console.WriteLine(e.Message);
+ }
+ finally
+ {
+
+ }
+ ```
+ >> 深入学习：C#的底层异常处理机制
+ 
+ 
+ 
+ # Attribute
+ 
+ ## 常见内置Attribute
+ * Conditional 按模式 [DEBUG|RELEASE]
+ ```
+ [Conditional("DEBUG")]
+ public static void Message(string msg)   //此方法只在DEBUG模式中才会被调用，其他模式下调用会报错
+ {
+     Console.WriteLine(msg);
+ }
+ ```
+ * Obsolete 弃用
+ ```
+ [Obsolete("message",false)]
+ public static void Message2(string msg)     //标记此方法已经弃用，message为提示信息，bool为是否报错，为false则是该方法仍可被使用
+ {
+     Console.WriteLine(msg); 
+ }
+ ```
+ 
+ ## 自定义Attribute
+ 可通过继承System.Attribute类创建一个自定义Attribute
+ 命名必须是自定义部分+Attribute
+ 调用时可以通过命名时的自定义部分调用，或者通过全名调用
+ 可在Attribute内设置的属性类型有限，可以是所有内置的值类型、System.Type、object、enum等
+ ```
+ [AttributeUsage(AttributeTargets.Method,AllowMultiple = true, Inherited = false)]
+ class HelpAttribute: Attribute
+ {
+     protected string description;
+     public HelpAttribute(string description)
+     {
+         this.description = description;
+     }
+
+     public string Description
+     {
+         get
+         {
+             return this.description;
+         }
+     }
+ 
+     public string Name { get; set; }
+ }
+ ```
+ ```
+ [Help("ddd",Name = "ssss")]  //可以用Help或HelpAttribute调用，当设置其他参数时，可以用在后面跟随的方式传递
+ public static void myFun()
+ {
+ }
+ ```
+ 
+ ### AttributeUsage
+ 自定义Attribute的使用限制
+ * AttributeTargets  规定Attribute的使用范围，常见的有All|Class|Method|Interface等
+ * AllowMulitiple  规定Attribute在单个类型上的能否被单次使用
+ * Inherited  规定Attribute是否能被继承
+ 
+ ## Attribute的信息获取
+ 通过反射获取Attribute内的信息
+ ```
+ static void main(string[] arg)
+ {
+     HelpAttribute help;
+
+     foreach(var attr in typeof(Dosome).GetCustomAttributes(true))  //遍历Dosome类中所有自定义的Attribute
+     {
+         help = attr as HelpAttribute;  //找到自定义Attribute内是HelpAttribute的Attribute
+
+         if(help != null)
+         {
+             Console.WriteLine(help.Description);  //找到后获取该Attribute的信息
+         }
+     }
+ }
+ ```
  
  
 # C#线程
