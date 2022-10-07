@@ -1128,6 +1128,78 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  
  
+# 反射
+ 程序可以观测并修改自己的能力
+ 
+ ## 基于type的反射
+ * obj.GetType
+ * Type.GetType("type_name", [true|false], [true|false])  第一参数为type命例如stystem.string，第二个参数是是否报错，第三个参数是是否忽略type名大小写
+ * typeof(obj)
+ ```
+ string ss;
+ ss.GetType();
+ Type.GetType("System.Sting", false, true);
+ typeof(ss)
+ ```
+ 
+ ## 对于method|field|properrite的反射
+ 对方法的反射
+ * <Type>t.GetMethods("BindFlags.pram")  获取所有方法，可通过Flags标志位缩小结果范围
+ * <Type>t.GetMethod("method_name")  获取指定方法
+ * <Type>t.GetFields("BindFlags.pram")  获取所有字段
+ * <Type>t.GetFields("method_name")  获取指定字段
+ * <Type>t.GetProperties("BindFlags.pram")  获取所有属性
+ * <Type>t.GetPropertie("method_name")  获取指定属性
+ ```
+ Type type = typeof(int);
+ type.GetMethods();   //获取int类型的所有方法
+ type.GetMethods(BindingFlags.Public);   //获取int类型的所有public方法
+ ```
+ 
+ ## 基于Assembly(程序集)的反射
+ 
+ ### 动态加载
+ 可以通过assembly的反射获取其中的type
+ ```
+ Assembly assembly;
+ assembly = Assembly.Load("assemblyString");
+ Type[] types = assembly.GetTypes();
+ ```
+ 
+ ### 推迟绑定
+ ```
+ class Program
+ {
+     public void main()
+     {
+         Assembly assembly;
+         assembly = Assembly.GetExecutingAssembly();
+         Type t = assembly.GetType("Test.myClass", false, true);     //寻找目标类
+         object obj = Activator.CreateInstance(t);       //实例化对应Type
+         MethodInfo mi = t.GetMethod("isMove");      //判断是否有方法
+         var isMove = (bool)mi.Invoke(obj, null);        //<MethodInfo>.Invoke 使用参数二的参数执行参数一中的mi方法
+
+         if (isMove)
+         {
+             Console.WriteLine("isMove");
+         }
+     }
+ }
+
+ class myClass
+ {
+     public bool isMove() { return false; }
+ }
+ ```
+ 
+ ## 运行时创建类
+ >> 深入学习：System.Emit
+ 
+ 
+ 
+ 
+ 
+ 
 # C#线程
  当某个方法比较耗时时才考虑开启线程处理
  
