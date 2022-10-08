@@ -537,7 +537,7 @@ a >> 2; 即 00100 -> 00001 -> a = 1
 dateType[] name
 C#中数组是单一类型数据且长度固定的"集合"（非集合）
 数组是引用类型，声明数组时不创建堆
-为赋值的数组无法隐式转换为bool类型或被调用
+未赋值的数组无法隐式转换为bool类型或被调用
 数组有定义的长度，访问超出定义长度的键时会报错
 在秩中加入逗号可以定义数组维度，int[,] n 即为一个二维数组
 >> 深入学习 指针数组、结构数组
@@ -706,7 +706,7 @@ Directory.Delete(@"path")|new DirectoryInfo(@"path").Delete()
 * 文件夹是否存在
 Directory.Exists(@"path")|new DirectoryInfo(@"path").Exists
 * 剪切文件夹，目标文件夹已经存在会报错
-Directory.Move(@"pathFrom",@"pathTo")|new DirectoryInfo(@"path").MoveTor(@"pathTo")
+Directory.Move(@"pathFrom",@"pathTo")|new DirectoryInfo(@"path").MoveTo(@"pathTo")
 * 设置文件夹
 Directory.Create(@"path").Attributes = FileAttributes.[ReadOnly|Hidden|Temporary(临时)|Encrypted(加密)]
 * 搜索文件夹，返回相关的FileInfo实例
@@ -1075,7 +1075,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  调用时可以通过命名时的自定义部分调用，或者通过全名调用
  可在Attribute内设置的属性类型有限，可以是所有内置的值类型、System.Type、object、enum等
  ```
- [AttributeUsage(AttributeTargets.Method,AllowMultiple = true, Inherited = false)]
+ [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
  class HelpAttribute: Attribute
  {
      protected string description;
@@ -1105,7 +1105,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ### AttributeUsage
  自定义Attribute的使用限制
  * AttributeTargets  规定Attribute的使用范围，常见的有All|Class|Method|Interface等
- * AllowMulitiple  规定Attribute在单个类型上的能否被单次使用
+ * AllowMulitiple  规定Attribute在单个类型上的能否被多次使用
  * Inherited  规定Attribute是否能被继承
  
  ## Attribute的信息获取
@@ -1126,6 +1126,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
      }
  }
  ```
+ 
  
  
 # 反射
@@ -1235,7 +1236,7 @@ static int ThreadMethod(int i)
  通过 ar.AsyncWaitHandle.WaitOne()等待线程结束
  ```
  Func<int,int> a = ThreadMethod;
- IAsyncResult ar = a.BeginInvoke(100, Callback, null); //ar剋有
+ IAsyncResult ar = a.BeginInvoke(100, Callback, null); //ar
 
  bool isEnded = ar.AsyncWaitHandle.WaitOne(1000); //等待线程执行或等待1000毫秒
  if (isEnded)
