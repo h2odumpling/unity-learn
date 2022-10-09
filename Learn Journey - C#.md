@@ -977,6 +977,20 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  可参考继承EventHandler
  
+ 
+ 
+ # 匿名函数
+ ```
+ delegate(string s){
+     Console.WriteLine(s);
+ }
+ ```
+ ```
+ (x) => {
+     Console.WriteLine(s);
+ }
+ ```
+ 
 
  
 # Action|Func
