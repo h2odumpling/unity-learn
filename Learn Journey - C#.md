@@ -1198,6 +1198,25 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
  
  
+# 预处理指令
+ 为了让编译器[VS]在编译前预先处理指令
+ ```
+ #define DEBUG //定义为DEBUG模式
+ namespace MyProject;
+
+ class Program{
+     void main()
+     {
+         #region something
+         //此处为可折叠区域
+         #endregion
+
+         #if (DEBUG) //当模式为DEBUG时 if内代码才有效
+         Console.WriteLine("ss");
+         #endif
+     }
+ }
+ ```
  
  
  
