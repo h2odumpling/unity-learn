@@ -144,6 +144,13 @@ sealed class Selfme  //sealed 无法被继承
 }
 ```
 
+#### 匿名类
+匿名类的字段、属性是只读的无法被修改
+```
+var a = new {fistrname = "ss",lastname = "bb"};
+```
+
+
 #### 继承
 类继承的实例化的顺序，会先调用父类的构造函数，后调用子类的构造函数
 一个类可以拥有多个构造函数
@@ -991,6 +998,22 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  }
  ```
  
+  
+ 
+# lambda
+ () => expression
+ ```
+ Func<string, bool> func = x => x == "ss";
+
+ Console.WriteLine(func("ss"));
+ Console.WriteLine(func("dd"));
+ ```
+ ```
+ Func<string, bool> func = (x) => {  //当参数为一个时可以省略()
+     return x == "ss";   //当函数只有一行时可以省略{}和return
+ };
+ ```
+ 
 
  
 # Action|Func
@@ -1229,6 +1252,173 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
          Console.WriteLine("ss");
          #endif
      }
+ }
+ ```
+ 
+ 
+ 
+# LINQ
+ Lanuage InterGated Query，语言整合查询，用于操作数据，用于弥补数据库面向数据与C#面向对象之间的差距
+ 创建时并不会执行，类似惰性数组
+ 
+ ## query语法
+ * Data Source  数据源
+ * Query Creation  query语句创建
+ * Query excution  query执行
+ ```
+ int[] numbers = { 1, 2, 3, 8, 6, 10 };
+
+ var numberQuery = from num in numbers   //获取数据源
+                   where num%2 == 0 && num%3 == 1   //过滤条件，query不执行，可以有效缩小结果范围，减速内存损耗
+                   orderby num descending   //descending|ascending
+                   select num;   //创建LINQ后不会立即执行，如需要立即执行，可在后面调用一些query方法，例如query.Count(),query.ToList(),query.ToArray()
+
+ foreach(var i in numberQuery)   //调用LINQ时，才会执行
+ {
+     Console.WriteLine(i);
+ }
+ ```
+ ### join、group、into、let
+ ```
+ public class customer
+ {
+     public string Name { get; set; }
+     public string Place { get; set; }
+
+     public customer(string name,string place)
+     {
+         Name = name;
+         Place = place;
+     }
+ }
+
+ public class office
+ {
+     public string Name { get; set; }
+     public int Id { get; set; }
+
+     public office(string name, int id)
+     {
+         Name = name;
+         Id = id;
+     }
+ }
+ ```
+ ```
+ List<customer> customers = new List<customer>();
+
+ customers.Add(new customer("li lei","beijing"));
+ customers.Add(new customer("han meimei", "xizang"));
+ customers.Add(new customer("wang", "beijing"));
+
+ var queryCustomer = from customer in customers
+                     group customer by customer.Place;   //group
+ 
+ foreach (var c in queryCustomer)
+ {
+     foreach(var d in c)
+     {
+         Console.WriteLine(d.Name);
+         Console.WriteLine(d.Place);
+     }
+ }
+ 
+ var queryCustomerInto = from customer in customers
+                         group customer by customer.Place into intoGroup     //into
+                         where intoGroup.Count() >= 2    //可以对结果集进行筛选
+                         select intoGroup;
+
+ foreach (var c in queryCustomerInto)
+ {
+     foreach (var d in c)
+     {
+         Console.WriteLine(d.Name);
+         Console.WriteLine(d.Place);
+     }
+ }
+
+ List<office> offices = new List<office>();
+ offices.Add(new office("li lei", 50));
+ offices.Add(new office("somebody", 60));
+
+ var queryJoin = from c in customers
+                 join o in offices on c.Name equals o.Name   //join
+                 select new { c.Name, c.Place, o.Id };
+ 
+ foreach (var c in queryCustomerInto)
+ {
+     Console.WriteLine(c.Name);
+     Console.WriteLine(c.Place);
+     Console.WriteLine(c.Id);
+ }
+ 
+ string[] strs = { "ss ee", "dd ff", "cc" };
+ var queryStr = from s in strs
+                let wrods = s.Split(' ')   //let相当于创建值以在linq中存储中间变量
+                from w in wrods
+                let wrod = w.ToUpper()
+                select wrod;
+
+ foreach(var d in queryStr)
+ {
+     Console.WriteLine(d);
+ }
+ ```
+ 
+ ## method方法
+ ```
+ int[] numbers = { 1, 2, 3, 8, 6, 10 };
+
+ numbers.Where(x=>x%2 == 0).OrderBy(x => x);   //method方法实现，是在system.Linq定义的string的扩展方法
+ 
+ foreach(var i in numberQuery)
+ {
+     Console.WriteLine(i);
+ }
+ ```
+
+ >> 深入学习：LINQ to SQL,LINQ to Xml,LINQ to DATASet,LINQ to Objects
+ 
+ 
+ 
+# 扩展方法
+ 在不想继承或改变原class的情况下，新增方法
+ 
+ ##在class上实现
+ ```
+ public static class myStr
+ {
+     public static int thisCount(this string str)  //需在非继承静态类中定义静态方法，string可替换成其它任意的class
+     {
+         return str.Split(new char[]{ ' ',',','.'}, StringSplitOptions.RemoveEmptyEntries).Length;
+     }
+ }
+ ```
+ ```
+ string str = "ss zz dd.bb";
+ Console.Write(str.thisCount());
+ ```
+ 
+ ## 在枚举类型上实现
+ ```
+ public enum Grade { F = 0, E, D, C, B, A }
+
+ public static class GradeExtension
+ {
+     public static Grade pass = Grade.D;
+
+     public static bool passing(this Grade grade)
+     {
+         return grade >= pass;
+     }
+ }
+ ```
+ ```
+ Grade[] grades = { Grade.A, Grade.F, Grade.B };
+
+ foreach(Grade g in grades)
+ {
+     Console.WriteLine(g.passing());
  }
  ```
  
@@ -1512,3 +1702,7 @@ static void main()
  添加锁时，所有锁按同一顺序添加
  
  
+ 
+ # .net framwork
+ 
+ >> 深入学习：内存管理与GC算法
