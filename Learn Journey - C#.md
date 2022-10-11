@@ -154,6 +154,7 @@ var a = new {fistrname = "ss",lastname = "bb"};
 #### 继承
 类继承的实例化的顺序，会先调用父类的构造函数，后调用子类的构造函数
 一个类可以拥有多个构造函数
+继承类时叫实现继承
 ```
 public class Person    //默认为internal
 {
