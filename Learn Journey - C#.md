@@ -7,7 +7,29 @@
 * internal protected  即可在继承类可见，又可在程序集可见
 
 # struct
-用于打包封装比较小的数据集，可完成class的大部分内容
+用于打包封装比较小的数据集，可完成class的大部分内容，是值类型
+```
+struct student
+{
+    public int id;
+    public string name;
+
+    public student(int id, string name)
+    {
+        this.id = id;
+        this.name = name;
+    }
+}
+```
+```
+student a = new student(1,"ss");
+student b = new student(2, "dd");
+a = b;  //struct类型是值类型，所以a = b 相当于 重新创建了a中的数据而非更改了引用
+a.id = 10;
+a.name = "zz";
+Console.WriteLine(b.name);  //dd
+Console.WriteLine(b.id);    //2
+```
 
 # enum  枚举类型
 为了限制变量的可能性
@@ -117,11 +139,12 @@ public class Person    //默认为internal
 ```
 
 #### 抽象类
+一个不完整的类，相当于类的模板，因此不能被实例化
 ```
 abstract public class Person    //默认为internal
 {
     abstract public void Zzz();
-    virtual public int zzzz()   //virtual 子类可以直接继承，也可以使用override重写
+    virtual public int zzzz()   //virtual (虚方法) 子类可以直接继承，也可以使用override重写
     {
         return 1;
     }
@@ -133,10 +156,14 @@ public class FromPerson : Person
     {
         Console.WriteLine("做点什么");
     }
+    
+    public sealed override int zzzz(){   //sealed 用在方法上时必须用于override方法上，表示改方法无法被重写，即假设有类继承了FromPerson类，也不能再重写zzzz方法
+        return 2;
+    }
 }
 ```
 
-#### 封印类
+#### 密封类
 ```
 sealed class Selfme  //sealed 无法被继承
 {
@@ -205,7 +232,7 @@ public class FromPerson : Person
         Console.WriteLine("ReDoA");
     }
 
-    new public void DoB()
+    new public void DoB()  //new 声明隐藏方法
     {
         Console.WriteLine("ReDoB");
     }
@@ -221,11 +248,16 @@ newPerson.DoB();    //调用父方法DoB，因为DoB没有被重写，只是被�
 ```
 
 ### interface
-相当于规则，只能包含方法Method、属性、索引Index、事件Event，不能拥有成员、变量、字段，继承接口的类需要实现接口中的所有要求
+相当于规则，只能包含方法Method、属性、索引Index、事件Event，不能拥有成员、变量、字段，不能声明成员的修饰符，继承接口的类需要实现接口中的所有要求
 ```
 interface IPerson   //一般interface用大写I开头
 {
     public int a();
+}
+
+interface IPerson2:IPerson   //接口之间相互继承时，子接口不需要实现父接口中的要求
+{
+    public int b();
 }
 
 public class FromInterface : IPerson
@@ -236,6 +268,10 @@ public class FromInterface : IPerson
     }
 }
 ```
+
+#### this/base
+* this 用于访问当前类的属性和方法
+* base 可以访问父类的属性和方法
 
 #### 索引器
 为了使一个类实现类似数组的操作方式
@@ -391,9 +427,35 @@ string a = "v";
 string b = "d";
 MyClass<int, int>.Action<string> (ref a,ref b);        //使用引用传递时，必须带ref一起进行变量的引用传递
 ```
-* 引用传递实现
+通过反射，使用变量的类型创建泛型方法
 ```
+class Program
+{
+    static void Main()
+    {
+        int z = 0;
+        var re = Method.genu(z);
+        Console.WriteLine(re);
+    }
 
+}
+
+class Method
+{
+    public static string meth<T>(string str)
+    {
+        Type t = typeof(T);
+        return t.ToString()+"-"+str;
+    }
+    
+    public static object genu(object c)
+    {
+        string className = c.GetType().FullName;   //获取类的包括命名空间的全名
+        Type t = Type.GetType(className);   //获取传入参数的对应类型
+        var method = Type.GetType("Test.Method").GetMethod("meth").MakeGenericMethod(new Type[] { t });   //以Type[] 中的类型代替泛型参数T返回构造方法的methodInfo对象
+        return method.Invoke(null, new object[] { "hello" });   //委托运行方法
+    }
+}
 ```
 
 
@@ -589,8 +651,17 @@ Count   集合中包含的元素个数
 >> 深入学习：其他内容
  
 #### list[T]
+所有list，包括ArrayList,SortList等
+* 初始容量为0，当添加元素时容量扩为4，当添加第5个元素时容量扩为8，以后每次容量不够都会2倍扩大
+* 扩容过程为创建一个数组，将数据复制到新数组中，因此如果能事先知道容量就可先设置 集合<T>(n)(n为容量)，可以有效避免扩容数组导致的性能损耗
+* 当指定容量n不能满足集合长度需求时，容量会扩展为2n
+ 
 * void Add   添加单个元素
 * void AddRange  添加多个元素
+* void Insert  向指定位置插入数据
+* int Capacity  获取容量和设置容量
+* int IndexOf|LastIndexOf  返回指定元素的index，不存在返回-1
+* void Sort  对列表从小到大排序
 
 #### 哈希表Hashtable
 * IsFixedSize   是否固定大小
