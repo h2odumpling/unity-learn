@@ -1091,7 +1091,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  
  ## event 事件
- 可在事件上绑定委托
+ 一种特殊的委托，只能在类内部触发，为委托提供了一种发布订阅的模式
  ```
  public class Mc
  {
@@ -1380,7 +1380,16 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
 # LINQ
  Lanuage InterGated Query，语言整合查询，用于操作数据，用于弥补数据库面向数据与C#面向对象之间的差距
+ 由微软设计的语法
  创建时并不会执行，类似惰性数组
+ LINQ 包含5部分，以下用到LINQ to Objects
+ * LINQ to Objects
+ * LINQ to XML
+ * LINQ to SQL
+ * LINQ to Dataset
+ * LINQ to Entities
+ LINQ 语法顺序
+ from in => join in on equals => let => orderBy => where => group => select => into
  
  ## query语法
  * Data Source  数据源
@@ -1391,7 +1400,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
 
  var numberQuery = from num in numbers   //获取数据源
                    where num%2 == 0 && num%3 == 1   //过滤条件，query不执行，可以有效缩小结果范围，减速内存损耗
-                   orderby num descending   //descending|ascending
+                   orderby num descending, num2 ascending   //descending|ascending
                    select num;   //创建LINQ后不会立即执行，如需要立即执行，可在后面调用一些query方法，例如query.Count(),query.ToList(),query.ToArray()
 
  foreach(var i in numberQuery)   //调用LINQ时，才会执行
@@ -1447,7 +1456,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  var queryCustomerInto = from customer in customers
                          group customer by customer.Place into intoGroup     //into
                          where intoGroup.Count() >= 2    //可以对结果集进行筛选
-                         select intoGroup;
+                         select {count = intoGroup.Count(), key = intoGroup.Key};  //Key表示分组的依据，此处为customer.Place的值
 
  foreach (var c in queryCustomerInto)
  {
@@ -1496,9 +1505,31 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  {
      Console.WriteLine(i);
  }
+
+ bool res_one = numbers.Any(x => x==2);     //判断是否有满足条件的值
+
+ Console.writeLine(res_one);
+
+ bool res_all = numbers.All(x => x==2);     //判断是否都满足条件
+
+ Console.writeLine(res_all);
+
+
+ customers.Add(new customer("li lei","beijing"));
+ customers.Add(new customer("han meimei", "xizang"));
+ customers.Add(new customer("wang", "beijing"));
+
+ offices.Add(new office("li lei", 50));
+ offices.Add(new office("somebody", 60));
+
+ customers
+    .selectMany(x=>office, (x,y) => new {customer = x,office = y}
+    .Where(x=>x.customer.Name == x.office.Name)
+    .OrderBy(x=>x.office.Id)
+    .ThenBy(x=>x.office.Name);      //在前一个相同时按此排序
  ```
 
- >> 深入学习：LINQ to SQL,LINQ to Xml,LINQ to DATASet,LINQ to Objects
+ >> 深入学习：集合操作符 分区操作符
  
  
  

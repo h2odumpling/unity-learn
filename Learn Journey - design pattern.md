@@ -51,4 +51,58 @@ public class prod2 : BaseProd{
 
 
 
+# 观察者模式
+```
+class Cat
+{
+    private string Name;
+    private string Color;
+
+    public event Action CatCome;
+
+    public Cat(string name, string color)
+    {
+        this.Name = name;
+        this.Color = color;
+    }
+
+    public void catCome()
+    {
+        Console.WriteLine("cat running");
+        if (CatCome != null)
+        {
+            CatCome();
+        }
+    }
+}
+
+class Mouse
+{
+    private string Name;
+    private string Color;
+
+    public Mouse(string name, string color, Cat cat)
+    {
+        Name = name;
+        Color = color;
+
+        cat.CatCome += MouseRun;
+    }
+
+    public void MouseRun()
+    {
+        Console.WriteLine(Name + "跑了");
+    }
+}
+```
+```
+Cat tom = new Cat("Tom", "blue");
+
+Mouse jerry = new Mouse("Jerry", "orange", tom);
+Mouse miki = new Mouse("Miki", "Black", tom);
+
+tom.catCome();
+```
+
+
 >> 深入学习：其他设计模式
