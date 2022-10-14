@@ -58,6 +58,8 @@ bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 * int(32,1)
 * uint(32,0)
 * ulong(64,0)
+当整形相除时，结果向下取整，例如 5/2 = 2
+当整形和浮点型相除时，会将整形隐式转换为浮点型
 
 #### 字符串转为整型的几种方法
 ```
@@ -69,14 +71,27 @@ int some3;
 bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out后的参数赋值
 ```
 
+### 货币值
+比浮点型有更大的精度及更小的范围
+* decimal(128,1,28)
+
 ### 浮点型
 使用科学计数法存储，1位存储符号，1位存储指数符号，一部分存储指数，剩余部分存储精度
 指数负数永远比正数少1，即0划归指数负数部分
-精度范围是浮动的，以float为例精度23位最大可存储8388608，若实际精度首位是9，则只有6位精度
+精度范围是浮动的，以float为例精度23位最大可存储8388608，若实际精度首位是9，则只有6位小数精度
 * double(64,1,[15-16])    10位指数 52位精度
 * float(32,1,[6-7])     7位指数 23位精度
-* //decimal的存储方法暂不明确，按mysql的存储方式，则是整数部分小数部分分开存储，每9位十进制数存于4字节（32）位中
-* //decimal(128,1,?)
+浮点型也可使用%，7%2.2 = 0.4
+
+### Infinity 及 NaN
+* Infinty 无穷大
+* NaN 非数字
+皆出现在浮点型运算中
+* 浮点型非0值除以0 为 Infinty
+* 浮点型0值除以0 为 NaN
+* Infinty*0 =0 除此之外任何操作仍是Infinty
+* NaN的任何操作仍然是NaN
+* 整形及demical在除以0时会报错
 
 ### n.toString("format")
 * C   货币
@@ -697,6 +712,7 @@ Count   集合中包含的元素个数
 像一个char的数组，通过String[n]的索引形式获取对应的char
 通过new string(char[] array)构造
 通过string.join("分隔符",string[] array)构造
+字符串是一个不可变的数据类型，一旦创建就不可以再改变内容了
  
 ### 在string前加@可防止其转为Unicode编码
  ```
@@ -706,6 +722,7 @@ Count   集合中包含的元素个数
 >> 深入学习 通过String.Format()构造
 
 ## 比较字符串
+按从左往右顺序依次比较，-1为右边字符串对应位置的char值大，相等返回0，
 * int Compare   String.Compare(str1,str2,true|false)|String.Compare(str1,index1,str2,index2,length,true|false)，true|false是否区分大小写，index及length可比较相应位数
 * int CompareTo   str1.CompareTo(str2)，区分大小写
 * int CompareOrdinal    String.CompareOrdinal(str1,str2)，str1的char总值 - str2的char总值，String.CompareOrdinal("ab","cd") -> -4
@@ -714,7 +731,7 @@ Count   集合中包含的元素个数
 ## 字符串检索
 * bool StartsWith   str1.StartsWith(string)
 * bool EndsWith   str1.EndsWith(string)
-* int IndexOf   str1.IndexOf(string,index1,length)
+* int IndexOf   str1.IndexOf(string,index1,length)    不包含返回-1，包含返回第一个字符的索引
 * int LastIndexOf   str1.LastIndexOf(string,index1,length)，从后往前检索，index不变
 * int IndexOfAny    str1.IndexOfAny(char[],index1,length)
 * int LastIndexOfAny    str1.LastIndexOfAny(char[],index1,length)，从后往前检索，index不变
@@ -730,6 +747,7 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * P|p   百分号形式
 * R|r   圆整，无视有效数字，精度最高17位（使用双精度，单精度只有9位）
 * X|x   十六进制
+
 ### 当string时间，如System.DateTime.now
 * D   *年*月*日
 * d   */*/*
@@ -738,15 +756,30 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * Y|y   *年*月
 * M|m   *月*日
 
+### 字符串插值
+比+高效，是string.format的语法糖
+```
+string ssss = "sss";
+$"ddd{ssss}";    //dddsss
+```
+以上代码相当于
+```
+object[] args = new object[] { ssss };
+string.Format("ddd{0}", args);
+```
+
 ## 字符串连接
 * string Contact    string.Contact([string[]|string|char[]|char],*)
 * string Join   string.Join("delimiter",[string[]|string|char[]|char],*)
 
 ## 字符分隔
-* string[] splite
+* string[] Splite   string[] = str1.Splite(char)
+
+## 字符串截取
+* int Substring  str1.Substring(index,length)
 
 ## 字符串插入
-* string insert   str1.Insert(index,string)
+* string Insert   str1.Insert(index,string)
 
 ## 字符串删除
 * string Remove   str1.Remove(index,length)
@@ -761,16 +794,32 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * string ToUpper
 * string ToLower
 
+
  
 # StringBulider
- 引用类型
- 修改时会变更对应的内存中堆的数据，而非新建内存堆后重新引用
+ * System.Text 命名空间
+ * 引用类型
+ * 当长度不超过stringBuilder定义长度时，不创建新的内存堆
+ * 当长度超过定义长度时，会重新申请一个现长度2倍的空间，然后将值复制到新字符串上，旧字符串空间会被GC回收
+ >> 深入学习：当新字符串长度超过现在字符串的2倍时如何申请内存空间
  ## Append | AppendFormat
  ```
+ StringBuilder sb = new StringBuilder(20);    //创建一个20字符大小的StringBuilder，避免申请新内存
+ StringBuilder sb2 = new StringBuilder("ssss",20);
+
  StringBuilder builder = new StringBuilder("sss");
  builder.Append("dd"); //sssdd
  builder.AppendFormat("aaa{0}", "bb"); //sssddaaabb
  ```
+ ## Insert(index,string)
+ ```
+ sb.Insert(0, "sss");
+ ```
+ ## Remove(index,length)
+ ```
+ sb.Remove(0, 3);
+ ```
+ ## Replace(char, char)|Replace(string,string)
 
 
  
