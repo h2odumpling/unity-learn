@@ -1,4 +1,5 @@
 # 冒泡
+遍历数组，把最大的元素放置于数组最后，依次遍历
 复杂度 O(n^2)
 ```
 void function Pop (int[] _arr){
@@ -12,6 +13,64 @@ void function Pop (int[] _arr){
       }
     }
   }
+}
+```
+冒泡排序优化
+```
+private void Main()
+{
+    Emp e1 = new Emp("z", 10);
+    Emp e2 = new Emp("a", 12);
+    Emp e3 = new Emp("b", 125);
+    Emp e4 = new Emp("c", 212);
+    Emp e5 = new Emp("d", 2);
+    Emp e6 = new Emp("e", 1112);
+
+
+    Emp[] empList = new Emp[] {e1,e2,e3,e4,e5,e6};
+
+    Pop<Emp>(empList, Emp.compare);
+
+    for(int i = 0; i < empList.Length - 1; i++)
+    {
+        Console.WriteLine(empList[i]);
+    }
+}
+
+class Emp
+{
+    private string name;
+    private int age;
+    public Emp(string name, int age)
+    {
+        this.name = name;
+        this.age = age;
+    }
+
+    public static bool compare(Emp e1, Emp e2)
+    {
+        return e1.age > e2.age;
+    }
+}
+
+public T[] Pop<T>(T[] arr,Func<T,T,bool> compareMethod)
+{
+    bool has_change;
+    has_change = false;
+    do
+    {
+        for (int i = 0; i < arr.Length - 1; i++)
+        {
+            if (compareMethod(arr[i], arr[i + 1]))
+            {
+                var temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                has_change = true;
+            }
+        }
+    } while (has_change == true);
+    return arr;
 }
 ```
 
