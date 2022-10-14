@@ -959,8 +959,42 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  numberChange nc = new numberChange(mc.AddNum);
  nc(25);
  ```
+    
+### Action|Func
+ 匿名委托
+ 
+ #### Action  当没有返回参数时使用
+ ```
+ static void ThreadMethod(object obj)
+ {
+     Console.WriteLine("做点什么");
+ }
+
+
+ static void main()
+ {
+     Action<object> a = ThreadMethod; 
+ }
+ ```
+ 
+ #### Func  当有返回参数时使用
+ ```
+ static string ThreadMethod(object obj)
+ {
+     Console.WriteLine("做点什么");
+     return "";
+ }
+
+
+ static void main()
+ {
+     Func<object,string> a = ThreadMethod; 
+ }
+ ```
+    
 ### 多重委托
 多个同类委托可以相加减，会依次执行委托
+若有返回值，多重委托只能获得最后一个委托的返回值，因此多重委托一般只用于没有返回值的时候
  ```
  public class Mc
  {
@@ -1086,41 +1120,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  };
  ```
  
-
- 
-# Action|Func
- 当需要实例化一个函数时可用Action或Func方法
- 
- ## Action  当没有返回参数时使用
- ```
- static void ThreadMethod(object obj)
- {
-     Console.WriteLine("做点什么");
- }
-
-
- static void main()
- {
-     Action<object> a = ThreadMethod; 
- }
- ```
- 
- ## Func  当有返回参数时使用
- ```
- static string ThreadMethod(object obj)
- {
-     Console.WriteLine("做点什么");
-     return "";
- }
-
-
- static void main()
- {
-     Func<object,string> a = ThreadMethod; 
- }
- ```
- 
- 
+    
  
  # 异常处理
  catch 异常非常消耗性能，因此一般只捕获对应异常
