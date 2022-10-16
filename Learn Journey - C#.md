@@ -1208,10 +1208,13 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
  
  # Attribute
- 
+ 特性，允许我们向程序的程序集增加元数据的语言结构，是用于保存某种程序结构信息的特殊的类
+ 在源代码中创建特性，通过编译器编译在程序集中，当编译器/CLR/浏览器 访问程序集时会消费特性
  ## 常见内置Attribute
- * Conditional 按模式 [DEBUG|RELEASE]
+ * Conditional 按宏，如果宏被定义则运行，没用被定义则不运行，常见宏有[DEBUG|PRODUCTION]
  ```
+ #define ISTEST
+
  [Conditional("DEBUG")]
  public static void Message(string msg)   //此方法只在DEBUG模式中才会被调用，其他模式下调用会报错
  {
@@ -1226,10 +1229,31 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
      Console.WriteLine(msg); 
  }
  ```
+ * debugerStepThrough
+ ```
+ [DebuggerStepThrough]      //当断点调试时，单步运行会直接跳过该方法，不会进入该方法逐一调试
+ public void callTest(string str)
+ {
+     Console.WriteLine(str);
+ }
+ ```
+
+ ## 调用者信息特性
+ * CallerFilePath string    获取调用的文件路径
+ * CallerLineNumber int     获取调用的行数
+ * CallerMemberName string      获取调用的方法名
+ ```
+ public void callTest(string str, [CallerFilePath] string callPath = "")    //变量会由系统进行自动传递，需要给一个默认值且放置在其他参数后
+ {
+     Console.WriteLine(callPath);
+ }
+ ```
  
  ## 自定义Attribute
+ 用来表示目标结构的一些状态，一般只定义字段和属性，不定义方法
  可通过继承System.Attribute类创建一个自定义Attribute
  命名必须是自定义部分+Attribute
+ 一般情况下声明为sealed
  调用时可以通过命名时的自定义部分调用，或者通过全名调用
  可在Attribute内设置的属性类型有限，可以是所有内置的值类型、System.Type、object、enum等
  ```
@@ -1261,7 +1285,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  
  ### AttributeUsage
- 自定义Attribute的使用限制
+ 自定义Attribute的使用目标限制
  * AttributeTargets  规定Attribute的使用范围，常见的有All|Class|Method|Interface等
  * AllowMulitiple  规定Attribute在单个类型上的能否被多次使用
  * Inherited  规定Attribute是否能被继承
@@ -1273,7 +1297,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  {
      HelpAttribute help;
 
-     foreach(var attr in typeof(Dosome).GetCustomAttributes(true))  //遍历Dosome类中所有自定义的Attribute
+     foreach(var attr in typeof(Dosome).GetCustomAttributes(true))  //遍历Dosome类中所有自定义的Attribute，bool参数表示是否搜索继承树
      {
          help = attr as HelpAttribute;  //找到自定义Attribute内是HelpAttribute的Attribute
 
@@ -1288,9 +1312,13 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
  
 # 反射
- 程序可以观测并修改自己的能力
+ 一个运行的程序查看本身或其他程序元数据的行为叫做反射。即程序可以观测并修改自己的能力
+ 
+ ##元数据
+ 程序及类拥有的数据
  
  ## 基于type的反射
+ type只存储类的成员，只能获得公有的数据即public定义的成员
  * obj.GetType
  * Type.GetType("type_name", [true|false], [true|false])  第一参数为type命例如stystem.string，第二个参数是是否报错，第三个参数是是否忽略type名大小写
  * typeof(obj)
@@ -1319,6 +1347,9 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
  ### 动态加载
  可以通过assembly的反射获取其中的type
+ * Assembly.Load("assemblyString")  通过程序集名称加载
+ * Assembly.LoadFrom("path")  通过程序集路径加载
+ * Type.Assembly  通过类的对象获取
  ```
  Assembly assembly;
  assembly = Assembly.Load("assemblyString");

@@ -1,6 +1,18 @@
+# 计算机网络
+一般分为5层。
+* 物理层    为数据端设备提供传送数据通路、传输数据，确保原始的数据可在各种物理媒体上传输        架空明线|平衡电缆|光纤|无线信道等
+* 数据链路层    定义单个链路上的数据传输，对物理层传输原始比特流的功能的加强，将物理层提供的可能出错的物理连接改造成为逻辑上无差错的数据链路    点对点协议|以太网高级数据链路协议|帧中继|异步传输模式
+* 网络层    解决网络路由和寻址问题      IP协议
+* 传输层    解决对应网络层进行可靠的传递数据包      TCP|UDP等协议
+* 应用层    如HTTP协议
+
+>> 深入学习：相关内容
+
+## 带宽
+指每秒钟内能通过的比特（BIT）数
+
 # Socket
 Socket继承自UNIX一切都是文件的原理，即是 打开->读|写->关闭 的模式
-
 
 ## Socket(AddressFamily,SocketType,ProtocolType)   Socket基本函数
 AddressFamily,SocketType,ProtocolType 有些互相匹配，当不匹配的参数用于创建socket时，会报错
@@ -25,7 +37,7 @@ AddressFamily,SocketType,ProtocolType 有些互相匹配，当不匹配的参数
 * HyperChannel    NSC Hyperchannel
 * Ieee12844   IEEE 1284.4工作组
 * ImpLink   ARPANET IMP
-* * Ipx   IPX或SPX
+* *Ipx   IPX或SPX
 * Irda    IrDA
 * Iso   ISO协议
 * Lat   LAT
@@ -96,8 +108,9 @@ Send函数负责内容发送，返回发送字节数（有可能发送了部分�
 
 
 
-# TCP/IP
+# TCP
 Transmission Control Protocol/Intternet Protocol    传输控制协议
+HTTP协议运用的就是TCP协议
 
 ## TCP三次握手
 * 客户端 SYN=1 seq=(random)J   SYN 1表示客户端想要建立连接
@@ -114,8 +127,32 @@ TCP握手中断，会一直发送相应信息至超时
 * 服务端 FIN=N   表示服务端同意中止连接
 * 客户端 ACK=N+1   表示客户端同意服务端中止，并提供ACK用以验证
 >> 深入学习：M和N是如何生成的
+>> 深入学习：通过计时器解决socket的recive堵塞问题
 
 
 
 # UDP
 用户数据报协议
+
+
+
+# TCP|UDP
+
+* 可靠性：TCP可靠，可自动重传；UDP不可靠，易丢包。TCP在传输数据前会检查连接状态，UDP直接进行投递
+* 传输：TCP效率较低，UDP传输结构简单，效率高
+* 连接数：TCP有限制，UDP无限制
+* 性能：TCP性能较好，UDP性能较差
+
+## 常见游戏
+主要按对网络延迟的要求及不同同步算法选择不同协议
+
+### TCP
+常用于对网络延迟要求不高的游戏
+* 炉石传说，斗地主，梦幻西游等回合制
+* 魔兽世界
+
+### UDP
+常用于对网络延迟较高的游戏
+* DOTA2，LOL等MOBA
+* PUBG，COD等FPS
+
