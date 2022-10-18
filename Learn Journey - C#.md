@@ -38,6 +38,32 @@ Console.WriteLine(b.id);    //2
 enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以设置值
 ```
 
+# method
+当需要返回多个值时可以用元组的方式实现
+```
+public static (int, int) doubleReturn()
+{
+    return (1, 2);
+}
+```
+```
+int x,y;
+(x, y) = doubleReturn();
+```
+可选参数与重载歧义
+```
+public static void doubleReturn(int x, string y="", int z=1)
+{
+}
+public static void doubleReturn(int x, string y="", int z=1, string j="j")
+{
+}
+```
+```
+doubleReturn(1,"y",1)       //实行第一个方法
+doubleReturn(1,"y")         //无法编译，因为无法为任何一个方法提供全部实参
+```
+
 # 数据类型
 不同数据用不同内存大小存储以减少内存损耗，C#中有值类型和引用类型
 C#中所有数据类型都继承自object，因此所有数据类型都可以使用toString方法
@@ -890,6 +916,217 @@ Write   fs.White(byte[], startIndex, endIndex)
 Close   fs.Close() 关闭文件
 
 >> 深入学习：测试文件流读写
+
+
+
+# C#常用数据交互
+
+## xml
+xml文件读取与解析
+```
+<skills>
+	<skill
+		id ="1"
+		name="zzz"
+		>
+		<demage>2</demage>
+	</skill>
+</skills>
+```
+```
+class Program
+{
+    static void Main()
+    {
+        List<Skill> skills = new List<Skill>();
+
+        XmlDocument doc = new XmlDocument();
+        doc.Load("data2.xml");       //按路径获取文档
+        XmlNode node = doc.FirstChild;      //获取第一个节点，当有xml版本号等内容时获取不到
+
+        XmlNodeList nodeList = node.ChildNodes;
+
+        foreach (XmlNode skillNode in nodeList)
+        {
+            Skill newSkill = new Skill();
+
+            XmlAttributeCollection col = skillNode.Attributes;
+
+            newSkill.id = Int32.Parse(col["id"].Value);
+            newSkill.name = col["name"].Value;
+
+            XmlElement ele = skillNode["demage"];
+            
+            newSkill.demage = Int32.Parse(ele.InnerText);
+            
+            skills.Add(newSkill);
+        }
+
+        Console.WriteLine(skills.Count);
+
+        foreach (Skill skill in skills)
+        {
+            Console.WriteLine(skill);
+        }
+
+        Console.ReadKey();
+    }
+}
+
+class Skill
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public int demage { get; set; }
+
+    public override string ToString()
+    {
+        return String.Format("id:{0}  name:{1}  demage:{2}", id, name, demage);
+    }
+}
+```
+
+## JSON
+* 轻量级文本交换格式
+* 独立于语言
+* 具有自我描述性，更容易理解
+
+C#解析json一般安装LitJson
+
+### JSON解析
+```
+{
+	"skills": [
+		{
+			"id": 1,
+			"name": "zzz",
+			"demage": 2
+		}
+	]
+}
+```
+```
+class Program
+{
+    static void Main()
+    {
+        List<Skill> skills = new List<Skill>();
+
+        JsonData data = JsonMapper.ToObject(File.ReadAllText("json.json"));
+
+        JsonData skillsData = data["skills"];
+
+        foreach (JsonData skill in skillsData)
+        {
+            Skill newSkill = new Skill();
+            newSkill.id = Int32.Parse(skill["id"].ToString());
+            newSkill.name = skill["name"].ToString();
+            newSkill.demage = Int32.Parse(skill["demage"].ToString());
+
+            skills.Add(newSkill);
+        }
+
+        foreach (Skill skill in skills)
+        {
+            Console.WriteLine(skill);
+        }
+
+        Console.ReadKey();
+    }
+}
+
+class Skill
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public int demage { get; set; }
+
+    public override string ToString()
+    {
+        return String.Format("id:{0}  name:{1}  demage:{2}", id, name, demage);
+    }
+}
+```
+
+### 更简单的解析方法
+```
+[
+	{
+		"id": 1,
+		"name": "zzz",
+		"demage": 2
+	}
+]
+```
+```
+Skill[] skill_array = JsonMapper.ToObject<Skill[]>(File.ReadAllText("json2.json"));     //转换成数组
+
+skills = JsonMapper.ToObject<List<Skill>>(File.ReadAllText("json2.json"));      //转换成List
+```
+
+### 对对象的解析
+```
+{
+	"Name": "h2o",
+	"Age": 20,
+	"SkillList": [
+		{
+			"id": 1,
+			"name": "zzz",
+			"demage": 2
+		},
+		{
+			"id": 2,
+			"name": "ddd",
+			"demage": 10
+		}
+	]
+}
+```
+```
+class Skill
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public int demage { get; set; }
+
+    public override string ToString()
+    {
+        return String.Format("id:{0}  name:{1}  demage:{2}", id, name, demage);
+    }
+}
+
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public List<Skill> SkillList { get; set; }
+
+    public override string ToString()
+    {
+        return String.Format("name:{0}  age:{1}", Name, Age);
+    }
+}
+```
+```
+Person person = JsonMapper.ToObject<Person>(File.ReadAllText("json3.json"));
+
+Console.WriteLine(person);
+```
+
+### 打包JSON对象
+```
+Player player = new Player();
+player.Name = "h2o";
+player.Age = 20;
+player.Level = 50;
+
+string message = JsonMapper.ToJson(player);
+
+Console.WriteLine(message);
+```
+
+
 
 
 

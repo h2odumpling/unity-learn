@@ -17,18 +17,18 @@ namespace Test
 
     }
 
-        class Method
+    class Method
+    {
+        public static string meth<T>(string str)
         {
-            public static string meth<T>(string str)
-            {
-                Type t = typeof(T);
-                return t.ToString()+"-"+str;
-            }
-            public static object genu(object c)
-            {
-                Type t = c.GetType();
-                var method = Type.GetType("Test.Method").GetMethod("meth").MakeGenericMethod(new Type[] { t });
-                return method.Invoke(null, new object[] { "hello" });
-            }
+            Type t = typeof(T);
+            return t.ToString()+"-"+str;
         }
+        public static object genu(object c)
+        {
+            Type t = c.GetType();
+            var method = Type.GetType("Test.Method").GetMethod("meth").MakeGenericMethod(new Type[] { t });
+            return method.Invoke(null, new object[] { "hello" });
+        }
+    }
 }
