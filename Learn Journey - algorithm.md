@@ -47,7 +47,7 @@
 遍历数组，把最大的元素放置于数组最后，依次遍历
 复杂度 O(n^2)
 ```
-void function Pop (int[] _arr){
+void static Pop (int[] _arr){
   int i,j,temp;
   for(i = 0; i < _arr.Length - 1; i++){
     for(j = i+1; j < _arr.Length; j++){
@@ -124,7 +124,7 @@ public T[] Pop<T>(T[] arr,Func<T,T,bool> compareMethod)
 # 选择排序
 O(n^2)，当n比较小，快于冒泡
 ```
-void function Selection (int[] _arr){
+void static Selection (int[] _arr){
   int i,j,min,temp;
   for(i = 0; i < _arr.Length - 1; i++){
     min = i;
@@ -145,7 +145,7 @@ void function Selection (int[] _arr){
 # 插入排序
 O(1)，当n比较小时比较适用
 ```
-void function Insert (int[] _arr){
+void static Insert (int[] _arr){
   int i,j,temp;
   for(i = 1; i < _arr.Length; i++;){
     temp = _arr[i];
@@ -164,7 +164,7 @@ void function Insert (int[] _arr){
 # 二分查找
 必须在有序队列中进行
 ```
-int function Quick(int[] _arr, int tar){
+int static Quick(int[] _arr, int tar){
   int left = 0;
   int right = _arr.Length;
   int mid = 0;
@@ -186,6 +186,38 @@ int function Quick(int[] _arr, int tar){
 
 # 直接插入排序
 遍历原数组，从后往前遍历新数组，若新数组元素大于原数组元素则后移一位，直至将原数组元素插入新数组中
+```
+static int[] insertSort(int[] ints)
+{
+    int[] result = new int[ints.Length];
+    for (int i = 0; i < ints.Length; i++)
+    {
+        result[i] = ints[i];
+        if (i > 0)
+        {    
+            for(int j = i - 1; j>=0; j--)
+            {
+                if (j == 0)
+                {
+                    result[j] = ints[i];
+                    break;
+                }
+                if (result[j] > ints[i])
+                {
+                    result[j + 1] = result[j];
+                    result[j] = ints[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+    return result;
+}
+```
+
 
 
 # 选择排序
