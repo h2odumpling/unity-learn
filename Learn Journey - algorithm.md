@@ -222,8 +222,81 @@ static int[] insertSort(int[] ints)
 
 # 选择排序
 循环遍历原数组，每次取出最小或最大的值
+```
+static int[] chooseSort(int[] ints)
+{
+    int temp;
+    int min;
+    int indexMin;
+    for(int i = 0; i < ints.Length-1; i++)
+    {
+        min = ints[i];
+        indexMin = i;
+        for(int j = i+1; j< ints.Length; j++)
+        {
+            if (ints[j] < min)
+            {
+                min = ints[j];
+                indexMin = j;
+            }
+        }
+        if(indexMin == i)
+        {
+            break; 
+        }
+        temp = ints[i];
+        ints[i] = min;
+        ints[indexMin] = temp;
+    }
+    return ints;
+}
+```
 
 
 
+# 快速排序
+因速度及性能在各类排序方法中较好，固较为常用
+从数组中取出第一位数x，首位索引l，末尾索引r，先从后往前遍历，将小于x的数y放于x的位置，再从前往后遍历，将大于x的值z放于y处，循环此过程直到l=r则把x的值插入此处，此时x左边都是小于x的数，x右边都是大于x的数
+按同样方法处理x左边的数及右边的数，递归得出最后的排序
 
+```
+static int[] quickSort(int[] ints, int left, int right)
+{
+    if(left >= right)
+    {
+        return ints;
+    }
+
+    int x = ints[left];
+    int i = left;
+    int j = right;
+    while(i < j)
+    {
+        while (i < j)
+        {
+            if (ints[j] <= x)
+            {
+                ints[i] = ints[j];
+                break;
+            }
+            j--;
+        }
+
+        while(i < j)
+        {
+            if(ints[i] > x)
+            {
+                ints[j] = ints[i];
+                break;
+            }
+            i++;
+        }
+    }
+    ints[i] = x;
+    quickSort(ints, left, i - 1);
+    quickSort(ints, i + 1, right);
+
+    return ints;
+}
+```
 
