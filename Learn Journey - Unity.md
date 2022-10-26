@@ -84,6 +84,9 @@ Interatable   是否可用，应该用于可变性调节某些选项，比如多
 源代码-(CLS)->中间语言[DLL]-(Mono Runtime)->机器码
 Mono Runtime Unity重写了Common Runtime而变成了自己的公共语言运行时，会把代码编译成不同语言的机器码执行
 
+## 修改Unity脚本模板
+修改Editor/Data/Resources/ScriptTempletes/81-C# Script-NewBehaviourScript.cs.txt 文件
+
 ## 访问修饰符
 public 除公开外，在编辑器内可见可改
 private 只在类中可以访问，且在编辑器内不可见，可通过设置[SerialsizeField]特性时其在编译器内可见
