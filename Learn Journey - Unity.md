@@ -71,3 +71,27 @@ Interatable   是否可用，应该用于可变性调节某些选项，比如多
 # Grid Layout Group   排版布局组件
 * Cell Size   子物体大小
 * Spacing   子物体间隔
+
+
+
+# Unity 脚本
+脚本是附加在游戏物体伤用于定义游戏对象行为的指令代码
+* 文件名与类名必须一致
+* MonoBehaviour 附加到游戏物体上的脚本必须继承，其它脚本无需继承
+* 脚本在物体上时会创建一个对象，而物体GameObject实则是存储了这些对象的引用的一个集合，实际通过引用访问和修改对象
+
+## 编译过程
+源代码-(CLS)->中间语言[DLL]-(Mono Runtime)->机器码
+Mono Runtime Unity重写了Common Runtime而变成了自己的公共语言运行时，会把代码编译成不同语言的机器码执行
+
+## 访问修饰符
+public 除公开外，在编辑器内可见可改
+private 只在类中可以访问，且在编辑器内不可见，可通过设置[SerialsizeField]特性时其在编译器内可见
+
+## Unity脚本生命周期|必然事件|消息 Message
+* 一个类从开始唤醒到销毁的过程
+* 在GameObject的不同时间点被调用
+* 如果在GameObject内没有相应方法则不会被调用，因此要删除不使用的方法，避免方法在内存中形成栈针，影响性能
+
+#### Start()
+在GameObject被创建时调用
