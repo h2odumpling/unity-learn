@@ -80,6 +80,9 @@ Interatable   是否可用，应该用于可变性调节某些选项，比如多
 * MonoBehaviour 附加到游戏物体上的脚本必须继承，其它脚本无需继承
 * 脚本在物体上时会创建一个对象，而物体GameObject实则是存储了这些对象的引用的一个集合，实际通过引用访问和修改对象
 
+## 单帧调试
+vs中开启调试->unity中开启场景->vs中设置断点->unity中单帧运行->在vs即时中调试
+
 ## 编译过程
 源代码-(CLS)->中间语言[DLL]-(Mono Runtime)->机器码
 Mono Runtime Unity重写了Common Runtime而变成了自己的公共语言运行时，会把代码编译成不同语言的机器码执行
@@ -125,3 +128,26 @@ private 只在类中可以访问，且在编辑器内不可见，可通过设置
 在每个渲染帧和Update之后调用，
 >> 深入学习：laterUpdate 是在所有物体的Update之后调用还是在当前物体Update之后调用
 ...
+
+## 常用API类
+
+### GameObject
+
+### Component
+getComponent T  按T获取物体的一个组件
+getComponents T   按T获取物体的所有组件
+getComponentInChildren T | getComponentsInChildren T  按深度获取自身或子物体的组件 
+
+由于挂载在GameObject的组件都继承于Component类，都可以通过GetComponent的方法获取GameObject上的其它组件
+子类：
+#### TransForm
+#### RigidBody
+#### ParticleSystem
+#### Behaviour
+子类： 
+
+#### Collider
+
+### Texture
+### Mesh
+### Material
