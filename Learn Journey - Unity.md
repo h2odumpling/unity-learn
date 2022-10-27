@@ -84,17 +84,44 @@ Interatable   是否可用，应该用于可变性调节某些选项，比如多
 源代码-(CLS)->中间语言[DLL]-(Mono Runtime)->机器码
 Mono Runtime Unity重写了Common Runtime而变成了自己的公共语言运行时，会把代码编译成不同语言的机器码执行
 
+## Unity脚本和C#普通类的区别
+Unity脚本中一般只使用字段和方法
+C#普通类一般至少有字段、属性、构造函数和方法
+* 为什么不使用属性  在不修改unity底层的情况下，属性无法在编辑器内展示
+* 为什么不使用构造方法  GameObject上绑定对象的构造方法实际是在子线程中被调用的，而Unity提供的许多方法都是在其他线程或主线程提供的，不能跨线程调用，一般使用Awake和Start代替
+
 ## 修改Unity脚本模板
 修改Editor/Data/Resources/ScriptTempletes/81-C# Script-NewBehaviourScript.cs.txt 文件
 
 ## 访问修饰符
-public 除公开外，在编辑器内可见可改
-private 只在类中可以访问，且在编辑器内不可见，可通过设置[SerialsizeField]特性时其在编译器内可见
+public 除公开外，在编辑器内可见可改，可通过设置[HideInInspector]特性使其在编译器内不可见
+private 只在类中可以访问，且在编辑器内不可见，可通过设置[SerialsizeField]特性使其在编译器内可见
+
+### 访问修饰符相关的特性
+[SerialsizeField]
+[HideInInspector]
+[Range(x,y)]  使一个字段在编译器内被限制上下限
 
 ## Unity脚本生命周期|必然事件|消息 Message
-* 一个类从开始唤醒到销毁的过程
+* 一个GameObject从开始唤醒到销毁的过程
 * 在GameObject的不同时间点被调用
 * 如果在GameObject内没有相应方法则不会被调用，因此要删除不使用的方法，避免方法在内存中形成栈针，影响性能
 
-#### Start()
-在GameObject被创建时调用
+### Reset()
+在编辑器内使用reset时调用，在游戏中不会被调用
+### Awake()
+在游戏物体创建时被调用1次，Unity会先执行所有物体的Awake方法，后执行start方法，一般用于初始化
+### Enable()
+在游戏物体启用时，若脚本被启用则调用，可调用多次
+### Start()
+在GameObject被创建后脚本启用时调用1次，永远晚于Awake被调用，一般用于初始化
+### OnMouseDown|...
+当鼠标对物体进行某些操作时调用
+### FixedUpdate
+在每个固定时间后执行，默认为0.02s，一般用于物理动作相关的处理
+### Update()
+在每个渲染帧调用，收到渲染性能的影响
+### LaterUpdate()
+在每个渲染帧和Update之后调用，
+>> 深入学习：laterUpdate 是在所有物体的Update之后调用还是在当前物体Update之后调用
+...
