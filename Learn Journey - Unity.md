@@ -140,7 +140,30 @@ getComponentInChildren T | getComponentsInChildren T  按深度获取自身或�
 
 由于挂载在GameObject的组件都继承于Component类，都可以通过GetComponent的方法获取GameObject上的其它组件
 子类：
-#### TransForm
+#### Transform
+循环GameObject的Transform组件，可以得到下一级的子物体的Transform组件
+编辑器里显示的全是物体的local属性
+```
+foreach(Transform child in this.Transform){
+    child
+}
+```
+* root 获取根物体Transform组件
+* parent 获取父物体Transform组件
+* setParent(tf,isWorldSpace) 设置父物体为tf，isWorldSpace表示位置如何根据父物体改变，true时为世界坐标不变而改变自身坐标相对于父物体的坐标值，false时为将现在的坐标视为自身对父物体的坐标值
+
+* position  世界坐标的位置
+* localPosition 相对于父物体的坐标位置
+* rotation  相对于世界的旋转
+* localRotation  相对于父物体的旋转
+* localScale  相对于父物体的缩放比例，即父121，子121，子实际为141
+* lossyScale  物体与模型的缩放比例，实际即为自身的localScale乘父物体的localScale 只读属性
+方法
+默认为朝自身坐标系方法，可添加Space.World参数表示向世界坐标系的运动方法
+* Translate 移动
+* Rotate  旋转
+* RotateAround (point,Vector3,n°) 围绕某点绕Vector3的轴旋转n°
+* 
 #### RigidBody
 #### ParticleSystem
 #### Behaviour
