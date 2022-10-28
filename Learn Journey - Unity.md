@@ -132,6 +132,11 @@ private 只在类中可以访问，且在编辑器内不可见，可通过设置
 ## 常用API类
 
 ### GameObject
+场景内所有物体都是GameObject
+* activeSelf  游戏对象的激活状态
+* activeInHierarchy   游戏对象在场景的激活状态，在父物体禁用的情况下，子物体已激活但在场景内仍非激活状态
+* AddComponent<Component>   添加组件
+
 
 ### Component
 getComponent T  按T获取物体的一个组件
