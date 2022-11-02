@@ -20,6 +20,10 @@
 
 
 
+# Camera
+* Field of view 摄像机镜头的数值，数值越大镜头越远
+
+
 # UGUI
 RaycastTarget   是否可以交互，开启会消耗性能，应只在需要交互的ui上开启
 Interatable   是否可用，应该用于可变性调节某些选项，比如多级控制按钮
@@ -230,14 +234,15 @@ MonoBehaviour 相关的特性
 
 
 # Input
-* MouseButton(int ButtonNum)    鼠标*键在这帧保持按下
-* MouseButtonDown(int ButtonNum)    鼠标*键在这帧按下
-* MouseButtonUp(int ButtonNum)    鼠标*键在这帧抬起
-* Key(int KeyBoardNum)    键盘*键在这帧保持按下
-* KeyDown(int KeyBoardNum)    键盘*键在这帧按下
-* KeyUp(int KeyBoardNum)    键盘*键在这帧抬起
+* GetMouseButton(int ButtonNum)    鼠标*键在这帧保持按下
+* GetMouseButtonDown(int ButtonNum)    鼠标*键在这帧按下
+* GetMouseButtonUp(int ButtonNum)    鼠标*键在这帧抬起
+* GetKey(int KeyBoardNum)    键盘*键在这帧保持按下
+* GetKeyDown(int KeyBoardNum)    键盘*键在这帧按下
+* GetKeyUp(int KeyBoardNum)    键盘*键在这帧抬起
 
 
 
 # Mathf
 * Lerp(start, end, rate)    返回(end - start)*rate + start
+* float Repeat(num,limit)   根据num返回0 - limit-1的值 num%limit
