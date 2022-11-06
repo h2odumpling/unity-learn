@@ -21,7 +21,7 @@
 
 
 # Camera
-* Field of view 摄像机镜头的数值，数值越大镜头越远
+* Field of view 摄像机镜头的数值，数值越大镜头越远，常做瞄准镜等视野缩放功能
 
 
 # UGUI
@@ -195,14 +195,20 @@ foreach(Transform child in this.Transform){
 * localScale  相对于父物体的缩放比例，即父121，子121，子实际为141
 * lossyScale  物体与模型的缩放比例，实际即为自身的localScale乘父物体的localScale 只读属性
 方法
+* forward   自身坐标系向前的单位向量
+* right     自身坐标系向右的单位向量
+* up    自身坐标系向上的单位向量
+* eulerAngles   物体的欧拉角
+* localEulerAngles   物体相对父级的欧拉角
+
 默认为朝自身坐标系方法，可添加Space.World参数表示向世界坐标系的运动方法，或传入其他变换组件表示使用根据别的物体移动
 * Translate 移动
 * Rotate  旋转
 * RotateAround (point,Vector3,n°) 围绕某点绕Vector3的轴旋转n°
 * LookAt    注视旋转，让物体的向前向量指向target的位置
+* TransformPoint(Vector3)   返回从自身轴心点按自身坐标系移动Vector3后的世界坐标系
 
 * Find("name")  通过游戏对象名称查找子对象
-* 
 
 ### RigidBody
 ### ParticleSystem
@@ -240,9 +246,320 @@ MonoBehaviour 相关的特性
 * GetKey(int KeyBoardNum)    键盘*键在这帧保持按下
 * GetKeyDown(int KeyBoardNum)    键盘*键在这帧按下
 * GetKeyUp(int KeyBoardNum)    键盘*键在这帧抬起
+* GetButton(string VirtualButtonName)   虚拟按键在这帧保持按下
+* GetButtonDown(string VirtualButtonName)   虚拟按键在这帧按下
+* GetButtonUp(string VirtualButtonName)   虚拟按键在这帧抬起
+* GetAxis(string VirtualButtonName)     获取虚拟按键现在返回的值
+* GetAxisRaw(string VirtualButtonName)     获取虚拟按键现在返回的值(0|1|-1)(无视Gravity,及Sensitivity的影响)
+
+## InputManager
+Unity提供的虚拟按键功能，主要用于为用户提供自定义按键的功能
+* Edit->ProjectSetting->InputManager
+* Name
+* DescriptionName
+* Native Button|Alt Native Button   反向按钮即按下返回0~-1
+* Positive Button|Alt Positive Button   正向按钮即按下返回0~1
+* Gravity   按键抬起后的归0速度
+* Sensitivity   按键按下后的归1速度
+* 可以设置多个相同名称的VirtualButton这样但按键就可以提供更多的按钮绑定
 
 
 
 # Mathf
-* Lerp(start, end, rate)    返回(end - start)*rate + start
+* Lerp(start, end, rate)    返回(end - start)*rate + start  常用于先快后慢或先慢后快的平滑过渡
+```
+InvokeRepeating("change",0,0.02);
+```
+```
+private void change(){
+    camera.fieldOfView = Lerp(camera.fieldOfView, 60, .1f);
+    if(60 - camera.fieldOfView < 0.05){     //使用Lerp永远不会抵达终点
+        camera.fieldOfView = 60;
+        cancelInvoke("change")
+    }
+}
+```
 * float Repeat(num,limit)   根据num返回0 - limit-1的值 num%limit
+* Repeat(float n,float max)   与%一样，但不会出现负数
+* PingPong
+* Pow(num,^n)   返回num的n次方
+* float Sqrt(num)   返回num的开方
+* PI   圆周率(float)
+* Deg2Rad   角度转换为弧度(float)
+* Rad2Deg   弧度转化为角度(float)
+* Sin(Rad)   正弦
+* Cos(Rad)   余弦
+* Tan(Rad)   正切
+
+
+
+# Vector3
+Unity中的positon是以世界原点为起点的向量
+https://docs.unity.cn/cn/current/ScriptReference/Vector3.html
+
+## 向量的基本概念
+* 有大小和方向的物理量
+* (x,y,z)|(x,y)
+* 模长，即向量的长度    Mathf.Sqrt(Mathf.Pow(x,2)+Mathf.Pow(y,2)+Mathf.Pow(z,2))
+* 方向|归一化|单位向量|标准化向量     方向与原向量一致，但模长为1的向量，即原向量/原模长
+* 向量相加  向量起点zero重叠，以两个向量的方向和模长作平行四边形，该平行四边形经过zero的对角线即为新向量
+* 向量相减  向量起点zero重叠，a-b 相减后的向量起点为zero，方向为b的终点指向a的终点，模长为b的终点到a的终点
+* 点乘|点积|内积    x1x2+y1y2+z1z2  
+* 叉乘|叉积|外积    (y1z2-y2z1,z1x2-z2x1,x1y2-x2y1)
+
+### 点乘|点积|内积
+* x1x2+y1y2+z1z2    各分量的乘积和
+* 几何意义：等于V1V2的模长的积 * cos(n)   |a|·|b|*cos(n)    -1< cos(n) < 1
+* 一般使用单位向量进行点乘，此时点乘结果即为cos值
+* 只能返回小于180的角
+常用应用
+求玩家是否在敌人视线的60°夹角内，此时一般使用enemy.transform.forward与|(player.transform.position - enemy.transform.position)|点乘求反余弦
+```
+Vector3 e2P = player.transform.position - enemy.transform.position;
+float dot = Vector3.Dot(enemy.transform.forward, e2p.normailized);
+//float deg = Mathf.Acos(dot) * Rad2Deg;
+//float rad = Mathf.Acos(dot)
+if(rad > 0.5f){      //由于60度的cos值为0.5f，且机器做反余弦运输消耗性能，因此一般使用cos值直接判断
+}
+```
+
+### 叉乘|叉积|外积
+* (y1z2-y2z1, z1x2-z2x1, x1y2-x2y1)
+* 几何意义：返回一个垂直于V1/V2所在平面的向量，模长 等于V1V2的模长的积 * sin(n)    |a|* |b| *sin(n)   0< sin(n) < 1
+* 可以通过y值判断两个向量的顺逆时针关系，y大于0时V1V2夹角小于180度，V1在V2的左边，反之夹角大于180度，V1在V2右边
+常用应用
+求玩家在敌人的左边还是右边
+```
+Vector3 e2P = player.transform.position - enemy.transform.position;
+float dot =  Vector3.Dot(enemy.transform.forward, e2p.normailized);
+//float deg = Mathf.Acos(dot) * Rad2Deg;
+Vector3 cross = Vector3.Cross(enemy.transform.forward, e2p.normailized);
+if(cross.y >0){
+    //玩家在敌人右边
+}
+if(cross.y <0){
+    //玩家在敌人左边
+}
+if(cross.y =0){
+    //玩家和敌人在正前方或正后方
+}
+if(dot >0){
+    //玩家在敌人前方
+}
+if(dot <0){
+    //玩家在敌人后方
+}
+```
+
+### 静态变量
+* forward   (0,0,1)
+* back  (0,0,-1)
+* up    (0,1,0)
+* down  (0,-1,0)
+* right (1,0,0)
+* left  (-1,0,0)
+* zero  (0,0,0)
+* one   (1,1,1)
+
+### 实例变量
+* magnitude     返回模长
+* sqrMagnitude      模长的平方，可以用于比较向量模长(因为平方根计算消耗性能，因此如果可以用sqrMagnitude代替的场合可以提高效率)
+* normalized    返回该向量的单位向量
+* this[0|1|2]   使用索引器访问x,y,z    
+
+### 静态方法
+* float Distance(V1,V2)     n1与n2的距离，即两向量相减后的模长
+* Vector3 Normalize(V1)   返回V1的单位向量，不设置V1
+* float Dot(V1,V2)    V1V2的点乘
+* Vector3 Cross(V1,V2)      V1V2的叉乘
+* float Angle(V1,V2)      返回V1V2的角度，使用点乘实现
+* Vector3 ClampMagnitude(V1,radius)     返回一个方向一致模长不超过radius的最大向量，可以将物体行动限制在一个圈内
+* Vector3 Max(V1,V2)    返回V1V2内最大值组成的向量 (V1.x>V2.x ? V1.x : V2.x, V1.y>V2.y ? V1.y : V2.y, V1.z>V2.z ? V1.z : V2.z)
+* Vector3 Min(V1,V2)    返回V1V2内最小值组成的向量
+* void OrthoNormalize(ref V1,ref V2,ref V3)    把V1标准化并且把V2,V3设置为垂直于V1的标准化向量
+* Vector3 Project(V1,V2)    将V1投影到V2的方向上，返回投影的向量
+* Vector3 ProjectOnPlane(V1,V2)    将V1投影到V2垂直的平面，返回投影的向量
+* Vector3 Reflect(V1,V2)    V1以V2为法线进行反射，即V1向量在V2垂直的平面上的反射向量，类似入射光反射光
+* Vector3 Lerp(V1,V2,rate)      返回V1,V2根据rate的插值位置，rate被限制在0~1
+* Vector3 LerpUnClamped(V1,V2,rate)     返回V1,V2根据rate的插值位置，rate无限制，可配合AnimationCurve进行物体移动速度的控制
+```
+t += Time.deltaTime;
+v1.position = Vector3.LerpUnclamped(v1OriPosition, v2.position, curve.Evaluate(t));     //此时1s即可完成运动
+```
+
+### 实例方法
+* Normalize()   将自身设置为自身的单位向量
+
+
+
+# AnimationCurve
+动画曲线
+* 可在面板中设置自定义的值变换曲线
+
+## 实例方法
+* Evaluate(float)   根据float返回动画曲线中的值
+
+
+
+# 角度，弧度
+* 一个圆为360角度
+* 一个圆为2Π弧度 1弧度即为弧长为半径的角
+
+## 相关Mathf函数
+* PI   圆周率(float)
+* Deg2Rad   角度转换为弧度(float)
+* Rad2Deg   弧度转化为角度(float)
+
+
+
+# 三角函数|反三角函数
+
+## 三角函数
+已知边角求边
+
+### 相关Mathf函数
+* Sin(Rad)   正弦
+* Cos(Rad)   余弦
+* Tan(Rad)   正切
+
+## 反三角函数
+已知边边求角
+
+### 相关Mathf函数
+* Asin()   反正弦
+* Acos(|V1|*|V2|)   反余弦
+* Atan()   反正切
+
+
+
+# 欧拉角|四元数
+用于表示物体的旋转
+## 欧拉角
+* 使用三个角度保存方位
+* x,z沿自身坐标系，y沿世界坐标系旋转
+* Vector3 transform.EulerAngles
+### 欧拉角的优点
+* 仅用3个数字就可以表示方位，占用空间小
+* 单位为沿坐标旋转的角度，符合思考模式
+* 任意3个数字都可以表示一个欧拉角，不存在不合理的数字
+### 欧拉角的缺点
+* 表达方式不唯一，同一个方位有多个欧拉角可以描述，因此无法判断多个欧拉角是否相同
+* 万向节死锁，数学上欧拉角由于单轴旋转会带动其他轴旋转，所以会导致死锁，在Unity内表示为当x旋转+-90度时，自身的y和z将重合，导致失去一个自由度
+### Unity对于欧拉角的限制
+* x轴范围在-90~90
+* y，z轴范围在0~360
+* 在触发万向节死锁时，沿y完成所有旋转，z为0
+### 欧拉角在Unity中的调节
+```
+Vector eulerAngles = transform.eulerAngles;
+eulerAngles += new Vector3(0,0,1);
+```
+### 相关transform方法
+* eulerAngles   物体的欧拉角
+* localEulerAngles   物体相对父级的欧拉角
+
+## 四元数|Quaternion
+* 由一个三维向量(X,Y,Z)及一个标量W组成
+* X,Y,Z,W 取值范围为-1~1
+* 旋转轴为V，旋转弧度为θ，则 (X,Y,Z) = (sin(θ/2) *V.x, sin(θ/2) *V.y, sin(θ/2) *V.z)   W = cos(θ/2)
+* 四元数和四元数相乘，表示组合旋转
+* 四元数和向量相乘，表示向量按四元数指示的旋转角度旋转
+
+### 四元数的优点
+* 不存在万向节死锁
+### 四元数的缺点
+* 难以使用，不能单独修改某个值
+* 存在不合法的四元数
+### 四元数在Unity中的调节
+```
+Vector3 axis = Vector3.up;
+float rad = 50 * Mathf.Deg2Rad;
+
+axis.x = Mathf.Sin(rad / 2) * axis.x;
+axis.y = Mathf.Sin(rad / 2) * axis.y;
+axis.z = Mathf.Sin(rad / 2) * axis.z;
+float w = Mathf.Cos(rad / 2);
+
+Quaternion qt = new Quaternion(axis.x, axis.y, axis.z, w);
+```
+等效于
+```
+transform.rotation = Quaternion.Euler(0, 50, 0);
+```
+组合旋转
+```
+transform.rotation *= Quaternion.Euler(0, 0, 1);
+```
+等效于
+```
+transform.Rotate(0, 0, 1);      //内部实现即是四元素的组合旋转
+```
+### 相关transform方法
+* Quaternion rotation   获取物体旋转的四元数
+### Quaternion
+#### 静态变量
+* identity      返回世界坐标系的角度，表示不旋转
+#### 静态方法
+* Quaternion Euler(x,y,z)(Vector3)   将欧拉角转化为四元数
+* Quaternion AngleAxis(float angle, Vector3)    轴角旋转，常用于非世界坐标系的坐标系向量的轴
+* Quaternion LookRotation(Vector3)     返回使物体的z轴的方向与传入向量相同时的旋转角度，如果需要注视旋转，则传入向量为目标位置-当前位置，常配合Lerp函数做慢速旋转，而transform.LookAt 无法提供这一功能
+* Quaternion FromToRotation(V1,V2)    返回使V1方向与V2方向相同时的旋转角度
+* Quaternion Lerp(Q1,Q2,rate)     插值旋转，rate被限制于0~1
+* Quaternion LerpUnClamped(Q1,Q2,rate)    插值旋转，rate无限制
+* Quaternion RotateTowards(Q1,Q2,rate)    匀速旋转
+* float Angle(Q1,Q2)    返回两个四元数相差角度，常用于判断lerp旋转是否到位
+#### 实例方法
+* Vector3 eulerAngles   返回四元素的欧拉角
+### 四元数在Unity中的应用
+目标右前方30°距离30m处
+```
+Vector3 newPosition = transform.position + Quaternion.Euler(0, 30, 0) * transform.rotation * new Vector3(0, 0, 30);
+Vector3 newPosition = transform.TransformPoint(Quaternion.Euler(0, 30, 0) * Vector3.forward * 30);
+```
+检测爆炸的受力范围(仅使用切点检测)
+```
+float personRed = 0.5f;
+float effectRed = 10;
+
+Vector3 P2B = v2.position - v1.position;
+
+if (P2B.magnitude - personRed < effectRed)  //最短距离受到冲击
+{
+    float angle = Mathf.Acos(personRed / P2B.magnitude) * Mathf.Rad2Deg;
+
+    Vector3 redVector = P2B.normalized * personRed;
+
+    Vector3 check_right = Quaternion.Euler(0, angle, 0) * redVector;
+    Vector3 right_position = v1.TransformPoint(check_right);
+
+    Vector3 check_left = Quaternion.Euler(0, -angle, 0) * redVector;
+    Vector3 left_position = v1.TransformPoint(check_left);
+
+    Debug.DrawLine(v2.position, right_position, Color.red);
+    Debug.DrawLine(v2.position, left_position, Color.red);
+
+}
+```
+
+>> 深入学习：使用矩阵表示方位
+
+
+
+# 贝塞尔曲线
+任意几点可确定一条平滑曲线
+
+
+
+# 参数方程
+使用参数返回点坐标
+* 圆
+* 椭圆
+* 抛物线
+* 双曲线
+
+
+
+# Debug
+* Log
+* LogFormat
+* DrawLin(Vector n1,Vector n2)
