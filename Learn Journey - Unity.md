@@ -559,6 +559,117 @@ if (P2B.magnitude - personRed < effectRed)  //最短距离受到冲击
 
 
 
+# 坐标系
+
+## World Space
+世界坐标系，在场景中表示每个游戏对象的位置和方向
+
+### 有关的transform方法
+* InverseTransformPoint  转换点，受变换组件的位置/旋转/缩放影响
+* InverseTransformDirection  转换方向，受变换组件的旋转影响
+* InverseTransformVector     转换变量，受变换组件的旋转和缩放影响
+
+## Local Space
+物体局部坐标系，表示物体间相对位置和方向
+
+### 有关的transform方法
+* TransformPoint  转换点，受变换组件的位置/旋转/缩放影响
+* TransformDirection  转换方向，受变换组件的旋转影响
+* TransformVector     转换变量，受变换组件的旋转和缩放影响
+
+# Screen Space
+* 屏幕坐标系
+* 原点在屏幕左下角
+* 以像素为单位
+* 表示物体在屏幕中的位置
+* 右上为(Screen.width, Screen.height)
+* Z为物体到相机的距离，为了将世界坐标转换为屏幕坐标时不丢失信息而保存
+
+## 有关的camera方法
+* WorldToScreenPoint    将点的世界坐标转换为屏幕坐标
+* ScreenToWorldPoint    将点的屏幕坐标转换为世界坐标
+
+# Viewport Space
+* 视口坐标系
+* 屏幕左下角为(0,0)，右上角为(1,1)，右上角为屏幕宽高的比例
+
+## 有关的camera方法
+* WorldToViewportPoint    将点的世界坐标转换为视口坐标
+* ViewportToWorldPoint    将点的视口坐标转换为世界坐标
+
+
+
+# Ridibody 与 Collider
+
+## Ridibody
+* Mass  质量
+* Drag  阻力，通常砖头为0.001，羽毛为10
+* AngularDrag  角阻力，当旋转物体时的阻力
+* Use Gravity  是否使用重力
+* Is Kinematic  运动学，不受物理引擎控制
+* Interpolate  缓解刚体运动时的抖动，一般由于摩擦的原因产生
+None  不应用插值
+Interpolate  基于上一帧的变换来平滑本帧变换
+Extrapolate  基于下一帧的预估变换来平滑本帧变换
+* Collison Detection  快速移动的物体可能会发生穿透，可以改变检测频率来提高检测成功率，但对性能影响较大
+Discrete  不连续检测，适用于普通碰撞
+Continuous  连续碰撞检测
+Continuous Dynamic  连续动态碰撞检测，适用高速物体
+* Constraints 对刚体的运动约束，冻结沿世界某轴的移动或旋转
+
+刚体在无运动时会休眠，不会检测其碰撞
+
+## Collider
+让物体有碰撞边界
+* Cube Collider  最节约性能的碰撞器
+* Mesh Collider  需要勾选Convex将网格合并优化
+
+* Is Trigger   是否为触发器
+
+* Material 物理材质
+
+### Physic Material
+* Dynamic Friction  动态摩擦力
+* Static Friction   静态摩擦力
+* Bounciness    弹力，1表示弹力无损耗
+* Fricton Combine   摩擦力合并方式
+* Bounce Combine    弹力合并方式
+
+处于玩家可移动范围内的物体碰撞物体应该加碰撞器
+
+## 碰撞
+### 碰撞的产生条件
+* 两物体具有碰撞器组件
+* 运动的物体具有刚体组件
+
+### 执行的生命周期
+OnCollisionEnter(Collision colOther)    当碰撞开始时
+OnCollisionStay(Collision colOther)     当碰撞进行中
+OnCollisionExit(Collision colOther)     两者接触的最后一帧
+
+### Collistion
+contacts   接触点数组
+contacts[index].point   接触点坐标
+contacts[index].normal   接触面法线
+
+## 触发
+触发产生的条件
+* 其中之一具有刚体
+* 其中之一勾选触发器
+
+执行的生命周期
+OnTriggerEnter(Collider colOther)    当碰撞开始时
+OnTriggerStay(Collider colOther)     当碰撞进行中
+OnTriggerExit(Collider colOther)     两者接触的最后一帧
+
+
+
+# Physics
+物理方法
+Raycast  射线检测
+
+
+
 # Debug
 * Log
 * LogFormat
