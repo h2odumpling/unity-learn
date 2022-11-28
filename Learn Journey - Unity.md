@@ -25,6 +25,11 @@
 
 
 # UGUI
+## 对比GUI的优势
+* Rect Transform、Layout Group 提供的布局系统
+* 将点击等事件进行封装，统一检测
+* 执行效能提高
+
 RaycastTarget   是否可以交互，开启会消耗性能，应只在需要交互的ui上开启
 Interatable   是否可用，应该用于可变性调节某些选项，比如多级控制按钮
 
