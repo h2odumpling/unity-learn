@@ -24,6 +24,19 @@
 * Field of view 摄像机镜头的数值，数值越大镜头越远，常做瞄准镜等视野缩放功能
 
 
+
+# Sprite Atlas
+图片打包，将多个图片合成为一个大图
+## 优点
+* 可有效降低DrawCall
+## 缺点
+* 加载其中一张图时，会加载整个大图，造成不必要的内存消耗
+## 属性
+* Type  Master主图集，Variant衍生图集，主图集的缩放体
+
+
+
+
 # UGUI
 ## 对比GUI的优势
 * Rect Transform、Layout Group 提供的布局系统
@@ -188,7 +201,7 @@ foreach(Transform child in this.Transform){
 * setParent(tf,isWorldSpace) 设置父物体为tf，isWorldSpace表示位置如何根据父物体改变，true时为世界坐标不变而改变自身坐标相对于父物体的坐标值，false时为将现在的坐标视为自身对父物体的坐标值，设置为null则脱离父子关系
 * DispatchChildren  解散所有子物体（非删除）
 * GetSiblingIndex   获取该对象的同级索引
-* SetAsFirstSibling   设置为兄弟索引第一
+* SetAsFirstSibling   设置为兄弟索引第一 
 * SetAsLastSibling   设置为兄弟索引最后
 * SetSiblingIndex   按索引设置为兄弟索引的第几个
 
