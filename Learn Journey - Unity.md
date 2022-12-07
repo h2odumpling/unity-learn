@@ -70,7 +70,61 @@ Interatable   是否可用，应该用于可变性调节某些选项，比如多
 * Selection Color   选择部分光标颜色设置
 * Hide Mobile Input   隐藏移动输入（仅限IOS）
 
+## 事件绑定
+On Func(string)
+* Object    需要绑定事件的GameObject
+* Function      当事件触发时，需要执行的Object中的方法
+* Dynamic string    动态字符串，即事件触发时文本框内的字符串
+* Static Parameters     静态参数
+### 方法
+* On Value Changed(string)   当文本框内字符串变化时
+* On Submit (string)    当提交时
+* On End Edit(string)   当转换焦点
+* On Deselect(string)   当转换焦点
+
+## 事件注册
+* 通过编辑器绑定方法
+* AddListener
+```
+    input = transform.Find("input").GetComponent<TMP_InputField>();
+    input.onValueChanged.AddListener(Fun1);
+```
+* 实现接口
+```
+    public class Test : MonoBehaviour,IDragHandler{
+        public void OnDrag(PointerEventData eventData)
+        {
+            transform.position = eventData.position;
+        }
+    }
+```
+
+### PointerEventData
+camera选择准确的camera，可通过pointerPress是否为null判断
+>> 深入学习：不准确的camera为什么会导致这样的问题
+* enterEventCamera  光标移入时的camera
+* pressEventCamera  光标按下时的camera
+* position   光标射线到与世界坐标系的碰撞点，值为 eventData.pointerCurrentRaycast.worldPosition
+* pressPosition   光标射线的屏幕坐标，值为 eventData.pointerCurrentRaycast.screenPosition
+* pointerPress  触发按下事件的GameObject
+* pointerEnter    触发光标移入事件的GameObject
+* pointerClick    触发光标点击事件的GameObject
+* ...   其它触发光标时间的GameObject
+
+
 >> 深入学习：TMP text
+
+## RectTransform
+
+
+### RectTransformUtility
+* FlipLayoutAxes	翻转 RectTransform 大小和对齐方式的水平和垂直轴，可以选择同时翻转其子级。
+* FlipLayoutOnAxis	沿水平或垂直轴翻转 RectTransform 的对齐方式，可以选择同时翻转其子级。
+* PixelAdjustPoint	将屏幕空间中的给定点转换为像素校正点。
+* PixelAdjustRect	根据给定的一个矩形变换，返回像素精确坐标中的角点。
+* RectangleContainsScreenPoint	此 RectTransform 是否包含从给定摄像机观察到的屏幕点？
+* ScreenPointToLocalPointInRectangle	将一个屏幕空间点转换为 RectTransform 的本地空间中位于其矩形平面上的一个位置。
+* ScreenPointToWorldPointInRectangle	将一个屏幕空间点转换为世界空间中位于给定 RectTransform 平面上的一个位置。
 
 
 
@@ -692,3 +746,8 @@ Raycast  射线检测
 * Log
 * LogFormat
 * DrawLin(Vector n1,Vector n2)
+
+
+
+# Resource
+资源类
