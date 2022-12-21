@@ -60,12 +60,16 @@ Console.WriteLine(b.name);  //dd
 Console.WriteLine(b.id);    //2
 ```
 
+
+
 # enum  枚举类型
 为了限制变量的可能性
 默认是整数类型，也可以更改
 ```
 enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以设置值
 ```
+
+
 
 # method
 当需要返回多个值时可以用元组的方式实现
@@ -92,6 +96,27 @@ public static void doubleReturn(int x, string y="", int z=1, string j="j")
 doubleReturn(1,"y",1)       //实行第一个方法
 doubleReturn(1,"y")         //无法编译，因为无法为任何一个方法提供全部实参
 ```
+
+
+
+# 二进制操作
+* ~ NOT     按位求补  ~10010 == 01101
+* << >>     左位移|右位移   首先要注意位数，若移动超出位数则超出部分直接舍弃  8位 10001000 << 2 == 00100000
+* | OR      按位OR    相同位有1个为1则为1   10010 | 11011 == 11011
+* & AND     按位AND   相同位都为1则为1      10010 & 11011 == 10010
+* ^ XOR     按位异或    相同位不同为1     10010 ^ 11011 == 01001
+
+## 二进制操作应用
+判断一个二进制数bit的n位是否为1
+```
+(bit & (1 << n)) != 0
+```
+将n位设置为1
+```
+bit |= (1 << n)
+```
+
+
 
 # 数据类型
 不同数据用不同内存大小存储以减少内存损耗，C#中有值类型和引用类型
@@ -189,7 +214,7 @@ public class Person    //默认为internal
          {
              a = value;
          }
-     }//属性，get或set其中一个改为方法，其他一个也需要改为方法，可在其中访问类中private变量
+     }//属性，get或set其中一个改为方法，其他一个也需要改为方法，属性的本质是方法
      
      public Person(int vv) //class 的构造函数，当没有构造函数时，默认有一个空的构造函数
      {
@@ -211,8 +236,18 @@ public class Person    //默认为internal
      {
          return 1;
      }
+
+     ~ Person(){    //class 的析构器，在clr垃圾回收时调用，
+
+     }
  }
 ```
+
+#### 属性
+* 本质是方法
+* 用以访问类中的私有变量
+* 可以为get/set分配不同的访问修饰，但访问器的可访问性要等于其中访问性较大的访问修饰
+* 自动属性的本质是为属性X创建了一个隐藏的_x的私有变量，因此自动属性必须要设置get
 
 #### 抽象类
 一个不完整的类，相当于类的模板，因此不能被实例化
@@ -469,6 +504,11 @@ Console.WriteLine(person[1]);
 
 console.WriteLine(person["ss"]);
 ```
+
+#### 数组和索引器对比
+* 索引器可以使用非数值下标
+* 索引器可以重载
+* 索引器不能作为ref或out参数使用，数组元素可以，大概是因为索引器本质是方法
 
 ### 泛型在Class内的实现
 极大提高代码重用性，且数据类型是安全的，且提高性能，有助于减少程序体积
@@ -2278,3 +2318,87 @@ static void main()
  * 级别和性能  内存分为0，1，2代
  * 为非托管资源释放内存
  >> 深入学习：内存管理与GC算法
+
+
+
+
+ # GC
+ * 一般在方法结束时执行
+ * 异步执行
+ * 运行时会暂停其它线程
+ * 可能会移动对象并更新引用
+ * 可通过调用System.GC.Collect 执行，但不建议使用
+
+ ## 原理
+ * 构造可达对象的映射
+ * 检查所有不可达对象的析构器，将其推入特殊队列中执行
+ * 回收其它不可达对象，将堆中可达对象向下移动并更新引用，施放堆顶的内存
+ * 恢复其它线程的运行
+ * 在独立线程中执行特殊队列
+
+ ## 析构器
+ 引用对象在GC时必定会执行的函数
+ * 非必要情况下不使用析构器
+ * 析构器不互相依赖，尽量不调用其它对象，因为他们可能已经被GC回收，GC回收的顺序是不能保证的
+
+ ## 资源清理方法
+ 当有些资源希望在使用完毕后清理时可以使用
+ 
+ ### 逻辑上的实现
+ 继承IDisposable接口并实现Dispose方法
+ ```
+ class Person : IDisposable{
+    public void Dispose(){
+
+    }
+ }
+ ```
+ ```
+ Person p = new Person();
+ try
+ {
+     //doSomething
+ }catch(Exception e)
+ {
+     Console.WriteLine(e);
+ }
+ finally
+ {
+     p.Dispose();
+ }
+ ```
+
+ ### 推荐的实现方法
+ using() 可以将实现IDisposable的引用对象在作用域结束后释放
+ ```
+ using(Person p = new Person())
+ {
+     //doSomething
+ }
+ ```
+
+ ### 优化Dispose所产生的GC问题
+ 当清理方法被调用后，GC在启用时仍会重复执行类的清理动作，包括执行析构方法，因此在调用清理方法后可调用GC.SuppressFinalize方法以让GC后续处理之间跳过该对象
+ ```
+ class Person : IDisposable
+ {
+     private Boolean disposed = false;
+
+     public void Dispose()
+     {
+         if (!disposed)
+         {
+             disposed = true;
+             Console.WriteLine("对象已经被清理");
+             Console.WriteLine("当GC启动时会绕过此对象");
+             GC.SuppressFinalize(this);
+         }
+     }
+
+     ~Person()
+     {
+         Console.WriteLine("GC启动析构器");
+         this.Dispose();
+     }
+ }
+ ```
