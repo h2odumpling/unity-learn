@@ -69,6 +69,10 @@ Console.WriteLine(b.id);    //2
 enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以设置值
 ```
 
+## foreach 的实现
+* foreach只能遍历可枚举集合(实现了System.Collections.IEnumerable接口的集合)
+* foreach实际调用集合元素的Current属性获取元素的值，然后调用MoveNext方法判断指针是否可以下移
+
 
 
 # method
@@ -812,6 +816,8 @@ dateType[] name
 # 集合
 集合较之数组，长度可变，且可存储引用类型，更为灵活，但开销也变得更大
 
+* 集合的循环中不能使用add|remove|insert等方法，不然会抛出InvalidOperationException
+
 ## 泛型和非泛型
 非泛型集合的value是object，所以在存储|读取值类型时会发生大量装箱|拆箱操作，且无法验证数据类型，所以在涉及值类型存储时推荐使用泛型集合
 
@@ -829,6 +835,7 @@ dateType[] name
 * Queue<T>    Queue的泛型等效类
 * Dictionary<TKey,TValue>   字典
 * BitArray    点阵列，存储[1|0]这样二进制数据的集合，使用索引访问元素
+* HashSet<T>    哈希集合
 >>  深入学习：各类型的底层实现
 
 #### 值的获取修改等
@@ -879,10 +886,23 @@ Count   集合中包含的元素个数
 * void Push(T)    推入元素
 
 #### 字典 Dictionary<TKey,TValue>
-在索引号并非int类型时使用
-键值
-使用索引获取值，索引值先通过散列函数寻找哈希桶中的值，然后根据哈希桶对应的值在单链表中寻找索引中对应的元素
+* 在索引号并非int类型时使用
+* 键值
+* 使用索引获取值，索引值先通过散列函数寻找哈希桶中的值，然后根据哈希桶对应的值在单链表中寻找索引中对应的元素
+* 在大量内存可用时高效，随着元素插入可能会消耗大量内存
+* foreach 字典返回的是类型为KeyValuePair<TKey,TValue>的只读元素
 >> 深入学习：哈希函数构建及解决哈希冲突的其他方法
+
+#### SortList<TKey,TValue>
+* SortList 与Dictionary、SortedDictionary类似
+* 永远是排好序的
+
+#### 哈希集合 HashSet<T>
+* 提供集合的优化操作，判断集合是否为另一个集合的子集或超集，或生成交集、并集、差集
+* HashSet<T> IntersectWith  交集
+* HashSet<T> UnionWith  并集
+* HashSet<T> ExceptWith  差集
+* SortSet<T> 和 HashSet<T> 可以互相操作
 
 
 
