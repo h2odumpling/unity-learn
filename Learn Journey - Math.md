@@ -73,3 +73,19 @@
     sin(a) - sin(b) = 2 sin((a-b)/2) cos((a+b)/2)
     cos(a) - cos(b) = 2 sin((a+b)/2) sin((a-b)/2)
     cos(a) + cos(b) = 2 cos((a+b)/2) cos((a-b)/2)
+
+## 反三角函数
+
+### 反正弦函数
+* y = arcsin(x),x∈[-1,1],y∈[-π/2,π/2]
+* y = sin(x),x∈[-π/2,π/2] 的反函数
+* 奇函数，增函数
+* sin(arcsin(x)) = x
+* arcsin(sin(x)) 当x∈[-π/2,π/2]时，等于x，其余情况下不等
+
+### 反余弦函数
+* y = arccos(x),x∈[-1,1],y∈[0,π]
+* y = cos(x),x∈[0,π] 的反函数
+* 减函数
+* cos(arccos(x)) = x
+* arccos(cos(x)) 当x∈[0,π]时，等于x，其余情况下不等
