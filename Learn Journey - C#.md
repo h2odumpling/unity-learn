@@ -737,6 +737,20 @@ newPerson2.Value = 2;
 Person ss = newPerson1 + newPerson2;
 ```
 
+运算符多态时应注意，==和!=，<=和>=，必须一起成对定义
+
+* 转换符多态
+```
+class Example{
+    private int value;
+
+    public static implicit operator  int (Hour from){   //转换符多态
+        return from.value;
+    }
+}
+```
+
+* 自定义转换符时需要声明是隐式转换(implicit)还是显式转换(explicit)
 ## 动态多态
 通过override实现
 toString方法可以被重写
@@ -1914,7 +1928,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  offices.Add(new office("somebody", 60));
 
  var queryJoin = from c in customers
-                 join o in offices on c.Name equals o.Name   //join
+                 join o in offices on c.Name equals o.Name   //join join只能equal join
                  select new { c.Name, c.Place, o.Id };
  
  foreach (var c in queryCustomerInto)
@@ -1972,8 +1986,16 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
 
  >> 深入学习：集合操作符 分区操作符
+
+ ## PLINQ
+ ```
+  var queryCustomerInto = from customer in customers.AsParallel()   //指定为ParallelQuery对象 
+                         group customer by customer.Place into intoGroup
+                         where intoGroup.Count() >= 2
+                         select {count = intoGroup.Count(), key = intoGroup.Key};
+ ```
  
- 
+
  
 # 扩展方法
 * 在不想继承或改变原class的情况下，新增方法
@@ -2021,6 +2043,15 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
 # C#线程
  当某个方法比较耗时时才考虑开启线程处理
+
+ * 线程过饱和：线程数超过最优线程数，响应能力会变差
+ * 线程欠饱和：线程数少于最优线程数，大量处理能力会被浪费
+ * 通过将线程加入队列，并使用工作窃取算法，保证线程高效运转
+ * 最优线程数是WinRt通过爬山算法动态调节的
+
+ 注：\
+ 工作窃取算法：多个处理器有多个线程池，当一个线程池空闲时会从别的线程池的队列窃取一个工作项进行处理\
+ 爬山算法：创建线程运行任务，找出添加线程反而导致性能下降的点，将线程保持在这个点以下
  
 ### 前台线程与后台线程
  一个进程如果有前台线程，即使main线程被关闭，也仍会运行直到所有前台线程结束
@@ -2190,6 +2221,23 @@ static void main()
      Task t4 = t2.ContinueWith(ThreadMethod_2);
  }
  ```
+ #### 连续任务的重载
+ ```
+ static void main()
+ {
+     Task t1 = new Task(ThreadMethod_1);
+     Task t2 = t1.ContinueWith(ThreadMethod_2, TaaskContinuationOptions.NotOnFaulted);  //未抛出异常时才执行
+     Task t3 = t1.ContinueWith(ThreadMethod_2);
+     Task t4 = t2.ContinueWith(ThreadMethod_2);
+ }
+ ```
+ * NotOnFaulted | OnlyOnFaulted 上个任务执行[未抛出|抛出]异常时才执行
+ * NotOnCanceled | OnlyOnCanceled 上个任务执行[未取消|取消]异常时才执行
+ * NotOnRanToCompletion | OnlyOnRanToCompletion 上个任务执行[未完成|完成]异常时才执行，NotOnRanToCompletion => NotOnFaulted || NotOnCanceled
+
+ ## 任务的其它控制
+ * Task.WaitAll(task1,task2)    等1和2都执行完
+ * Task.WaitAny(task1,task2)    等1或2执行完
  
  ## 任务的层次结构
  如果在一个任务中启动新任务，则构建为父子任务，当子任务还没有完成时，父任务即使已经执行完也会处于WaitingForChildrenToComplete状态，当子任务执行完毕，父任务会改为RunToCompletion
