@@ -1,5 +1,22 @@
 # 命名空间
-避免类的重名
+避免类的重名，指示CLR在寻找类时会逐一寻找
+
+```
+using System.IO;
+using System.Text;
+
+public sealed class Program{
+    public static void Main(){
+        FileStream fs = new FileStream(..);
+        StringBuilder sb = new StringBuilder();
+    }
+}
+```
+
+上例中，StringBuilder类型若同时存在于System.IO及System.Text，则会触发不明确引用的错误\
+```
+using TextStringBuilder = System.Text.StringBuilder     //可以通过定义一个新的别名来消除歧义
+```
 
 
 
@@ -1749,7 +1766,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  * typeof(obj)
  ```
  string ss;
- ss.GetType();
+ ss.GetType();  //GetType 实际返回的是CLR保存在堆中的类型引用的地址，这里要区别于类型实例的引用地址
  Type.GetType("System.Sting", false, true);
  typeof(ss)
  ```
@@ -2364,7 +2381,7 @@ static void main()
  * ASP.NET 运行库
  * 应用程序
  
- ## Common Language Runtime CLR 通用语言运行时
+ ## Common Language Runtime CLR 通用语言运行时（公共语言运行时）
  * 安全性，对不同的组件有不同的访问级别，例如注册表|普通文件
  * 访问安全，访问网络的安全性
  * CTS，常规类型系统，严格的类型验证
@@ -2374,11 +2391,25 @@ static void main()
  * 宿主应用，可以宿主在IIS等
  
  基于CLR开发的代码被称为托管代码
+ 
  ### C#的执行
  * 选择编译器
- * 将代码编译为MSIL
- * 将MSIL编译为本机代码
+ * 将代码编译为托管模块，托管模块包括PE32或PE32+头、CLR头，元数据及IL代码
+ * 将IL编译为本机代码（本机CPU指令）
  * 运行代码
+
+ 注：\
+ PE32或PE32+头：标准的Win PE文件头，标识系统版本及文件类型\
+ CLR头：包含托管模块的信息，包括模块入口文件、执行方法\
+ 元数据：元数据表，包含源代码定义的类型和成员或引用的类型或成员\
+ IL代码：又称MSIL(Microsoft Intermediate Language)\
+
+ ### 编译过程
+ * JIT尝试将IL编译为本机CPU指令
+ * 发现引用类型，CLR确定包括这些类型的程序集已经被加载
+ * 利用程序集内元数据，将类型有关的信息提取到内存堆中
+ * CLR确定引用类型全部创建且编译完成，允许线程执行本机CPU指令
+ * 随程序执行，JIT对堆中引用对象的方法、字段等继续进行同步编译
  
  ### 自动内存管理
  * 分配内存
@@ -2470,3 +2501,26 @@ static void main()
      }
  }
  ```
+
+
+
+ # 版本号管理
+ 一般由major、minor、build、revision构成
+ * major 主版本号
+ * minor 次版本号
+ * build 内部版本号，随着每次打包程序集递增
+ * revision 修订号，如同版本需要修正某些bug时应递增
+
+ # 程序签名
+
+ ## 签名过程
+ 将公钥嵌入元数据中\
+ 对PE文件进行哈希处理\
+ 对PE哈希值使用私钥签名获得RSA签名\
+ 将RSA签名嵌入CLR头中\
+
+ ## 意义
+ 程序签名可以防止程序未被篡改
+
+ ## 延时签名（部分签名）
+ 只使用公钥生成程序集
