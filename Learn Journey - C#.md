@@ -31,10 +31,11 @@ using TextStringBuilder = System.Text.StringBuilder     //可以通过定义一�
 
 
 # static
-类中的静态数据由所有类的实例共享
+表示是类型而非实例的一部分，类中的静态数据由所有类的实例共享
 
 ## const
-常量字段，是一种特殊的静态字段，值永远不变
+常量字段，是一种特殊的静态字段，值永远不变\
+在编译成IL时会被直接替换成基元类型或null\
 
 
 
@@ -49,33 +50,6 @@ using TextStringBuilder = System.Text.StringBuilder     //可以通过定义一�
 
 # 代码块
 代码块内定义的变量在代码块结束时消失
-
-
-
-# struct
-用于打包封装比较小的数据集，可完成class的大部分内容，是值类型
-```
-struct student
-{
-    public int id;
-    public string name;
-
-    public student(int id, string name)
-    {
-        this.id = id;
-        this.name = name;
-    }
-}
-```
-```
-student a = new student(1,"ss");
-student b = new student(2, "dd");
-a = b;  //struct类型是值类型，所以a = b 相当于 重新创建了a中的数据而非更改了引用
-a.id = 10;
-a.name = "zz";
-Console.WriteLine(b.name);  //dd
-Console.WriteLine(b.id);    //2
-```
 
 
 
@@ -174,7 +148,7 @@ bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out�
 
 ### 货币值
 比浮点型有更大的精度及更小的范围
-* decimal(128,1,28)
+* decimal(128,1) 96位值，8位指数，-28<=指数<=0，其余位数没有使用
 
 ### 浮点型
 使用科学计数法存储，1位存储符号，1位存储指数符号，一部分存储指数，剩余部分存储精度
@@ -202,6 +176,52 @@ bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out�
 * G   常规
 * N   带有逗号和小数点的数字
 * X   十六进制
+
+### struct
+用于打包封装比较小的数据集，可完成class的大部分内容，是值类型\
+```
+struct student
+{
+    public int id;
+    public string name;
+
+    public student(int id, string name)
+    {
+        this.id = id;
+        this.name = name;
+    }
+}
+```
+```
+student a = new student(1,"ss");
+student b = new student(2, "dd");
+a = b;  //struct类型是值类型，所以a = b 相当于 重新创建了a中的数据而非更改了引用
+a.id = 10;
+a.name = "zz";
+Console.WriteLine(b.name);  //dd
+Console.WriteLine(b.id);    //2
+```
+
+不能包含无参构造器，只能使用有参数的显式构造器\
+```
+struct student
+{
+    public int id;
+    public string name;
+
+    public student(){   //这个构造函数无法编译
+
+    }
+}
+```
+
+### 什么时候使用值类型
+
+* 具有基元类型的行为
+* 类型不从其它类型继承
+* 类型不派生其它类型
+* 当类型实例较小时或类型实例较大但不会作为方法实参传递，也不从方法返回，因为当实参传递或返回时都会在内存进行值类型的复制
+
 
 ## 引用类型
 在栈中存放值的地址，在堆中存放值
@@ -264,6 +284,42 @@ public class Person    //默认为internal
  }
 ```
 
+#### 构造函数
+字段的初始化在调用构造函数之前\
+当一个类有多个构造函数时，将字段初始化放入公共构造函数中运行，可以减少IL代码的生成提高性能\
+```
+class Person{
+    int x;  //若将初始化放在这，则会根据构造函数数量进行多次初始化
+    int y;
+
+    public Person(){    //如使用公共构造函数，则IL代码会减少
+        x = 5;
+        y = 10;
+    }
+
+    public Person(int mx) : this(){
+        this.x = mx;
+    }
+}
+```
+
+#### 字段
+
+* readonly字段
+static readonly通常用于替换const，使字段可以被其它程序集引用，性能较const略差，因为需要加载到内存中\
+readonly字段只可以在实例构造器中更改\
+引用类型的readonly字段不可改变只是引用，而不是引用对象\
+```
+public class AType{
+    public static readonly Char[] CharsArray = new Char[] {'A','B','C'};
+}
+public class program{
+    public static void Main(){
+        AType.CharsArray[0] = 'X';  // X B C
+    }
+}
+```
+
 #### 属性
 * 本质是方法
 * 用以访问类中的私有变量
@@ -276,7 +332,7 @@ public class Person    //默认为internal
 abstract public class Person    //默认为internal
 {
     abstract public void Zzz();
-    virtual public int zzzz()   //virtual (虚方法) 子类可以直接继承，也可以使用override重写
+    virtual public int zzzz()   //virtual (虚方法) 子类可以直接继承，也可以使用override重写，但重写时只能放宽限制如把protected改为public，而不能收紧限制
     {
         return 1;
     }
@@ -311,6 +367,7 @@ var a = new {fistrname = "ss",lastname = "bb"};
 
 
 #### 静态类
+用于组合一组相关的成员，例如Math\
 * 类中的所有内容都是静态的，包括构造函数、字段、变量、函数
 * 静态类不能创建实例，因为静态类的实例没有意义
 * using static className 可以将类中的静态方法引入作用域，可以直接使用方法名调用方法
@@ -319,7 +376,7 @@ var a = new {fistrname = "ss",lastname = "bb"};
 #### 类的复制
 * 浅复制  只复制引用
 * 深复制  复制引用的对象
-类可以通过提供方法来提供自己的新实例
+类可以通过提供方法来提供自己的新实例\
 ```
 public Circle Clone()
 {
@@ -761,10 +818,23 @@ Person ss = newPerson1 + newPerson2;
 class Example{
     private int value;
 
-    public static implicit operator  int (Hour from){   //转换符多态
-        return from.value;
+    public Example(int e){
+        this.value = e;
+    }
+
+    public static implicit operator Example (int e){   //转换符多态，隐式转换
+        return new Example(e);
+    }
+
+    public static explicit operator int (Example e){   //转换符多态，显式转换
+        return e.value;
     }
 }
+```
+```
+Example e = 5;
+int num = (int) e;
+int num = e as int; //0 使用as或is时不会调用转换符
 ```
 
 * 自定义转换符时需要声明是隐式转换(implicit)还是显式转换(explicit)
@@ -793,17 +863,115 @@ int min = Min(int1, int2, int3);
   
   
 # 装箱|拆箱
-装箱就是把值类型转为引用类型的操作，下面代码就是i的装箱操作
+装箱就是把值类型转为引用类型的操作，当需要获取值类型的引用地址时就会发生装箱，下面代码就是i的装箱操作\
 ```
 int i = 0;
 System.Object obj = i;
 ```
-拆箱就是把引用类型转为值类型的操作，下面代码就是obj的拆箱操作
+当需要对一个值类型反复装箱时，应手动执行装箱\
+```
+int i = 0;
+Object o = i;
+Object z = i.ToString();
+Console.WriteLine("{0}, {1}, {2}", i, i, i);    //装箱三次
+Console.WriteLine("{0}, {1}, {2}", o, o, o);    //装箱一次
+Console.WriteLine("{0}, {1}, {2}", z, z, z);    //不装箱
+```
+在以下情况下会发生装箱：\
+* 当把值类型传递给需要引用类型的方法\
+* 调用从Object继承的需要实例的方法时，例如GetType，因为需要获取堆中类型的引用就必须获取堆中类型实例的引用，而ToString已经在int类型中重写避免了装箱\
+* 成为接口变量时，因为接口变量必须包含对堆对象的引用
+```
+Point : IComparable{
+    int x,y;
+    public Point(int mx, int my){
+        x = mx;
+        y = my;
+    }
+}
+
+Point p = new Point(1, 2);
+IComparable i = p;  //p装箱
+```
+改变值类型的值容易引发的问题
+```
+internal interface IChange{
+    void ChangeMe (int mx, int my)
+}
+Point p : IChange{
+    int x,y;
+    public Point(int mx, int my){
+        x = mx;
+        y = my;
+    }
+    public void Change(int mx, int my){
+        x = mx;
+        y = my
+    }
+    public void ChangeMe(int mx, int my){
+        x = mx;
+        y = my;
+    }
+    public string ToString(){
+        return String.Format("{0}, {1}", x, y);
+    }
+}
+
+Point p = new Point(1, 2);
+p.Change(2, 2);
+Console.WriteLine(p);  // 2, 2
+
+Object o = p;
+((Point) o).Change(3, 3);   //将o转为值类型并执行Change后立即被GC回收，并不会改变o引用的堆中的未封装Point的值
+Console.WriteLine(o);   // 2, 2
+
+((IChange) p).ChangeMe(3, 3);   //将p转为接口对象并执行ChangeMe，实际改变的是在堆中创建的对应对象的值，并没有改变p的值，且执行完后立刻被GC回收  
+Console.WriteLine(p);   // 2, 2
+
+((IChange) o).ChangeMe(3, 3);
+Console.WriteLine(o)    // 3, 3
+```
+
+拆箱就是把引用类型转为值类型的操作，下面代码就是obj的拆箱操作\
 ```
 int i = 0;
 System.Object obj = i;
 int j = (int)obj;
 ```
+拆箱时只能把对象转为最初未装箱的值类型\
+```
+Int32 i = 0;
+Object p = i;
+Int16 x = (Int16)(Int32)p
+```
+拆箱时的内存复制\
+```
+int i = 0;
+Object p = i;
+i = (int) p;    //拆箱p后，将p引用指向的堆中的未装箱值复制到栈中
+i +=1;
+p = i;      //将i的值装箱后复制到堆中，p指向新的地址
+```
+
+## 泛型集合及非泛型集合的对比
+```
+struct Point{
+    public int x,y;
+}
+public sealed class Program{
+    public static void Main(){
+        ArrayList a = new ArrayList();
+        List<Point> b = new List<Point>();
+        Point p;
+        for(int i = 0; i < 10; i++){
+            p.x = p.y = i;
+            a.Add(p);   对p进行装箱，将引用添加至ArrayList中
+            b.Add(p);   不对p进行装箱，直接将值类型添加至List中
+        }
+    }
+}
+```
+上例中p会装箱是因为ArrayList的Add方法需要Object作为参数，即需要一个对象的引用，因此会进行装箱并获取引用地址存入ArrayList中，而List则实际需要Point作为参数，因此不需装箱
 
 
 
@@ -2053,6 +2221,35 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  foreach(Grade g in grades)
  {
      Console.WriteLine(g.passing());
+ }
+ ```
+
+
+
+ # 分部方法
+ 想覆盖原有类型的时候可以使用\
+ ```
+ class partial Base{
+    private string name;
+    
+    partial void NameChange(string value);
+
+    public String Name{
+        get { return name};
+        set {
+            NameChange(value);
+            name = value;
+        }
+    }
+ }
+ ```
+ ```
+ class partial Base{
+    partial void NameChange(string value){
+        if(String.IsNullOrEmpty(value)){
+            throw new ArgumentNullException("value is null");
+        }
+    }
  }
  ```
  
