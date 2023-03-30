@@ -1601,8 +1601,8 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
 # delegate、event 委托和事件
  
 ## delegate 委托
-委托是实现事件和回调函数的基础
-类似依赖注入
+委托是实现事件和回调函数的基础\
+类似依赖注入\
  
 ### 委托的静态调用
  ```
@@ -1775,7 +1775,142 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  可参考继承EventHandler
  
- 
+ ## 事件的线程争用问题
+ 首先事件主要在单线程模式下运行，因此线程安全不是问题\
+ 事件的线程争用是由于以下代码在判断是否包含委托时，可能事件的委托链已经被别的线程修改\
+ ```
+ protected virtual void OnNumChange()
+     {
+         if(NC != null)
+         {
+             NC(25);
+         }
+         else
+         {
+             Console.WriteLine("Event havn't been binded");
+         }
+     }
+ ```
+ 解决方法，将事件的引用复制到一个新变量中，这样临时变量存储的是赋值发生时的变量，但这样仍有可能导致方法的重复触发\
+ ```
+ protected virtual void OnNumChange()
+     {
+        var temp = NC;  //如果编译器在这里优化了temp变量，就需要使用Volatile.Read(ref NC)来强迫引用真的复制到temp变量中了
+        // var temp = Volatile.Read(ref Nc);
+         if(temp != null)
+         {
+             temp(25);
+         }
+         else
+         {
+             Console.WriteLine("Event havn't been binded");
+         }
+     }
+ ```
+
+ ## 显式实现事件
+ 使用字典创建委托列表并添加相关的增删及引发事件的方法\
+ ```
+ public sealed class Program
+ {
+     public static void Main()
+     {
+         TypeWithLotsOfEvents twle = new TypeWithLotsOfEvents();
+
+         twle.Foo += HandleFooEvent;
+
+         twle.SimulateFoo();
+     }
+
+     //模拟一个事件订阅方法，一般是在其他类中定义的
+     private static void HandleFooEvent(Object sender, FooEventArgs e)
+     {
+         Console.WriteLine("Handling Foo Event here");
+     }
+ }
+
+ public class FooEventArgs : EventArgs { }
+
+ //事件定义者
+ public class TypeWithLotsOfEvents
+ {
+     private readonly EventSet m_eventSet = new EventSet();
+
+     protected EventSet EventSet { get { return m_eventSet; } }  //使用自定义的委托列表
+
+     protected static readonly EventKey s_fooEventKey = new EventKey();  //为自己创建哈希码用于查询委托列表
+
+     public event EventHandler<FooEventArgs> Foo     //设置自定义的委托列表相关方法
+     {
+         add { m_eventSet.Add(s_fooEventKey, value); }
+         remove { m_eventSet.Remove(s_fooEventKey, value); }
+     }
+    
+     protected virtual void OnFoo(FooEventArgs e)
+     {
+         m_eventSet.Raise(s_fooEventKey, this, e);
+     }
+
+     public void SimulateFoo()
+     {
+         OnFoo(new FooEventArgs());
+     }
+ }
+
+ //提供委托列表的哈希码
+ public sealed class EventKey { }
+
+ // 自己的事件类
+ public sealed class EventSet { 
+     private readonly Dictionary<EventKey,Delegate> m_events;
+
+     //将委托加入委托列表中
+     public void Add(EventKey eventKey, Delegate handler) { 
+         Monitor.Enter(m_events);    //通过Monitor.Enter 获取对象锁，避免被其它线程改变
+         Delegate d;
+         if (m_events.TryGetValue(eventKey, out d))  //根据键获取对应事件的委托列表
+         {
+             m_events[eventKey] = Delegate.Combine(d, handler);  //将新委托加入列表中
+         }
+        
+         Monitor.Exit(m_events);
+     }
+
+     //从列表中删除委托
+     public void Remove(EventKey eventKey, Delegate handler) {
+         Monitor.Enter(m_events);
+         Delegate d;
+         if(m_events.TryGetValue(eventKey, out d))
+         {
+             d = Delegate.Remove(d, handler);    //从委托列表删除对应委托
+
+             if(d != null)   //判断委托列表是否为空
+             {
+                 m_events[eventKey] = d;     //委托列表不为空时更新委托列表
+             }
+             else
+             {
+                 m_events.Remove(eventKey);     //委托列表为空时直接删除对应的委托列表，施放空引用的内存占用
+             }
+         }
+         Monitor.Exit(m_events);
+     }
+
+     //执行委托列表中的委托
+     public void Raise(EventKey eventKey, Object sender, EventArgs e) {
+         Delegate d;
+         Monitor.Enter(m_events);
+         m_events.TryGetValue(eventKey, out d);  //尝试获取委托列表
+         Monitor.Exit(m_events);
+
+         if (d != null)
+         {
+             d.DynamicInvoke(new object[] { sender, e });    //在不知道委托类型的情况下通过反射进行委托调用，但十分影响性能，谨慎使用
+         }
+     }
+ }
+ ```
+
  
  # 匿名函数
  ```
