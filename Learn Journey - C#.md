@@ -1186,6 +1186,10 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 * Y|y   *年*月
 * M|m   *月*日
 
+### 字符串复制
+* string Clone     返回一个string对象的引用
+* string Copy      返回一个string对象的复制，新建内存区域来存放，不同的引用
+
 ### 字符串插值
 比+高效，是string.format的语法糖
 ```
@@ -1223,7 +1227,27 @@ string.Format("ddd{0}", args);
 ## 更改大小写
 * string ToUpper
 * string ToLower
+* string ToUpperInvariant   对语言文化不敏感
+* string ToLowerInvariant   对语言文化不敏感
 
+## 字符串留用
+调用此方法会将字符串留用至哈希表，这样重复字符串创建或对比就能直接通过对比指针实现，但对于不同字符串留用会影响性能
+* string Intern     尝试获取留用字符串，获取不到则新建留用
+* string IsIntern       尝试获取留用字符串，获取不到则返回null
+
+## StringInfo
+获取Unicode字符串的信息
+* int LengthInTextElements    获取字符串的文本个数
+* string SubstringByTextElements    截取字符串中的文本
+* TextElementEnumerator GetTextElementEnumerator    获取一个对象，其中包含了字符串中的所有文本
+```
+String s = "a\u0304";
+TextElementEnumerator charEnum = StringInfo.GetTextElementEnumerator(s);
+while(charEnum.nextMove()){
+    Console.WriteLine("text element {0} is {1}{2}", charEnum.ElementIndex, charEnum.GetTextElement(), Environment.NewLine);
+}
+```
+* int[] ParseCombiningCharacters    获取一个以文本每个起始索引为值的数组
 
  
 # StringBulider
