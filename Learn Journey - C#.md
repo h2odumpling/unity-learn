@@ -1255,7 +1255,8 @@ while(charEnum.nextMove()){
  * 引用类型
  * 当长度不超过stringBuilder定义长度时，不创建新的内存堆
  * 当长度超过定义长度时，会重新申请一个现长度2倍的空间，然后将值复制到新字符串上，旧字符串空间会被GC回收
- >> 深入学习：当新字符串长度超过现在字符串的2倍时如何申请内存空间
+ * 本质是维护一个字符数组
+
  ## Append | AppendFormat
  ```
  StringBuilder sb = new StringBuilder(20);    //创建一个20字符大小的StringBuilder，避免申请新内存
@@ -1274,6 +1275,18 @@ while(charEnum.nextMove()){
  sb.Remove(0, 3);
  ```
  ## Replace(char, char)|Replace(string,string)
+
+
+
+ # SecureString
+ 安全字符串，可用于密码等机密数据的保存\
+ String对象被垃圾回收后，相当于指针被清空，但内存并不会立刻被重用，导致String的内容长时间保存在内存中，有可能导致机密泄露\
+ SecureString类似Stream类，自带dispose方法，会在调用后立即对内存内容进行清零\
+ * AppendChar
+ * InsertAt
+ * RemoveAt
+ * SetAt
+ 上述方法会将字符串解密后处理再加密，导致字符串有一段时间处于未加密状态，且性能一般，因此应尽可能少的执行这些操作\
 
 
 
