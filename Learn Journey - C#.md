@@ -64,6 +64,46 @@ enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以�
 * foreach只能遍历可枚举集合(实现了System.Collections.IEnumerable接口的集合)
 * foreach实际调用集合元素的Current属性获取元素的值，然后调用MoveNext方法判断指针是否可以下移
 
+## 相关方法
+* bool Enum.IsDefined(type, value)     使用反射实现，实际效率不如if直接判断，常用于参数检验
+* T Enum.Prase(type, string value, bool ignoreCase)    查找与符号对应的值或值对应的符号，并返回一个枚举实例，如果两个符合重复对应一个值，则按顺序获取前置值
+* string ToString()     一般会获取符号，当格式为数字格式时会获取值
+* Enum.TryPrase<T>(string value, out T)     查找与符号对应的值或值对应的符号，并返回一个枚举实例
+
+```
+    enum Color : int { Red = 1, Green = 2, Blue = 1 };
+
+    public static void Main()
+    {
+        Color color = Color.Red;
+
+        Console.WriteLine(color.ToString("X"));     //当枚举类型转换16进制时会按枚举的基础类型输出位数，byte/sbyte2位，short/ushort4位，int/uint8位，long/unlong，16位，并添加前置0 
+
+        Console.WriteLine(Environment.NewLine);
+
+        Console.WriteLine(Enum.Format(typeof(Color), 1, "G"));      //虽然Red和Blue有相同常量，但这里只会按顺序获取Red
+
+        Color[] colors = (Color[]) Enum.GetValues(typeof(Color));
+
+        foreach(Color c in colors)
+        {
+            Console.WriteLine("{0:D}{0}", c);   //1Red,1Red,2Green
+        }
+
+        color = Color.Blue;
+
+        Console.WriteLine(color.ToString("G"));     //Red   可以看出本质是通过值去匹配对应的枚举指针
+
+        color = (Color) Enum.Parse(typeof(Color), "1", false);
+
+        Color x;
+
+        Enum.TryParse<Color>("Green", out x);
+
+        Console.WriteLine(x);   //Red
+    }
+```
+
 
 
 # method
@@ -1040,6 +1080,21 @@ dateType[] name
 * 在秩中加入逗号可以定义数组维度，int[,] n 即为一个二维数组
 >> 深入学习 指针数组、结构数组
 * Array.Copy|array.copyto|array.clone  均为浅拷贝
+* Array.CreateInstance(type, int[] lenghths, int[] lowerBounds)     创建下限非零的数组，推荐还是使用从0开始的0基数组
+
+交错数组若是0基数组，则性能要比多维数组更好，这是因为遍历访问一维0基数组时，会一次验证索引范围，而其他情况下的数组在每次访问时都需要验证索引安全性\
+
+## 将数组嵌入结构
+必须在结构中嵌入，类中不可以\
+结构定义需要用unsafe关键字\
+数组定义需要用fixed关键字\
+数组必须是一维0基数组\
+数组的元素类型必须是基元值类型\
+```
+internal unsafe struct CharArray{
+    public fixed Char Characters[20];   //将数组嵌入结构，这样结构创建在栈上，数组也创建在栈上
+}
+```
 
 
 
