@@ -1762,7 +1762,12 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
 ## delegate 委托
 委托是实现事件和回调函数的基础\
-类似依赖注入\
+委托实际是创建了一个委托类，包含构造器、Invoke、BeginInvoke、EndInvoke方法\
+每个委托实例都有三个继承自MulticastDelegate的字段\
+* _target   回调方法的对象，如果是静态方法则为null
+* _methodPtr   方法的内部整数值，CLR通过这个标识回调方法
+* _invocationList   当为委托链时，引用一个委托数组
+委托的调用实际就是Invoke(_target, _method)\
  
 ### 委托的静态调用
  ```
@@ -1837,9 +1842,10 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  }
  ```
     
-### 多重委托
-多个同类委托可以相加减，会依次执行委托
-若有返回值，多重委托只能获得最后一个委托的返回值，因此多重委托一般只用于没有返回值的时候
+### 多重委托|委托链
+多个同类委托可以相加减，会依次执行委托\
+若有返回值，多重委托只能获得最后一个委托的返回值，因此多重委托一般只用于没有返回值的时候\
++=|-+ 实质是语法糖，调用了Delegate.Combine|Remove方法\
  ```
  public class Mc
  {
@@ -1860,7 +1866,9 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  ```
  numberChange nc1 = new numberChange(Mc.AddNum);
  numberChange nc2 = new numberChange(Mc.AddNum2);
- numberChange nc3 = nc1 + nc2;
+ numberChange nc3 = nc1;    //nc3 nc1引用同一个委托实例
+ nc3 += nc2;    //nc3 引用一个新创建的委托实例，_invocationList字段为nc1、nc2的数组
+ //nc3 += nc1;    //nc3 引用一个新创建的委托实例，_invocationList字段为nc1、nc2、nc1的数组
 
  nc3(25); //先执行 nc1 后执行 nc2
  
@@ -1875,9 +1883,14 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  nc3 -= nc2; //不会报错，相当于没有效果
  
  nc3(25); //当委托列表为空时报错
+ 
  ```
+
+ #### 多重委托的细致处理
+ 多重委托只能获取最后一个委托的返回值，而如果需要自己进行委托处理，可以使用GetInvocationList方法获取_invocationList进行处理
  
  ### 泛型在委托上的实现
+ 匿名委托也是泛型委托的一种\
  ```
  delegate T NumberChange<T>(T obj);
  ```
