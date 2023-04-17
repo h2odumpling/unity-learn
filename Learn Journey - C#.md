@@ -2336,7 +2336,13 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
          Type t = assembly.GetType("Test.myClass", false, true);     //寻找目标类
          object obj = Activator.CreateInstance(t);       //实例化对应Type
          MethodInfo mi = t.GetMethod("isMove");      //判断是否有方法
-         var isMove = (bool)mi.Invoke(obj, null);        //<MethodInfo>.Invoke 使用参数二的参数执行参数一中的mi方法
+         try{
+            var isMove = (bool)mi.Invoke(obj, null);        //<MethodInfo>.Invoke 使用参数二的参数执行参数一中的mi方法
+         }
+         catch( System.Reflection.TargetInvocationException e){     //使用invoke时，mi可能会报错，但会被转化为TargetInvocationException类型的报错
+            throw e.InnerException;     //调用InnerException获取最初的报错信息
+         }
+         
 
          if (isMove)
          {
