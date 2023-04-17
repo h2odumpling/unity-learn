@@ -820,7 +820,7 @@ FromPerson fp3 = p2 as FromPerson;
 
 
 
-# Nullable
+# 可空值类型|Nullable
 声明变量时可以声明其可能为空，这样在赋值其他可能为空也可能为值类型时就不会报错
 ```
 object obj = null;
@@ -832,6 +832,31 @@ Console.WriteLine( nullableValue.Value ); //当nullableValue为null时会出错
 Console.WriteLine(nullableValue.HasValue); //可以获取当前值是否有值，null时返回false
 Console.WriteLine( nullableValue.GetValueOrDefault() ); //当nullableValue为null时会返回对应类型的默认值，如int为0
 ```
+
+## 相关操作符
+
+### 一元操作符[+|++|-|--|!|~]
+可空值类型使用一元操作符时任何结果都是null
+
+### 二元操作符[&||]
+* 非Boolean类型的可空值类型其中一个为null结果就是null
+* Boolean类型的可空值类型，可理解为true为1，null为0，false为-1，&操作始终取小，|操作始终取大
+
+### 相等性操作符[==|!=]
+按正常关系比较
+
+### 关系操作符[>|<|>=|<=]
+两者其中之一为null，结果就为false
+
+## 可空值类型的装箱
+在为null时，不进行装箱操作直接返回null\
+在不为null时，只对值进行装箱，即int? 5 会装箱为 int 5\
+
+### 可空值类型的拆箱
+理论上不存在可空值类型的拆箱操作，因为可空值类型装箱时会进行值类型的装箱\
+
+### 可空值类型的GetType
+调用后会返回对应值类型的类型，而非Nullable<T>
 
 
 
