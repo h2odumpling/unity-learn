@@ -3151,7 +3151,6 @@ static void main()
  ```
 
 
-
  # 版本号管理
  一般由major、minor、build、revision构成
  * major 主版本号
