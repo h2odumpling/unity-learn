@@ -3041,11 +3041,37 @@ static void main()
  针对客户端应用进行GC优化，GC延迟很低\
 
  ### 服务器
- 针对服务器应用进行GC优化，主要优化
+ 针对服务器应用进行GC优化，主要优化\
+ 通过GCSettings中的Boolean属性的IsServerGC来设置是否在服务器模式中运行\
+ ```
+ using System;
+ using System.Runtime;  //GCSettings 在这个命名空间内
+
+ public static class Program{
+    public static void Main() {
+        Console.WriteLine("Application is running with server GC = " + GCSettings.IsServerGc);
+    }
+ }
+ ```
+
+ ## 强制垃圾回收
+ 可通过指向GC类的Collect方法进行强制垃圾回收\
+ GC.Collect(Int32 generation, GCCollectionMode mode, Boolean blocking)\
+ 
+ ### GCCollectiong|模式
+ * Default 默认，现等同于Forced
+ * Forced 强制回收指定或低于指定的代，一般用于调试
+ * Optimized 只有在释放大量内存或能减少碎片的情况下才执行回收，否则没有任何效果，一般用于生产环境
+
+
+ ## 通过GC监视内存使用情况
+ 可通过GC类的CollectionCount方法监视垃圾回收的次数\
+ CollectionCount(Int32 generation)\ 
+ 可以通过这种方法查看算法是否需要优化以便提升性能\
 
  ## 析构器
- 引用对象在GC时必定会执行的函数
- * 非必要情况下不使用析构器
+ 引用对象在GC时必定会执行的函数\
+ * 非必要情况下不使用析构器，因为析构器实际是执行了定义的Finalize方法，而且这个过程在GC回收之后执行，因此GC执行时会将要执行析构器的对象升代，因此对象存货的正常时间要长，增大了内存的开销
  * 析构器不互相依赖，尽量不调用其它对象，因为他们可能已经被GC回收，GC回收的顺序是不能保证的
 
  ## 资源清理方法
@@ -3076,7 +3102,8 @@ static void main()
  ```
 
  ### 推荐的实现方法
- using() 可以将实现IDisposable的引用对象在作用域结束后释放
+ using() 可以将实现IDisposable的引用对象在作用域结束后释放\
+ 实际using是一个try{}finally{}结构\
  ```
  using(Person p = new Person())
  {
@@ -3107,6 +3134,19 @@ static void main()
          Console.WriteLine("GC启动析构器");
          this.Dispose();
      }
+ }
+ ```
+
+
+ ## WeakReference<T>|弱引用
+ 实际是包装了一个GCHandle对象的的包装器\
+ 当一个对象被设为弱引用时应该将原强引用设置为null，不然弱引用无法生效\
+ 弱引用在垃圾回收时会立即被回收，未发生垃圾回收时则存放在托管堆内\
+ ```
+ WeakReference<Object> o = new WeakReference<Object> (new Object(), true);  //Boolean trackResurrection 用于标识是否启用终结器(Finalize)，设置为false时即使对象有终结器也不会执行终结器而被直接回收
+ Object z = o.Target;   //设为强引用
+ if(z != null){
+    //do something
  }
  ```
 
