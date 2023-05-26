@@ -381,7 +381,9 @@ https://docs.unity.cn/cn/current/ScriptReference/Vector3.html
 
 ### 点乘|点积|内积
 * x1x2+y1y2+z1z2    各分量的乘积和
-* 几何意义：等于V1V2的模长的积 * cos(n)   |a|·|b|*cos(n)    -1< cos(n) < 1
+* 几何意义1：等于V1V2的模长的积 * cos(n)   |a|·|b|*cos(n)    -1< cos(n) < 1
+* 几何意义2：当a为单位向量时，a·b即为b在a方向上的投影，+-符合表示ab直接的夹角
+* 几何意义3：a与自身点乘的结果为a模长的平方
 * 一般使用单位向量进行点乘，此时点乘结果即为cos值
 * 只能返回小于180的角
 常用应用
