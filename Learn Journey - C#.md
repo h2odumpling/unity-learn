@@ -2283,7 +2283,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
 # 反射
  一个运行的程序查看本身或其他程序元数据的行为叫做反射。即程序可以观测并修改自己的能力
  
- ##元数据
+ ## 元数据
  程序及类拥有的数据
  
  ## 基于type的反射
@@ -2295,7 +2295,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  string ss;
  ss.GetType();  //GetType 实际返回的是CLR保存在堆中的类型引用的地址，这里要区别于类型实例的引用地址
  Type.GetType("System.Sting", false, true);
- typeof(ss)
+ typeof(ss);
  ```
  
  ## 对于method|field|properrite的反射
@@ -2359,6 +2359,13 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  
  ## 运行时创建类
  >> 深入学习：System.Emit
+
+ ## 反射的缺点
+ 无法保证类型安全性\
+ 速度慢，消耗性能多，反射机制在运行时执行，且会不停的执行字符串搜索\
+
+ ### 通过其他方法规避使用反射
+ 使用基类的派生类型或基类实现的接口，利用转型调用基类定义的虚方法或接口定义的方法\
  
  
  
