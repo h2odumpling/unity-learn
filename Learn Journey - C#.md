@@ -3192,3 +3192,88 @@ static void main()
 
  ## 延时签名（部分签名）
  只使用公钥生成程序集
+
+
+
+ # 序列化和反序列化
+ * 序列化是将对象或图转换为字节流的过程
+ * 反序列化是将字节流转换回对象或图的过程
+ 作用：\
+ 可以保存应用程序的状态，并在程序下次运行时恢复\
+ 对象的传输，包括本地传输、网络传输等\
+ 进行数据压缩或加密\
+ 相关程序：\
+ 通信协议\
+ 数据类型匹配\
+ 错误处理\
+ 由结构构成的数组\
+
+ ```
+ internal static class QuickStart{
+    public static void Main(){
+        var objectGraph = new List<String> {"jeff","kirito"};
+        Stream stream = SerializeToMemory(objectGraph);
+        stream.Position = 0;    //将文件流光标置于最开始，否则会从流末尾开始读取
+        objectGraph = null;
+        objectGraph = (List<String>) DeserializeFromMemeory(stream);
+        foreach(var s in objectGraph){
+            Console.WriteLine(s);
+        }
+    }
+
+    //序列化对象
+    private static MemoryStream SerializeToMemory(Object objectGraph){
+        MemoryStream stream = new MemoryStream();
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(stream, objectGraph);
+        return stream;
+    }
+
+    //反序列化
+    //实际从流当前光标位置开始反序列化一个对象
+    private static DeserializeFromMemory(Stream stream){
+        BinaryFormatter formatter = new BinaryFormatter();
+        return formatter.Deserialize(stream);
+    }
+ }
+ ```
+
+ 序列化过程：\
+ 序列化时Serialize方法会通过反射查看对象类型包含哪些字段或对别的对象的引用，序列化时同时会序列化引用的对象\
+ 序列化时类的全名及类型定义的程序集全名会写入流，包括程序集的文件名、版本号、公钥信息等\
+ 
+ 反序列化过程：\
+ 反序列化首先会获取程序集的信息，通过Assembly.Load将程序集加载到当前AppDomain中\
+ 反序列化还会检查流的内容，并构造所有流中对象的实例，并初始化字段为序列化时的值。一般需要将反序列化返回的对象转为合适的类型\
+
+ 序列化引发的问题：\
+ 数据流中含有损坏数据，原因是序列化时不会对对象图中的所有引用进行验证，如果序列化过程中发现有无法序列化的类型就会报错，已经序列化并存入流中的内容就会变成损坏数据\
+
+ ## 序列化有关的特性
+
+ * SerializableAttribute
+ 可应用于class、struct、enum、delegate，其中enum及delegate总是可序列化的因此不用显式声明\
+ 不会被派生类型继承\
+ 一些敏感或安全数据或数据转移后没有含义或值时不应设置为可序列化\
+
+ * NonSerializableAttribute
+ 可应用于字段\
+ 将可序列化类型中的一些字段设置为不可序列化\
+ 减少无意义的数据被序列化，增加传输时的性能\
+
+ * OnDeserializing
+ 可应用于方法\
+ 使方法在反序列化字段之前调用\
+
+ * OnDeserialized
+ 可应用于方法\
+ 使方法在反序列化字段之后调用\
+ 可以初始化一些被设置无法序列化的字段的值\
+
+ * OnSerializing
+ 可应用于方法\
+ 使方法在序列化字段之前调用\
+
+ * OnSerialized
+ 可应用于方法
+ 使方法在序列化字段之后调用\
