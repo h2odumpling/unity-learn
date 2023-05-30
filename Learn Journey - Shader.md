@@ -64,3 +64,62 @@ Cg是由Nvidia提供的着色语言，与微软合作，真正意义上的跨平
 可以使用Unity Cg或GLSL，Unity Cg与Cg略有不同，类似于Mono基于CLR的移植\
 
    
+# 顶点坐标变换过程
+
+注：具体坐标系变换公式可查阅《Math：坐标系变换》\
+
+## 模型空间
+模型空间即为某个模型或对象自己的坐标系\
+
+## 世界空间
+世界空间即为Unity中的游戏空间\
+
+## 观察空间
+即摄像机空间\
+
+## 裁剪空间
+即齐次裁剪空间，这个过程中的变换矩阵一般称为投影矩阵或裁剪矩阵\
+
+Aspect：摄像机纵横比（在屏幕上显示的宽高比），在Unity中可通过Camera.aspect得到，具体值为ViewPort Rect中W与H的比值\
+Size：正交投影时视锥体竖直方向上高度的一半，在Unity中可通过设置Camera的Size得到\
+透视投影的变换矩阵：\
+M = [ cot(Fov/2)/Aspect 0          0                      0                     ] \
+    | 0                 cot(Fov/2) 0                      0                     | \
+    | 0                 0          -(Far+Near)/(Far-Near) -2Far*Near/(Far-Near) | \
+    [ 0                 0          -1                     0                     ] \ 
+透视投影的顶点变换：\
+P = [ cot(Fov/2)/Aspect 0          0                      0                     ] [ x ]\
+    | 0                 cot(Fov/2) 0                      0                     | [ y ]\
+    | 0                 0          -(Far+Near)/(Far-Near) -2Far*Near/(Far-Near) | [ z ]\
+    [ 0                 0          -1                     0                     ] [ 1 ]\ 
+  = [ x*cot(Fov/2)/Aspect                            ] \
+    | y*cot(Fov/2)                                   | \
+    | -z(Far+Near)/(Far-Near) - 2Far*Near/(Far-Near) | \
+    [ -z                                             ] \
+此时P的顶点分量w为-z，且可通过-w<=x<=w,-w<=y<=w,-w<=z<=w判断顶点是否在视锥体内，不在则需要被裁剪\
+正交投影的变换矩阵：\
+M = [ 1/(Aspect*Size) 0      0             0                      ] \
+    | 0               1/Size 0             0                      | \
+    | 0               0      -2/(Far-Near) -(Far+Near)/(Far-Near) | \
+    [ 0               0      0             1                      ] \ 
+正交投影的顶点变换：
+P = [ 1/(Aspect*Size) 0      0             0                      ] [ x ]\
+    | 0               1/Size 0             0                      | | y |\
+    | 0               0      -2/(Far-Near) -(Far+Near)/(Far-Near) | | z |\
+    [ 0               0      0             1                      ] [ 1 ]\ 
+  = [ x/Aspect*Size                          ] \
+    | y/Size                                 | \
+    | -2z/(Far-Near) - (Far+Near)/(Far-Near) | \
+    [ 1                                      ] \
+
+## 屏幕空间
+将裁剪空间中得到的视锥体投影到屏幕空间，我们会在这里得到像素坐标\
+先对透视投影进行进行标准齐次除法，又称为透视除法，即用齐次坐标的w分量分别除x、y、z分量，就可得到归一化的设备坐标，此时透视投影的裁剪空间会变换到一个立方体\
+Px = clipx*pixelWidth/(2clipw)+pixelWidth/2
+Py = clipy*pixelHeight/(2clipw)+picelHeight/2
+
+# 法线变换
+因为法线N垂直于切线T，因此TB·NB=0，而TB=M(A->B)TA，设NB=GNA，则M(A->B)TA·GNA=0，则TA(M(A->B)G)NA=0，则M(A->B)G=I时，上式成立，即G=(M(A->B)^T)^-1=(M(A->B)^-1)^T\
+由此若M(A->B)是正交矩阵，则G=M(A->B)，而只使用旋转时，M(A->B)就是正交矩阵，而当包含统一缩放时，变换矩阵就是1/k*M(A->B)，其余情况需要求解逆转置矩阵\
+
+
