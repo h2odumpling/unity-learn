@@ -37,15 +37,16 @@
 解决问题的思路
 
 ## 算法的评价标准
-* 运行时间
-* 占用空间
-一般情况下运行时间和占用空间是对立的
+* 时间复杂度：运行时间，一般与循环次数成正比，2次循环就是n^2
+* 空间复杂度：占用空间
+一般情况下运行时间和占用空间是对立的\
+时间复杂度
 
 
 
 # 冒泡
-遍历数组，把最大的元素放置于数组最后，依次遍历
-复杂度 O(n^2)
+遍历数组，把最大的元素放置于数组最后，依次遍历\
+复杂度 O(n^2)\
 ```
 void static Pop (int[] _arr){
   int i,j,temp;
@@ -121,48 +122,9 @@ public T[] Pop<T>(T[] arr,Func<T,T,bool> compareMethod)
 
 
 
-# 选择排序
-O(n^2)，当n比较小，快于冒泡
-```
-void static Selection (int[] _arr){
-  int i,j,min,temp;
-  for(i = 0; i < _arr.Length - 1; i++){
-    min = i;
-    for(j = i+1; j < _arr.Length; j++){
-      if(_arr[min] > _arr[j]){
-        min = j;
-      }
-    }
-    temp = _arr[min];
-    _arr[min] = _arr[i];
-    _arr[i] = temp;
-  }
-}
-```
-
-
-
-# 插入排序
-O(1)，当n比较小时比较适用
-```
-void static Insert (int[] _arr){
-  int i,j,temp;
-  for(i = 1; i < _arr.Length; i++;){
-    temp = _arr[i];
-    for(j = i-1; j >= 0; j--){
-      if(temp > _arr[j]){
-        _arr[j+1] = _arr[j];
-        _arr[j] = _arr[temp];
-      }
-    }
-  }
-}
-```
-
-
-
 # 二分查找
-必须在有序队列中进行
+log(n)\
+必须在有序队列中进行\
 ```
 int static Quick(int[] _arr, int tar){
   int left = 0;
@@ -184,10 +146,37 @@ int static Quick(int[] _arr, int tar){
 
 
 
-# 直接插入排序
-遍历原数组，从后往前遍历新数组，若新数组元素大于原数组元素则后移一位，直至将原数组元素插入新数组中
+# 插入排序
+O^1~O^2\
+遍历数组，每次排序0~i的元素，0~i-1的元素是有序的，实际去查找i元素的位置，若有j位置的元素小于（升序时）i位置的元素，则i的位置在j+1处即可结束本次循环开始下一次循环\
 ```
+//不创建新数组
 static int[] insertSort(int[] ints)
+{
+    int temp;
+    for (int i = 0; i < ints.Length; i++)
+    {
+        temp = ints[i];
+        if (i > 0)
+        {
+            for (int j = i - 1; j >= 0; j--)
+            {
+                if (ints[j] > temp)
+                {
+                    ints[j + 1] = ints[j];
+                    ints[j] = temp;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+    return ints;
+}
+//创建新数组的情况下，遍历原数组，从后往前遍历新数组，若新数组元素大于原数组元素则后移一位，直至将原数组元素插入新数组中
+static int[] newInsertSort(int[] ints)
 {
     int[] result = new int[ints.Length];
     for (int i = 0; i < ints.Length; i++)
@@ -221,7 +210,8 @@ static int[] insertSort(int[] ints)
 
 
 # 选择排序
-循环遍历原数组，每次取出最小或最大的值
+O(n^2)，当n比较小，快于冒泡\
+循环遍历原数组，每次取出最小或最大的值\
 ```
 static int[] chooseSort(int[] ints)
 {
@@ -255,9 +245,10 @@ static int[] chooseSort(int[] ints)
 
 
 # 快速排序
-因速度及性能在各类排序方法中较好，固较为常用
-从数组中取出第一位数x，首位索引l，末尾索引r，先从后往前遍历，将小于x的数y放于x的位置，再从前往后遍历，将大于x的值z放于y处，循环此过程直到l=r则把x的值插入此处，此时x左边都是小于x的数，x右边都是大于x的数
-按同样方法处理x左边的数及右边的数，递归得出最后的排序
+O(nlog(n))~O(n^2)
+因速度及性能在各类排序方法中较好，固较为常用\
+从数组中取出第一位数x，首位索引l，末尾索引r，先从后往前遍历，将小于x的数y放于x的位置，再从前往后遍历，将大于x的值z放于y处，循环此过程直到l=r则把x的值插入此处，此时x左边都是小于x的数，x右边都是大于x的数\
+按同样方法处理x左边的数及右边的数，递归得出最后的排序\
 
 ```
 static int[] quickSort(int[] ints, int left, int right)

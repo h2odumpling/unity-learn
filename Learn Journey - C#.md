@@ -1477,7 +1477,7 @@ using (StreamReader sr = File.OpenText(@"path"))
 ```
 
 ### FileMode
-* Append    打开并追加，需要与FileMode = Write，一起使用
+* Append    打开并追加，需要与FileAccess = Write，一起使用
 * Create    创建新并覆盖
 * CreateNew   创建新，如果已存在则报错
 * Open    打开，不存在会报错
@@ -1715,7 +1715,7 @@ Console.WriteLine(message);
 
 
 # 正则表达式
-@"正则表达式"可表示这是一个正则表达式，否则\n需写成\\n
+@"正则表达式"可避免unicode转义，表示这是一个正则表达式，否则\n需写成\\n
 参考微软文档：https://learn.microsoft.com/zh-cn/dotnet/standard/base-types/regular-expressions
 
 ## Regex类
@@ -2311,7 +2311,7 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
  type.GetMethods();   //获取int类型的所有方法
  type.GetMethods(BindingFlags.Public);   //获取int类型的所有public方法
  ```
- 
+ 你
  ## 基于Assembly(程序集)的反射
  
  ### 动态加载
@@ -3238,17 +3238,6 @@ static void main()
  }
  ```
 
- 序列化过程：\
- 序列化时Serialize方法会通过反射查看对象类型包含哪些字段或对别的对象的引用，序列化时同时会序列化引用的对象\
- 序列化时类的全名及类型定义的程序集全名会写入流，包括程序集的文件名、版本号、公钥信息等\
- 
- 反序列化过程：\
- 反序列化首先会获取程序集的信息，通过Assembly.Load将程序集加载到当前AppDomain中\
- 反序列化还会检查流的内容，并构造所有流中对象的实例，并初始化字段为序列化时的值。一般需要将反序列化返回的对象转为合适的类型\
-
- 序列化引发的问题：\
- 数据流中含有损坏数据，原因是序列化时不会对对象图中的所有引用进行验证，如果序列化过程中发现有无法序列化的类型就会报错，已经序列化并存入流中的内容就会变成损坏数据\
-
  ## 序列化有关的特性
 
  * SerializableAttribute
@@ -3277,3 +3266,25 @@ static void main()
  * OnSerialized
  可应用于方法
  使方法在序列化字段之后调用\
+
+ ## 格式化器与序列化、反序列化过程
+ 具体可通过查看FormatterServices基类查看格式化器需要实现的方法\
+
+ ### 序列化过程
+ 序列化时Serialize方法会通过反射查看对象类型包含哪些字段或对别的对象的引用，序列化时同时会序列化引用的对象\
+ 1.调用GetSerializableMembers方法利用反射获取类型public及private的可实例化字段，返回由MemberInfo对象构成的数组\
+ 2.将MemberInfo数组传递给GetObjectData方法，将对象中字段的值传入MemberInfo数组的并行数组Object[]中\
+ 3.格式化器将程序集标识和类型的完整名称写入流中，包含程序集的文件名、版本号、公钥信息等\
+ 4.格式化器遍历两个数组，将每个成员的名称和值写入流中\
+
+ ### 反序列化过程
+ 1.格式化器从流中读取程序集标识和完整的类型名称，如果程序集未加载就尝试加载，无法加载就抛出SerializationException异常，如果已加载就返回程序集信息和类名给GetTypeFromAssembly方法，返回一个type对象，表示需要反序列化的对象\
+ 2.调用GetUninitializedObject方法，为反序列化对象分配内存\
+ 3.调用GetSerializableMembers方法返回需要反序列化字段\
+ 4.格式化器根据流中数据初始化Object对象\
+ 5.将新分配对象、MemberInfo数组及并行Object数组传递给PopulateObjectMembers方法，遍历数组将每个字段初始化为对于的值\
+
+ 序列化引发的问题：\
+ 数据流中含有损坏数据，原因是序列化时不会对对象图中的所有引用进行验证，如果序列化过程中发现有无法序列化的类型就会报错，已经序列化并存入流中的内容就会变成损坏数据\
+
+ 
