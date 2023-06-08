@@ -741,8 +741,13 @@ OnTriggerExit(Collider colOther)     两者接触的最后一帧
 
 
 # Physics
-物理方法
-Raycast  射线检测
+描述物理helper类方法的静态类\
+
+## 静态方法
+* Raycast  射线检测，返回最初碰撞的碰撞点信息
+Raycast(Ray ray, out RaycastHit hitInfo)\
+* RaycastAll   射线检测，返回全部碰撞点信息，无序
+RaycastAll(Ray ray)
 
 
 
