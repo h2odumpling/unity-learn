@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Default{
     /// <summary>
-    /// 
+    /// UI拖拽
     /// </summary>
     public class Test : MonoBehaviour,IDragHandler,IPointerDownHandler
     {
