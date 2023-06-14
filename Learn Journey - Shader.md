@@ -1,6 +1,8 @@
 # Shader
 Shader是GPU流水线上一些可以高度编程的阶段，这些代码在GPU中运行，并控制流水线中的渲染细节\
 
+
+
 # 渲染流水线
 
 ## 由CPU主导的阶段
@@ -51,8 +53,10 @@ z表示深度值，对后续的深度测试有重要的影响作用\
 混合操作需要确定物体是否透明，对于透明物体需要对颜色缓冲区的颜色及当前片元颜色进行混合，而不透明物体则可以使用片元颜色直接更新颜色缓冲区，类似于ps中图层的合并\
 
 
+
 # OpenGL与DirectX
 实际是提供了显卡驱动与应用程序直接的接口过渡，CPU发送渲染指令给OpenGL或DirectX，通过后者传递至显卡驱动，再由显卡驱动翻译命令使GPU工作\
+
 
 
 # HLSL与GLSL与Cg
@@ -64,6 +68,7 @@ Cg是由Nvidia提供的着色语言，与微软合作，真正意义上的跨平
 可以使用Unity Cg或GLSL，Unity Cg与Cg略有不同，类似于Mono基于CLR的移植\
 
    
+
 # 顶点坐标变换过程
 
 注：具体坐标系变换公式可查阅《Math：坐标系变换》\
@@ -118,8 +123,125 @@ P = [ 1/(Aspect*Size) 0      0             0                      ] [ x ]\
 Px = clipx*pixelWidth/(2clipw)+pixelWidth/2
 Py = clipy*pixelHeight/(2clipw)+picelHeight/2
 
+
+
 # 法线变换
 因为法线N垂直于切线T，因此TB·NB=0，而TB=M(A->B)TA，设NB=GNA，则M(A->B)TA·GNA=0，则TA(M(A->B)G)NA=0，则M(A->B)G=I时，上式成立，即G=(M(A->B)^T)^-1=(M(A->B)^-1)^T\
 由此若M(A->B)是正交矩阵，则G=M(A->B)，而只使用旋转时，M(A->B)就是正交矩阵，而当包含统一缩放时，变换矩阵就是1/k*M(A->B)，其余情况需要求解逆转置矩阵\
 
 
+
+# Unity Shader
+
+## VS 扩展
+* ShaderLabVS
+UnityShader编程扩展，高亮代码等\
+* Sublime
+换行缩进插件\
+
+## Shader结构
+```
+Shader "ShaderName"
+{
+  //定义shader的属性
+  Properties {
+    //声明一个color类型顶点属性
+    _Color ("Color Tint", Color) = (1.0, 1.0, 1.0, 1.0)
+  }
+  //针对不同显卡进行渲染定义
+  SubShader
+  {
+
+    Pass
+    {
+      CGPROGRAM
+      //定义顶点着色器函数
+      #pragma vertex vert
+      //定义片元着色器函数
+      #pragma fragment frag
+
+      //加载UnityCg
+      #include "UnityCg.cginc"
+
+      //定义一个和属性中名称相同的变量，同步
+      fixed4 _Color;
+
+      struct a2v{
+        //用顶点坐标填充vertex
+        float4 vert : POSITION;
+        //用法线方向填充normal
+        float3 normal : NORMAL;
+        //用模型第一套纹理填充texcoord
+        float texcoord : TEXCOORD0;
+      };
+
+      struct v2f{
+        //pos里包含了顶点在裁剪空间的位置信息
+        float4 pos : SV_POSITION;
+        //存储颜色信息
+        float3 color : COLOR0;
+      };
+
+      v2f vert(a2v v){
+        v2f o;
+        o.pos = UnityObjectToClipPos (v.vert);
+        o.color = v.normal * 0.5 + fixed3(0.5, 0.5, 0.5);
+        return o;
+      }
+
+      //float4 vert(float4 v : POSITION) : SV_POSITION{
+      //    return UnityObjectToClipPos(v);
+      //}
+
+      float4 frag(v2f o) : SV_TARGET{
+        fixed3 c = o.color;
+        c *= _Color.rgb;
+        return fixed4(c, 1.0);
+      }
+
+      //float4 frag() : SV_TARGET{
+      //    return fixed4(1.0, 1.0, 1.0, 1.0);
+      //}
+
+      ENDCG
+    }
+  }
+}
+```
+
+## Shader中使用的数据结构
+* float
+32位浮点型，同c#\
+* half
+16位浮点型，精度范围在-60000~60000\
+* fixed
+11位浮点型，精度范围在-2.0~2.0
+
+### 数据结构带来的差异
+* PC等桌面型GPU，一般会无视数据结构直接按float进行计算\
+* 移动平台的GPU，一般会按设置精度进行计算\
+* fixed 实际只在较旧的移动端GPU上使用，现在大部分GPU把他等同于half\
+
+## Shader Debug
+在shader编码中进行debug的方法\
+
+### 假彩色图像
+把需要调试的变量设为0-1之间，然后把他们作为颜色输出，判断值是否正确\
+
+## DirectX|OpenGl
+DirectX的语法更加严格，因此最好用严格的语法结构进行Shader编写\
+
+## Shader注意点
+* DirectX的语法更加严格
+最好用严格的语法结构进行Shader编写\
+* 除以0的情况要避免出现
+不同平台对除以零得到的值有可能不同，有些平台可以得到白色，有些平台可以得到黑色，有些平台可能直接报错\
+对有可能为0的分母，需要强行约束为不为零，也可以加或减一个特别小的浮点数来达成这点\
+
+## Shader性能优化
+* 减少在Shader中的运算，尤其在片元着色器
+* 减少if、while等控制语句在Shader上的运行
+主要是由于GPU和CPU关于这些语句的实现方式不同，导致GPU中的这些语句性能很差\
+避免控制语句的嵌套\
+if中尽量使用常量\
+计算流程尽可能上行，将片元着色器的放在顶点着色器执行，将顶点着色器的放在CPU执行\
