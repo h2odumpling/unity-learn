@@ -332,3 +332,8 @@ static int[] quickSort(int[] ints, int left, int right)
 对未登录词汇的识别效果好\
 劣势：\
 实现复杂\
+
+
+
+# 文本相似度算法
+## BM25
