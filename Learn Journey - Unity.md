@@ -21,18 +21,96 @@
 
 
 # Camera
+## Clear Flags
+* Skybox
+* Solid Color
+* Depth Only    仅把摄像机照到的物体覆盖到画面上，空白部分不渲染
+* Don't Clear
+
+## 其他属性设置
+* Culling Mask 摄像机绘制的物体层
 * Field of view 摄像机镜头的数值，数值越大镜头越远，常做瞄准镜等视野缩放功能
+* Depth 深度值，深度值大的摄像机会覆盖深度小的摄像机
+* Projection 投射方式 projective 3D  Orthographic 2D
+
+## UI摄像机
+* 使用UI摄像机是为了节省性能，避免画布随摄像机多次改变
+* 显示UI时，Depth值大于主摄像机
+* Clear FLags 设置为Deepth Only，不渲染UI摄像机的空白部分
+* Culling Mask 仅选择UI
+* Projection 投射方式选择Orthographic无视物体离摄像机远近导致的大小变化
+
 
 
 # UGUI
 RaycastTarget   是否可以交互，开启会消耗性能，应只在需要交互的ui上开启
 Interatable   是否可用，应该用于可变性调节某些选项，比如多级控制按钮
 
-### Text
-### Image
+## Canvas
+使用像素进行衡量，在编辑器中1像素表现和1米一致
+* 同画布，兄弟关系间，index较大的会盖住index较小的
+* 不同画布，Canvas排序属性较大的会盖住较小的
+### Render Mode 画布模式
+#### Screen Space - Overlay    2D画布-覆盖
+* 画布会永远覆盖3D物体，UI独立渲染
+* Canvas的坐标系与世界屏幕坐标系覆盖
+#### Screen Space - Camera    2D画布-摄像机
+* 当未设置渲染摄像机时，可以视为Overlay的Camera
+* 画布会随着摄像机变化而变换
+* 画布与3D物体中距离摄像机近的会覆盖远的
+* Plane Dsitance 画布到摄像机的距离
+#### 2D画布的取舍
+* 当覆盖模式与摄像机模式的效果一致时，选择覆盖模式节省性能
+* 当需要3D物体/特效遮挡ui时，使用摄像机模式
+#### World Space   3D画布
+* 3D画布受摄像机视野限制
+* 一般缩小画布适配大小
+
+## Rect Transform 矩形变换
+表示一个容纳UI元素的矩形
+* 从transform继承
+* Pos   轴心点相对于自身锚点的位置
+* Anchor  锚点 和屏幕位置的百分比绑定，和图片通过像素大小绑定，锚点分开表示随屏幕大小自适应大小，Min为锚点左下角点的位置，Max为锚点右上角的点的位置
+* Pivot   轴心点 X,Y 百分比
+
+### RectTransform
+* anchoredPosition3D    Pos
+* anchorMin|anchorMax   锚点位置
+* rect.width    UI宽度，只读
+* rect.height   UI高度，只读
+* SetSizeWithCurrentAnchors(RectTransform.Axis.Horizotion....,size)     设置UI的宽高等属性
+* sizeDelta     物体宽/高度减锚点间距，当锚点Min=Max时等同于物体的宽高属性
+
+### RectTransformUtility  UGUI常用工具类
+
+* transform.position  世界坐标，当画布为overlay时，世界坐标与屏幕坐标重合
+* transform.localposition  当前轴心点相当于父ui轴心点的位置
+
+### Image   图片
+* Image Type
+FillAmount  图片填充比例
+* Set Native Size  设置图片本地大小
+
+### Text    文本框
+* Rich Text 富文本标记    b|i|size|color
+* Horizontal Overflow|Vertical Overflow     水平溢出|垂直溢出
+* Best Fit  随文本框大小按MinSize|MaxSize限制进行缩放
+>>深入学习： 图文混排
+
+### Button  按钮
+* Transition 按钮切换模式
+Color Tint  按颜色
+Split Swap  按图片
+Animation   按动画
+
+* OnClick
+
 ### Toggle    单、复选
-### Button
+* label
+* Is On   选择状态
+
 ### DropDown
+* Options   下拉选项
 
 ### Slider    滑动条，可做血条、进度条
 * Handle    标识滚动条的位置的子物体，做血条进度条时可以隐藏或做成特效
