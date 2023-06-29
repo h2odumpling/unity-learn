@@ -106,9 +106,9 @@
 以下矩阵M中的元素，可以表示为m11,m12,m13,m21,m22,m23,m31,m32,m33\
 ```math
 \begin{bmatrix}
-1&1&1 \\
-2&2&2 \\
-3&3&3
+1 & 1 & 1 \\
+2 & 2 & 2 \\
+3 & 3 & 3
 \end{bmatrix}
 ```
 向量可以看成只有1行的行矩阵或只有1列的列矩阵\
@@ -117,9 +117,9 @@
 ```math
 kM = 
 \begin{bmatrix}
-1&1&1 \\
-2&2&2 \\
-3&3&3
+1 & 1 & 1 \\
+2 & 2 & 2 \\
+3 & 3 & 3
 \end{bmatrix}
 ```
 
@@ -146,9 +146,9 @@ Mij^T = Mji\
 如果一个方阵除对角元素外的其他元素都为0，那么这个方阵就是一个对角矩阵\
 ```math
 \begin{bmatrix}
-1&0&0 \\
-0&2&0 \\
-0&0&3
+1 & 0 & 0 \\
+0 & 2 & 0 \\
+0 & 0 & 3
 \end{bmatrix}
 ```
 
@@ -157,9 +157,9 @@ Mij^T = Mji\
 单位矩阵满足 MI = IM = M\
 ```math
 \begin{bmatrix}
-1&0&0 \\
-0&1&0 \\
-0&0&1
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
 \end{bmatrix}
 ```
 
@@ -195,7 +195,7 @@ V3
 ```math
 M^T=
 \begin{bmatrix}
-V1&V2&V3
+V1 & V2 & V3
 \end{bmatrix}
 ```
 则
@@ -207,9 +207,9 @@ V2·V1 & V2·V2 & V2·V3 \\
 V3·V1 & V3·V2 & V3·V3 
 \end{bmatrix} =
 \begin{bmatrix}
-1&0&0 \\
-0&1&0 \\
-0&0&1 
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 
 \end{bmatrix} = I
 ```
 
@@ -254,19 +254,19 @@ z+tz \\
 1 & 0 & 0 & tx \\
 0 & 1 & 0 & ty \\
 0 & 0 & 1 & tz \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 \begin{bmatrix}
 x \\
 y \\
 z \\
-0 \\
+0 
 \end{bmatrix} = 
 \begin{bmatrix}
 x \\
 y \\
 z \\
-0 \\
+0 
 \end{bmatrix}
 ```
 
@@ -276,7 +276,7 @@ z \\
 1 & 0 & 0 & -tx \\
 0 & 1 & 0 & -ty \\
 0 & 0 & 1 & -tz \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 
@@ -289,19 +289,19 @@ z \\
 kx & 0 & 0 & 0 \\
 0 & ky & 0 & 0 \\
 0 & 0 & kz & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 \begin{bmatrix}
 x \\
 y \\
 z \\
-1 \\
+1 
 \end{bmatrix} = 
 \begin{bmatrix}
 x*kx \\
 y*ky \\
 z*kz \\
-1 \\
+1 
 \end{bmatrix}
 ```
 
@@ -311,19 +311,19 @@ z*kz \\
 kx & 0 & 0 & 0 \\
 0 & ky & 0 & 0 \\
 0 & 0 & kz & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 \begin{bmatrix}
 x \\
 y \\
 z \\
-0 \\
+0 
 \end{bmatrix} = 
 \begin{bmatrix}
 x*kx \\
 y*ky \\
 z*kz \\
-0 \\
+0 
 \end{bmatrix}
 ```
 
@@ -334,7 +334,7 @@ z*kz \\
 \frac{1}{kx} & 0 & 0 & 0 \\
 0 & \frac{1}{ky} & 0 & 0 \\
 0 & 0 & \frac{1}{kz} & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 
@@ -349,7 +349,7 @@ Rx(θ) =
 1 & 0 & 0 & 0 \\
 0 & cos(θ) & -sin(θ) & 0 \\
 0 & sin(θ) & cos(θ) & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 ```math
@@ -358,7 +358,7 @@ Ry(θ) =
 cos(θ) & 0 & sin(θ) & 0 \\
 0 & 1 & 0 & 0 \\
 -sin(θ) & 0 & cos(θ) & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 ```math
@@ -367,7 +367,7 @@ Rz(θ) =
 cos(θ) & -sin(θ) & 0 & 0 \\
 sin(θ) & cos(θ) & 0 & 0 \\
 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 
@@ -381,7 +381,7 @@ sin(θ) & cos(θ) & 0 & 0 \\
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 
@@ -396,7 +396,7 @@ M(c→p) =
 | & | & | & | \\
 Xc & Yc & Zc & Oc \\
 | & | & | & | \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 ```
 ```math
@@ -405,7 +405,7 @@ M(c→p)Ac =
 | & | & | & | \\
 Xc & Yc & Zc & Oc \\
 | & | & | & | \\
-0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 
 \end{bmatrix}
 \begin{bmatrix}
 a \\
@@ -421,14 +421,14 @@ M(c→p) =
 \begin{bmatrix}
 | & | & | \\
 Xc & Yc & Zc \\
-| & | & | \\
+| & | & | 
 \end{bmatrix} 
 = M(p→c)^-1
 = M(p→c)^T =
 \begin{bmatrix}
 \cdots & Xp & \cdots \\
 \cdots & Yp & \cdots \\
-\cdots & Zp & \cdots \\
+\cdots & Zp & \cdots 
 \end{bmatrix} 
 ```
 M(c→p)是正交矩阵，因为坐标轴都是正交矩阵\
@@ -438,21 +438,21 @@ M(c→p)Xp =
 \begin{bmatrix}
 \cdots & Xp & \cdots \\
 \cdots & Yp & \cdots \\
-\cdots & Zp & \cdots \\
+\cdots & Zp & \cdots 
 \end{bmatrix} 
 \begin{bmatrix}
 | \\
 Xp \\
-| \\
+| 
 \end{bmatrix} =
 \begin{bmatrix}
 Xp·Xp \\
 Yp·Xp \\
-Zp·Xp \\
+Zp·Xp 
 \end{bmatrix} =
 \begin{bmatrix}
 1 \\
 0 \\
-0 \\
+0 
 \end{bmatrix}
 ```
