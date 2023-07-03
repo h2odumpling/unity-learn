@@ -401,6 +401,7 @@ MonoBehaviour 相关的特性
 * GetButtonDown(string VirtualButtonName)   虚拟按键在这帧按下
 * GetButtonUp(string VirtualButtonName)   虚拟按键在这帧抬起
 * GetAxis(string VirtualButtonName)     获取虚拟按键现在返回的值
+常用的默认设置的值有Mouse X(鼠标左右偏移量)、Mouse Y(鼠标上下偏移量)
 * GetAxisRaw(string VirtualButtonName)     获取虚拟按键现在返回的值(0|1|-1)(无视Gravity,及Sensitivity的影响)
 
 ## InputManager
