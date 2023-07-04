@@ -321,45 +321,76 @@ getComponentInParent T 按深度获取自身或父物体的组件
 
 由于挂载在GameObject的组件都继承于Component类，都可以通过GetComponent的方法获取GameObject上的其它组件
 子类：
+
 ### Transform
+> 编辑器里显示的是物体的**local属性**
+> 举个栗子：
+> 当物体编辑器显示positon为(0,0,4)，而父物体scale为(1,1,2)，则实际物体距离父物体在世界坐标系中的距离为8
+
+#### 枚举器
+transform是实现了IEnumerable接口的枚举器\
 循环GameObject的Transform组件，可以得到下一级的子物体的Transform组件
-编辑器里显示的全是物体的local属性
-```
+```c#
 foreach(Transform child in this.Transform){
     child
 }
 ```
-* root 获取根物体Transform组件
-* parent 获取父物体Transform组件
-* setParent(tf,isWorldSpace) 设置父物体为tf，isWorldSpace表示位置如何根据父物体改变，true时为世界坐标不变而改变自身坐标相对于父物体的坐标值，false时为将现在的坐标视为自身对父物体的坐标值，设置为null则脱离父子关系
-* DispatchChildren  解散所有子物体（非删除）
-* GetSiblingIndex   获取该对象的同级索引
-* SetAsFirstSibling   设置为兄弟索引第一
-* SetAsLastSibling   设置为兄弟索引最后
-* SetSiblingIndex   按索引设置为兄弟索引的第几个
 
+#### 变量
+* root\
+  获取根物体Transform组件
+* parent\
+  获取父物体Transform组件
+* position\
+  世界坐标的位置
+* localPosition\
+  相对于父物体的坐标位置
+* rotation\
+  相对于世界的旋转
+* localRotation\
+  相对于父物体的旋转
+* localScale\
+  相对于父物体的缩放比例，即父121，子121，子实际为141
+* lossyScale\
+  物体与模型的缩放比例，实际即为自身的localScale乘父物体的localScale 只读属性
+* forward\
+  自身坐标系向前的单位向量
+* right\
+  自身坐标系向右的单位向量
+* up\
+  自身坐标系向上的单位向量
+* eulerAngles\
+  物体的欧拉角
+* localEulerAngles\
+  物体相对父级的欧拉角
 
-* position  世界坐标的位置
-* localPosition 相对于父物体的坐标位置
-* rotation  相对于世界的旋转
-* localRotation  相对于父物体的旋转
-* localScale  相对于父物体的缩放比例，即父121，子121，子实际为141
-* lossyScale  物体与模型的缩放比例，实际即为自身的localScale乘父物体的localScale 只读属性
-方法
-* forward   自身坐标系向前的单位向量
-* right     自身坐标系向右的单位向量
-* up    自身坐标系向上的单位向量
-* eulerAngles   物体的欧拉角
-* localEulerAngles   物体相对父级的欧拉角
-
-默认为朝自身坐标系方法，可添加Space.World参数表示向世界坐标系的运动方法，或传入其他变换组件表示使用根据别的物体移动
-* Translate 移动
-* Rotate  旋转
-* RotateAround (point,Vector3,n°) 围绕某点绕Vector3的轴旋转n°
-* LookAt    注视旋转，让物体的向前向量指向target的位置
-* TransformPoint(Vector3)   返回从自身轴心点按自身坐标系移动Vector3后的世界坐标系
-
-* Find("name")  通过游戏对象名称查找子对象
+#### 方法
+* setParent(tf,isWorldSpace)\
+  设置父物体为tf，isWorldSpace表示位置如何根据父物体改变，true时为世界坐标不变而改变自身坐标相对于父物体的坐标值，false时为将现在的坐标视为自身对父物体的坐标值，设置为null则脱离父子关系
+* DispatchChildren\
+  解散所有子物体（非删除）
+* GetSiblingIndex\
+  获取该对象的同级索引
+* SetAsFirstSibling\
+  设置为兄弟索引第一
+* SetAsLastSibling\
+  设置为兄弟索引最后
+* SetSiblingIndex\
+  按索引设置为兄弟索引的第几个
+* Translate\
+  移动
+* Rotate\
+  旋转
+* RotateAround (point,Vector3,n°)\
+  围绕某点绕Vector3的轴旋转n°\
+  实际是使用Quaternion的AngleAxis实现的
+* LookAt(point, Vector3)\
+  注视旋转，让物体的向前向量指向target的位置\
+  可以传入Vector3来标识y轴方向以确定x轴的方法
+* TransformPoint(Vector3)
+  返回从自身轴心点按自身坐标系移动Vector3后的世界坐标系
+* Find("name")\
+  通过游戏对象名称查找子对象
 
 ### RigidBody
 ### ParticleSystem
