@@ -565,6 +565,92 @@ $B = A^{-1}$
 * 因为$A^k$，$A^l$，$E$均可以交换，则A的不同的多项式也可以交换，因为A的多项式相乘，始终是$A^k$，$A^l$，$E$在相乘
 * 若$A = P \lambda P^{-1}$，则$A = P \phi (\lambda) P^{-1}$
 
+## 克拉默法则
+含有n个未知量的线性方程组 *
+$$
+\begin{cases}
+a_{11} x_1 + a_{12} x_2 + \cdots + a_{1n} x_n = b_1 \\
+a_{21} x_1 + a_{22} x_2 + \cdots + a_{2n} x_n = b_2 \\
+\vdots \\
+a_{n1} x_1 + a_{n2} x_2 + \cdots + a_{nn} x_n = b_n
+\end{cases}
+$$
+则系数矩阵可以表示为A
+$$
+A = 
+\begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{nn} 
+\end{bmatrix}
+$$
+未知数矩阵可以表示为X
+$$
+X = 
+\begin{bmatrix}
+x_{1}\\
+x_{2}\\
+\vdots \\
+x_{n}\\
+\end{bmatrix}
+$$
+常数矩阵可以表示为b
+$$
+b = 
+\begin{bmatrix}
+b_{1}\\
+b_{2}\\
+\vdots \\
+b_{n}\\
+\end{bmatrix}
+$$
+则多项式可以表示为 $AX = b$ \
+且若$|A| \neq 0$，则 * 有唯一解，$x_1 = \frac{|A_1|}{|A|}$，$x_2 = \frac{|A_2|}{|A|}$ $\cdots$ $x_n = \frac{|A_n|}{|A|}$ \
+其中 $A_j$ 可以表示为系数矩阵A中第j列元素用常数项代替得到的矩阵
+$$
+A_j = 
+\begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1,j-1} & b_1 & a_{1,j+1} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2,j-1} & b_2 & a_{2,j+1} & \cdots & a_{2n} \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{n,j-1} & b_n & a_{n,j+1} & \cdots & a_{nn} 
+\end{bmatrix}
+$$
+**证明：** \
+$|A| \neq 0$，所以A可逆，对$AX = b$左乘$A^{-1}$ \
+$$
+X = A^{-1} b = \frac{1}{|A|} A^* b
+$$
+$$
+\begin{bmatrix}
+x_{1}\\
+x_{2}\\
+\vdots \\
+x_{n}\\
+\end{bmatrix} = \frac{1}{|A|}
+\begin{bmatrix}
+A_{11} & A_{12} & \cdots & A_{1n}\\
+A_{21} & A_{22} & \cdots & A_{2n}\\
+\vdots & \vdots & \ddots & \vdots & \\
+A_{n1} & A_{n2} & \cdots & A_{nn}\\
+\end{bmatrix}
+\begin{bmatrix}
+b_{1}\\
+b_{2}\\
+\vdots \\
+b_{n}\\
+\end{bmatrix} = \frac{1}{|A|}
+\begin{bmatrix}
+A_{11}b_1 + A_{12}b_2 + \cdots + A_{1n}b_n\\
+A_{21}b_1 + A_{22}b_2 + \cdots + A_{2n}b_n\\
+\vdots \\
+A_{n1}b_1 + A_{n2}b_2 + \cdots + A_{nn}b_n\\
+\end{bmatrix}
+$$
+则 $|A_j| = A_{11}b_1 + A_{12}b_2 + \cdots + A_{1n}b_n$，为A的第j列为b的矩阵的第j列展开
+则 $x_j = \frac{|A_j|}{|A|}$
+
 
 
 ## 齐次坐标
