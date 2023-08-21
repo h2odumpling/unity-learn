@@ -659,6 +659,207 @@ $$
 ## 齐次坐标
 M33的矩阵不足以表示平移、缩放等操作，因此我们把它扩展到M44的矩阵，齐次坐标也可能超过四维\
 
+## 分块矩阵
+按一定规则把矩阵分为多个矩阵，通过观察达到简化计算的目的
+$$
+A = 
+\begin{bmatrix}
+a_{11} & a_{12} | & a_{13} & a_{14}\\
+a_{21} & a_{22} | & a_{23} & a_{24}\\
+-- & -- & -- & -- \\
+a_{31} & a_{32} | & a_{33} & a_{34}
+\end{bmatrix}
+$$
+分割得
+$$
+A = 
+\begin{bmatrix}
+A_{11} & A_{12}\\
+A_{21} & A_{22}
+\end{bmatrix}
+$$
+$$
+A_{11} = 
+\begin{bmatrix}
+a_{11} & a_{12}\\
+a_{21} & a_{22}
+\end{bmatrix},
+A_{12} = 
+\begin{bmatrix}
+a_{13} & a_{14}\\
+a_{23} & a_{24}
+\end{bmatrix},
+A_{21} = 
+\begin{bmatrix}
+a_{31} & a_{32}
+\end{bmatrix},
+A_{22} = 
+\begin{bmatrix}
+a_{33} & a_{34}
+\end{bmatrix}
+$$
+
+### 分块矩阵的和差
+AB同型且做相同分块方式，则和差为对应块的加减
+$$
+A + B =
+\begin{bmatrix}
+A_{11} & \cdots & A_{1r}\\
+\vdots &  & \vdots \\
+A_{s1} & \cdots & A_{sr}
+\end{bmatrix} +
+\begin{bmatrix}
+B_{11} & \cdots & B_{1r}\\
+\vdots &  & \vdots \\
+B_{s1} & \cdots & B_{sr}
+\end{bmatrix} = 
+\begin{bmatrix}
+A_{11} + B_{11} & \cdots & A_{1r} + B_{1r}\\
+\vdots &  & \vdots \\
+A_{s1} + B_{s1} & \cdots & A_{sr} + B_{sr}
+\end{bmatrix}
+$$
+
+### 分块矩阵的数乘
+$$
+\lambda A =
+\begin{bmatrix}
+\lambda A_{11} & \cdots & \lambda A_{1r}\\
+\vdots &  & \vdots \\
+\lambda A_{s1} & \cdots & \lambda A_{sr}
+\end{bmatrix}
+$$
+
+### 分块矩阵的乘法
+设$A_{ml}, B_{ln}$，若A的列分法与B的行分法一致，则块乘法与矩阵元素乘法一致
+$$
+AB =
+\begin{bmatrix}
+A_{11} & \cdots & A_{1l}\\
+\vdots &  & \vdots \\
+A_{m1} & \cdots & A_{ml}
+\end{bmatrix}
+\begin{bmatrix}
+B_{11} & \cdots & B_{1n}\\
+\vdots &  & \vdots \\
+B_{l1} & \cdots & B_{ln}
+\end{bmatrix}
+$$
+
+### 分块矩阵的方幂
+仅对分块对角矩阵
+$$
+A^k = 
+\begin{bmatrix}
+A_{1} &  &  &\\
+& A_{2} & & \\
+& & \ddots & \\
+& & & A_{n}
+\end{bmatrix}^k =
+\begin{bmatrix}
+A_{1}^k &  &  &\\
+& A_{2}^k & & \\
+& & \ddots & \\
+& & & A_{n}^k
+\end{bmatrix}
+$$
+
+### 分块矩阵的转置
+$$
+A^T = 
+\begin{bmatrix}
+A_{11} & \cdots & A_{1r}\\
+\vdots &  & \vdots \\
+A_{s1} & \cdots & A_{sr}
+\end{bmatrix} ^T = 
+\begin{bmatrix}
+A_{11}^T & \cdots & A_{s1}^T\\
+\vdots &  & \vdots \\
+A_{1r}^T & \cdots & A_{sr}^T
+\end{bmatrix}
+$$
+
+### 分块矩阵的行列式
+* 若A为分块对角矩阵
+$$
+|A|= 
+\begin{vmatrix}
+A_{1} &  &  &\\
+& A_{2} & & \\
+& & \ddots & \\
+& & & A_{n}
+\end{vmatrix} 
+= |A_{1}| |A_{2}| \cdots |A_{n}|
+$$
+* 若
+$$
+|A| = 
+\begin{vmatrix}
+A_{nn} & B_{nm}\\
+O & c_{mm}\\
+\end{vmatrix} =
+\begin{vmatrix}
+A_{nn} & O\\
+B_{mn} & c_{mm}\\
+\end{vmatrix} =
+|A_{nn}||C_{mm}|
+$$
+* 若
+$$
+|A| = 
+\begin{vmatrix}
+O & A_{nn}\\
+C_{mm} & B_{mn}\\
+\end{vmatrix} =
+\begin{vmatrix}
+B_{nm} & A_{nn}\\
+C_{mm} & O\\
+\end{vmatrix} =
+(-1)^{mn} |A_{nn}| |C_{mm}|
+$$
+
+### 分块矩阵的逆运算
+* 若A为分块对角阵，且$|A_{1}| \neq 0,|A_{2}| \neq 0,\cdots,|A_{n}| \neq 0$，则
+$$
+A= 
+\begin{bmatrix}
+A_{1} &  &  &\\
+& A_{2} & & \\
+& & \ddots & \\
+& & & A_{n}
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+A_{1}^{-1} &  &  &\\
+& A_{2}^{-1} & & \\
+& & \ddots & \\
+& & & A_{n}^{-1}
+\end{bmatrix}
+$$
+* 若
+$$
+A^{-1} = 
+\begin{bmatrix}
+A & C \\
+O & B 
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+A^{-1} & -A^{-1} C B^{-1} \\
+O & B^{-1} 
+\end{bmatrix}
+$$
+* 若
+$$
+A^{-1} = 
+\begin{bmatrix}
+A & O \\
+C & B 
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+A^{-1} & O \\
+-B^{-1} C A^{-1} & B^{-1} 
+\end{bmatrix}
+$$
+
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
 
