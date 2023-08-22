@@ -442,6 +442,32 @@ a_{m1} & a_{m2} & \dots & a_{mn} & b_m
 \end{bmatrix}
 $$
 
+### 表达形式
+* 矩阵形式
+$AX=b$
+* 向量形式
+把A做列分块得
+$$
+A=
+\begin{bmatrix}
+\alpha_{1} & \alpha_{2} & \cdots & \alpha_{n}
+\end{bmatrix}
+$$
+则
+$$
+AX = 
+\begin{bmatrix}
+\alpha_{1} & \alpha_{2} & \cdots & \alpha_{n}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\vdots \\
+x_n
+\end{bmatrix}=
+\alpha_1 x_1 + \alpha_2 x_2 + \cdots + \alpha_{n} x_n = b
+$$
+
 ## 矩阵的运算方法
 
 ### 矩阵的和差
@@ -849,7 +875,7 @@ O & B^{-1}
 $$
 * 若
 $$
-A^{-1} = 
+A^{-1} =  
 \begin{bmatrix}
 A & O \\
 C & B 
@@ -859,6 +885,43 @@ A^{-1} & O \\
 -B^{-1} C A^{-1} & B^{-1} 
 \end{bmatrix}
 $$
+* 若
+$$
+A^{-1} =  
+\begin{bmatrix}
+O & A \\
+B & O 
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+O & B^{-1} \\
+A^{-1} & O 
+\end{bmatrix}
+$$
+* 若
+$$
+A^{-1} =  
+\begin{bmatrix}
+C & A \\
+B & 0 
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+O & B^{-1} \\
+A^{-1} & -A^{-1} C B^{-1} 
+\end{bmatrix}
+$$
+* 若
+$$
+A^{-1} =  
+\begin{bmatrix}
+O & A \\
+B & C 
+\end{bmatrix}^{-1} =
+\begin{bmatrix}
+-B^{-1} C A^{-1} & B^{-1} \\
+A^{-1} & O 
+\end{bmatrix}
+$$
+
 
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
