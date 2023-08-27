@@ -923,6 +923,100 @@ A^{-1} & O
 \end{bmatrix}
 $$
 
+## 矩阵初等变换
+
+### 矩阵的等价
+如果A经过有限次的初等行(列)变换，转换成B，则称A、B行(列)等价，记作$A \xrightarrow{r} B$($A \xrightarrow{c} B$)
+若A经过有限次初等变换转换成B，则称A、B等价，记作$A \sim B$
+
+* 反身性，$A \sim B$
+* 对称性，若$A \sim B$，则$B \sim A$
+* 传递性，若$A \sim B$，$B \sim C$，则$A \sim C$
+
+### 特殊的相关矩阵
+
+* 行阶梯矩阵
+$$
+\begin{bmatrix}
+\Delta & * & * & * & * & * \\
+0 & \Delta & * & * & * & * \\
+0 & 0 & 0 & 0 & \Delta & * \\
+0 & 0 & 0 & 0 & 0 & \Delta
+\end{bmatrix},
+\Delta \neq 0 
+$$
+
+* 行最简形矩阵
+$$
+\begin{bmatrix}
+1 & 0 & * & * & 0 & * \\
+0 & 1 & * & * & 0 & * \\
+0 & 0 & 0 & 0 & 1 & * \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+
+* 标准形矩阵
+$$
+A_{mn} \xrightarrow{r,c} 
+\begin{bmatrix}
+E_r & 0 \\
+0 & 0
+\end{bmatrix}
+$$
+
+## 初等矩阵
+单位矩阵E经过1次初等变换得到的矩阵，称为初等矩阵
+
+* $E_{ij}$
+$$
+\begin{bmatrix}
+1 \\
+& \ddots \\
+& & 0 & \cdots & \cdots & \cdots & 1\\
+& & \vdots & 1 & & & \vdots\\
+& & \vdots & & \ddots & & \vdots\\
+& & \vdots & & & 1 & \vdots\\
+& & 1 & \cdots & \cdots & \cdots & 0 \\
+& & & & & & & \ddots \\
+& & & & & & & & 1
+\end{bmatrix}
+$$
+
+* $E_{i(k)} , k \neq 0$
+$$
+\begin{bmatrix}
+1 \\
+& \ddots \\
+& & 1 \\
+& & & k \\
+& & & & 1 \\
+& & & & & \ddots \\
+& & & & & & 1 
+\end{bmatrix}
+$$
+
+* $E_{ij(k)} , k \neq 0$
+$$
+\begin{bmatrix}
+1 \\
+& \ddots \\
+& & 1 & \cdots & k \\
+& & & \ddots & \vdots \\
+& & & & 1 \\
+& & & & & \ddots \\
+& & & & & & 1 
+\end{bmatrix}
+$$
+
+1. 矩阵A左乘初等矩阵，相当于对A做初等行变换
+2. 矩阵A又乘初等矩阵，相当于对A做初等列变换
+3. 若方阵A可逆，则A只进行标准行或列变换就能得到矩阵标准型
+4. 若方阵A可逆，则存在有限个初等矩阵$P_1,P_2,\cdots,P_n$，使得$A = P_1 P_2 \cdots P_n$
+5. 若$A_{mn} \xrightarrow{r} B_{mn}$，则存在m阶可逆矩阵P，使得$PA = B$
+6. 若$A_{mn} \xrightarrow{c} B_{mn}$，则存在n阶可逆矩阵Q，使得$AQ = B$
+7. 若$A_{mn} \xrightarrow B_{mn}$，则存在m阶可逆矩阵P和n阶可逆矩阵Q，使得$PAQ = B$
+8. 若A为n阶可逆方阵，则$A \xrightarrow{r} E$
 
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
