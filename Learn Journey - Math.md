@@ -1025,7 +1025,7 @@ $$
 * 零矩阵的秩为0
 * $0 \leq R(A) \leq min(m,n)$
 * 已知R(A)，若A中有某个s阶非零子式，则$R(A) \ge s$，若A中有l阶子式全为0，则$R(A) \lt l$
-* R(A^T) = R(A)
+* $R(A^T) = R(A)$
 * $A_n 可逆 \Leftarrow \Rightarrow |A| \neq 0 \Leftarrow \Rightarrow R(A) = n$ 
 * $A_{mn}，$若$R(A) = m$，则A为行满秩矩阵
 * $A_{mn}，$若$R(A) = n$，则A为列满秩矩阵
@@ -1033,6 +1033,23 @@ $$
 * 行阶梯矩阵的秩是非零行的行数
 * 初等变换不改变矩阵的秩
 * 若AB等价，即$A \sim B$，则$R(A) = R(B)$
+* 若PQ可逆则$R(PAQ) = R(A)$
+* $max(R(A),R(B)) \le R(A,B) \le R(A) + R(B)$ \
+  $R(A^T) = R(A), R(B^T) = R(B)$\
+  将$R(A^T)$,$R(B^T)$基础行变换为行阶梯矩阵$A_1, B_1$\
+  $R(\frac{A_1}{B_1}) = R(\frac{A^T}{B^T}) \le R(A) + R(B)$ 
+* $R(A \pm B) \le R(A) + R(B)$\
+  为$(A \pm B)$ 构建增广矩阵 $(A \pm B, B)$\
+  $(A \pm B, B) \xrightarrow{c} (A, B)$\
+  所以$R(A \pm B) \le R(A \pm B, B) \le R(A) + R(B)$
+* $R(AB) \le min(R(A),R(B))$
+* 若$A_{mn} B_{nt} = 0$，则$R(A) + R(B) \le n$
+
+### n元线性方程组与矩阵的秩
+$A_{mn} X_{n1} = b{m1}$，其中m为方程个数，n为未知量个数
+* 若$R(A) = R(A,b) = n \Leftarrow \Rightarrow AX = b 有唯一解$
+* 若$R(A) = R(A,b) < n \Leftarrow \Rightarrow AX = b 有无穷解$
+* 若$R(A) < R(A,b) < n \Leftarrow \Rightarrow AX = b 无解$
 
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
