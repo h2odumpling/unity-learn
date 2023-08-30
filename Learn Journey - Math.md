@@ -1051,6 +1051,10 @@ $A_{mn} X_{n1} = b{m1}$，其中m为方程个数，n为未知量个数
 * 若$R(A) = R(A,b) < n \Leftarrow \Rightarrow AX = b 有无穷解$
 * 若$R(A) < R(A,b) < n \Leftarrow \Rightarrow AX = b 无解$
 
+1. n元齐次线性方程组中，$A_{mn}=0 有非零解 \Leftarrow \Rightarrow R(A) < n$，$A_{mn}=0 只有零解 \Leftarrow \Rightarrow R(A) = n$
+2. n元非齐次线性方程组中，$A_{mn}=b 有解 \Leftarrow \Rightarrow R(A) = R(A,b)$
+3. 矩阵方程$AX=B 有解 \Leftarrow \Rightarrow R(A) = R(A,B)$
+
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
 
