@@ -1055,6 +1055,84 @@ $A_{mn} X_{n1} = b{m1}$，其中m为方程个数，n为未知量个数
 2. n元非齐次线性方程组中，$A_{mn}=b 有解 \Leftarrow \Rightarrow R(A) = R(A,b)$
 3. 矩阵方程$AX=B 有解 \Leftarrow \Rightarrow R(A) = R(A,B)$
 
+
+
+# 向量组的线性相关性
+
+## 向量
+n个有次序的数$a_1, a_2, \cdots, a_n$的数组成为n维向量，其中数组的元素成为向量的分量
+* 实向量：分量均为实数的向量
+* 复向量：有1个以上的分量为复数的向量
+
+向量一般使用$\alpha, \beta, \cdots$表示，且一般情况下$\alpha$为列向量，$\alpha^T$为行向量
+$$
+\alpha = 
+\begin{bmatrix}
+a_1 \\
+a_2 \\
+\vdots \\
+a_n
+\end{bmatrix}
+$$
+向量是矩阵，符合矩阵运算的规则
+
+## 向量组
+若干个同维数的列向量（行向量）组成的集合称为向量组
+
+1. 矩阵与向量组
+   可以将矩阵写错列向量组或行向量组的形式
+2. 线性方程组的解与向量组\
+   方程组的向量形式：$x_1 \alpha _1 + x_2 \alpha _2 + \cdots + x_n \alpha _n = b$
+
+### 向量组的线性组合
+* 线性组合\
+  对一个向量组，使用$k_1, k_2, \cdots, k_m$的组合系数分别乘以向量组的向量，这个过程叫线性组合\
+$k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_m \alpha _m$
+* 向量的线性表示\
+  对一个向量b，若存在组合系数，使得$b = k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_m \alpha _m$，则称向量b可由向量组A线性表示\
+即方程组$x_1 \alpha _1 + x_2 \alpha _2 + \cdots + x_n \alpha _n = b$有解\
+则$R(A) = R(A,b)$
+* 向量组的线性表示\
+  若向量组B中的每个向量都能由向量组A线性表示，则称向量组B可由向量组A线性表示
+* 矩阵表示\
+  设向量组$A = (\alpha _1, \alpha _2, \cdots, \alpha _m)$和向量组$B = (\beta _1, \beta _2, \cdots, \beta _l)$，若满足
+$$
+\beta _j = (\alpha _1, \alpha _2, \cdots, \alpha _m) * 
+\begin{bmatrix}
+k_{1j} \\
+k_{2j} \\
+\vdots \\
+k_{mj}
+\end{bmatrix},
+j \in (1,2,\cdots,l)
+$$
+则可表示为
+$$
+(\beta _1, \beta _2, \cdots, \beta _m) =
+(\alpha _1, \alpha _2, \cdots, \alpha _m) * 
+\begin{bmatrix}
+k_{11} & k_{12} & \cdots & k_{1l} \\
+k_{21} & k_{22} & \cdots & k_{2l} \\
+\vdots & \vdots & \ddots & \vdots \\
+k_{m1} & k_{m2} & \cdots & k_{ml} 
+\end{bmatrix}
+$$
+记作$B = AK$，K称为系数矩阵或表示矩阵\
+对于$A_{mn} B_{nl} = C_{ml}$，则C的列向量组可由A的列向量组线性表示，C的行向量组可由B的行向量组线性表示
+* 向量组等价\
+  若向量组A与向量组B可以互相线性表示，则称AB等价\
+  且AB等价 $\Leftarrow\Rightarrow R(A) = R(B) = R(A,B)$
+* 向量组构成的矩阵等价则向量组也等价，但向量组等价时构成的矩阵不一定等价，因为矩阵等价需要同型
+
+
+
+
+
+
+
+
+
+
 ## 平移矩阵
 用以表示向量或点的平移的矩阵\
 
