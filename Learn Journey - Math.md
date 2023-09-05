@@ -1123,8 +1123,20 @@ $$
   若向量组A与向量组B可以互相线性表示，则称AB等价\
   且AB等价 $\Leftarrow\Rightarrow R(A) = R(B) = R(A,B)$
 * 向量组构成的矩阵等价则向量组也等价，但向量组等价时构成的矩阵不一定等价，因为矩阵等价需要同型
+* 若向量组$\beta _1, \beta _2, \cdots, \beta _l$可由向量组$\alpha _1, \alpha _2, \cdots, \alpha _m$线性表示，则$R(\beta _1, \beta _2, \cdots, \beta _l) \le R(\alpha _1, \alpha _2, \cdots, \alpha _m)$
+* 若n维单位坐标向量可由向量组A线性表示 $\Leftarrow\Rightarrow R(A) = n$\
+  可由$A_{mn}X = E_n有解，即R(A) = R(A,E) = n$证得
 
+### 向量组的线性相关
+对于用向量组A，把O向量线性表示，则$k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_m \alpha _m = 0 $\
+若当且仅当$k_1 = k_2 = \cdots = k_m = 0$时，上式成立，则$\alpha _1, \alpha _2, \cdots, \alpha _m$线性无关\
+若$k_1, k_2, \cdots, k_m$不全为0时，上式成立，则$\alpha _1, \alpha _2, \cdots, \alpha _m$线性相关
 
+* 若向量组A线性相关，则R(A) < m
+* 若向量组A线性无关，则R(A) = m
+* 若向量组A由n个n维向量构成，则当向量组A线性相关时，$|A| \neq 0$，当向量组A线性无关时，$|A| = 0$
+* 若2维向量$\alpha _1, \alpha _2$线性相关，即$\alpha _1, \alpha _2$共线
+* 若3维向量$\alpha _1, \alpha _2, \alpha _3$线性相关，即$\alpha _1, \alpha _2, \alpha _3$共面
 
 
 
