@@ -1128,7 +1128,7 @@ $$
   可由$A_{mn}X = E_n有解，即R(A) = R(A,E) = n$证得
 
 ### 向量组的线性相关
-对于用向量组A，把O向量线性表示，则$k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_m \alpha _m = 0 $\
+对于用向量组A，把0向量线性表示，则$k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_m \alpha _m = 0 $\
 若当且仅当$k_1 = k_2 = \cdots = k_m = 0$时，上式成立，则$\alpha _1, \alpha _2, \cdots, \alpha _m$线性无关\
 若$k_1, k_2, \cdots, k_m$不全为0时，上式成立，则$\alpha _1, \alpha _2, \cdots, \alpha _m$线性相关
 
@@ -1137,8 +1137,10 @@ $$
 * 若向量组A由n个n维向量构成，则当向量组A线性相关时，$|A| \neq 0$，当向量组A线性无关时，$|A| = 0$
 * 若2维向量$\alpha _1, \alpha _2$线性相关，即$\alpha _1, \alpha _2$共线
 * 若3维向量$\alpha _1, \alpha _2, \alpha _3$线性相关，即$\alpha _1, \alpha _2, \alpha _3$共面
-
-
+* 对于向量组A:$\alpha _1, \alpha _2, \cdots, \alpha _m$、向量组B:$\alpha _1, \alpha _2, \cdots, \alpha _m, \alpha _{m+1} + \cdots + \alpha _{m+n}$，若A线性相关则B线性相关，若B线性无关则A线性无关
+* A为m个n维向量构成的向量组，若$n < m$，则A一定线性相关
+* A为m个n位向量构成的向量组，若A线性无关，则当向量分量增加时，A仍线性无关
+* 对于向量组A:$\alpha _1, \alpha _2, \cdots, \alpha _m$，若A线性无关，且向量组B:$\alpha _1, \alpha _2, \cdots, \alpha _m, \beta$线性相关，则$\beta$可由向量组A唯一线性表示
 
 
 
