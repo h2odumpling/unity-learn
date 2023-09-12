@@ -1157,8 +1157,16 @@ $$
    2. 若$\delta$是方程组$A_{mn}X=0$的解，则$k \delta$也是方程组$A_{mn}X=0$的解
    3. $R_A$为非自由未知量个数，n为总未知量个数，$n-R_A$为自由未知量个数
 2. 基础解系
-   若$\delta _1, \delta _2, \cdots , \delta _{n-R_A}$为向量组的最大无关组，则$X = k_1 \delta _2 + k_2 \delta _1 + \cdots + k_{n-R_A} \delta _{n-R_A}$为$AX = 0$的通解，$\delta _1, \delta _2, \cdots , \delta _{n-R_A}$被称为基础解系，是方程组的最大线性无关解
+   若$\delta _1, \delta _2, \cdots , \delta _{n-R_A}$为向量组的最大无关组，则$X = k_1 \delta _2 + k_2 \delta _1 + \cdots + k_{n-R_A} \delta _{n-R_A}$为$AX = 0$的通解，$\delta _1, \delta _2, \cdots , \delta _{n-R_A}$被称为基础解系，是方程组的最大线性无关解 
+3. 非齐次线性方程组解的结构$A_{mn}X=b$
+   1. 令b=0，则得$A_{mn}X=0$，此方程组为该非齐次线性方程组的导出组
+   2. 若$\eta _1, \eta _2$是$AX=b$的解，则$\delta = \eta _1 - \eta _2$是对应导出组的解\
+   $A(\delta) = A(\eta _1 - \eta _2) = A(\eta _1) - A(\eta _2) = b - b = 0$
+   3. 若$\eta$是$AX=b$的解，$\delta$是对应导出组的解，则$\eta + \delta$是$AX=b$的解
+   $A(\delta + \eta) = A(\delta) + A(\eta) = b + 0 = b$
 
+## 向量空间
+是一个同维向量的集合V，其中的向量之间有加法和数乘运算，若$V_a \in V,V_b \in V$，则$a+b \in V, ka \in V$，称V为一个向量空间
 
 
 
