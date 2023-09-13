@@ -1166,8 +1166,24 @@ $$
    $A(\delta + \eta) = A(\delta) + A(\eta) = b + 0 = b$
 
 ## 向量空间
-是一个同维向量的集合V，其中的向量之间有加法和数乘运算，若$V_a \in V,V_b \in V$，则$a+b \in V, ka \in V$，称V为一个向量空间
+是一个同维向量的集合V，其中的向量之间有加法和数乘运算，若$V_a \in V,V_b \in V$，则$a+b \in V, ka \in V$，称V为一个向量空间\
+$R^2$表示2维向量空间，$R^3$表示3维向量空间\
+若不满足加法或数乘运算，则不是一个向量空间
 
+### 向量空间的基
+若向量空间V又最大线性无关组，则此最大线性无关组为V的基，基中所含无关向量的个数称为V的维数
+
+### 坐标
+在$R^3$中，$\alpha = (x, y, z)^T = xi + yj + zk$，则xyz实际为ijk作为基向量时的系数\
+在向量空间V下，若$\alpha _1, \alpha _2, \cdots ,\alpha _n$为V的一组基，若$x = k_1 \alpha _1 + k_2 \alpha _2 + \cdots + k_n \alpha _n$，则称$k_1, k_2, \cdots, k_n$为x在基$\alpha _1, \alpha _2, \cdots ,\alpha _n$下的坐标\
+当基为各方向上的单位向量时，被称为自然基
+
+### 过渡矩阵
+对于向量空间V，有两组基$\alpha _1, \alpha _2, \cdots ,\alpha _n$与$\beta _1, \beta _2, \cdots ,\beta _n$，若$(\beta _1, \beta _2, \cdots ,\beta _n) = (\alpha _1, \alpha _2, \cdots ,\alpha _n)P$，则称P为由基$\alpha _1, \alpha _2, \cdots ,\alpha _n$到基$\beta _1, \beta _2, \cdots ,\beta _n$到过渡矩阵\
+若两组基均可逆，则A->B的过渡矩阵P是B->A的过渡矩阵的逆矩阵
+
+### 坐标变换公式
+对于向量空间V，坐标X是基$\alpha _1, \alpha _2, \cdots ,\alpha _n$下的坐标，坐标Y是基$\beta _1, \beta _2, \cdots ,\beta _n$下的坐标，则$AX = BY$，因为AB可逆，所以$X = A^{-1}BY = PY, Y = B^{-1}AX = P^{-1}Y$
 
 
 ## 平移矩阵
