@@ -1185,9 +1185,42 @@ $R^2$表示2维向量空间，$R^3$表示3维向量空间\
 ### 坐标变换公式
 对于向量空间V，坐标X是基$\alpha _1, \alpha _2, \cdots ,\alpha _n$下的坐标，坐标Y是基$\beta _1, \beta _2, \cdots ,\beta _n$下的坐标，则$AX = BY$，因为AB可逆，所以$X = A^{-1}BY = PY, Y = B^{-1}AX = P^{-1}Y$
 
+## 向量内积、长度、正交
+
+### 向量内积
+向量内积为两个向量对应分量乘积的和\
+$[x,y] = x^T y = x_1 y_1 + x_2 y_2 + \cdots + x_n y_n$
+1. $[x,y] = [y,x]$
+2. $[\lambda x,y] = \lambda[x,y]$
+3. $[x+y, z] = (x+y)^T z = (x^T +y^T)z = x^T z + y^T z = [x,z] + [y,z]$
+4. $[x, x] = 0 \Leftarrow\Rightarrow x = 0$
+
+### 向量长度
+向量长度（模）为$||x|| = \sqrt{[x,x]}$\
+若$||x|| = 1$则x为单位向量\
+向量单位化 $x = \frac{x}{||x||}$
+
+### 向量正交
+若x,y垂直，则这2个向量正交，此时$\theta = accos(\frac{x \cdot y}{|x||y|}) = \frac{\pi}{2}$\
+当x=0时，x与任何向量都正交
+
+#### 正交向量组
+两两正交的非零向量组，称为正交向量组
+1. 正交向量组线性无关 
+2. 线性无关向量组，可通过施密特正交化公式化为正交向量组
+设变换完后的向量组为$(\beta _1, \beta _2 \cdots \beta _n)$，则\
+$
+\beta _1 = \alpha _1 \\
+\beta _2 = \alpha _2 - \frac{[\alpha _2, \beta _1]}{[\beta _1, \beta _1]} \beta _1 \\
+\beta _3 = \alpha _3 - \frac{[\alpha _3, \beta _1]}{[\beta _1, \beta _1]} \beta _1 - \frac{[\alpha _3, \beta _2]}{[\beta _2, \beta _2]} \beta _2 \\
+\vdots \\
+\beta _n = \alpha _n - \frac{[\alpha _n, \beta _1]}{[\beta _1, \beta _1]} \beta _1 - \frac{[\alpha _n, \beta _2]}{[\beta _2, \beta _2]} \beta _2 - \cdots - \frac{[\alpha _n, \beta _{n-1}]}{[\beta _{n-1}, \beta _{n-1}]} \beta _{n-1}
+$
+记忆方法：左上角恒定为$\alpha _r$，其余部分恒定为$\beta _j$
+
 
 ## 平移矩阵
-用以表示向量或点的平移的矩阵\
+用以表示向量或点的平移的矩阵
 
 * 点的平移
 ```math
