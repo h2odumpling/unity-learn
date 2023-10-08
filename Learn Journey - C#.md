@@ -1,7 +1,7 @@
 # 命名空间
 避免类的重名，指示CLR在寻找类时会逐一寻找
 
-```
+```c#
 using System.IO;
 using System.Text;
 
@@ -14,7 +14,7 @@ public sealed class Program{
 ```
 
 上例中，StringBuilder类型若同时存在于System.IO及System.Text，则会触发不明确引用的错误\
-```
+```c#
 using TextStringBuilder = System.Text.StringBuilder     //可以通过定义一个新的别名来消除歧义
 ```
 
@@ -56,7 +56,7 @@ using TextStringBuilder = System.Text.StringBuilder     //可以通过定义一�
 # enum  枚举类型
 为了限制变量的可能性
 默认是整数类型，也可以更改
-```
+```c#
 enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以设置值
 ```
 
@@ -70,7 +70,7 @@ enum Days : byte {Monday = 1, Tuesday, Wensday} //默认从0开始，也可以�
 * string ToString()     一般会获取符号，当格式为数字格式时会获取值
 * Enum.TryPrase<T>(string value, out T)     查找与符号对应的值或值对应的符号，并返回一个枚举实例
 
-```
+```c#
 enum Color : int { Red = 1, Green = 2, Blue = 1 };
 
 public static void Main()
@@ -108,18 +108,18 @@ public static void Main()
 
 # method
 当需要返回多个值时可以用元组的方式实现
-```
+```c#
 public static (int, int) doubleReturn()
 {
 return (1, 2);
 }
 ```
-```
+```c#
 int x,y;
 (x, y) = doubleReturn();
 ```
 可选参数与重载歧义
-```
+```c#
 public static void doubleReturn(int x, string y="", int z=1)
 {
 }
@@ -127,7 +127,7 @@ public static void doubleReturn(int x, string y="", int z=1, string j="j")
 {
 }
 ```
-```
+```c#
 doubleReturn(1,"y",1)       //实行第一个方法
 doubleReturn(1,"y")         //无法编译，因为无法为任何一个方法提供全部实参
 ```
@@ -143,11 +143,11 @@ doubleReturn(1,"y")         //无法编译，因为无法为任何一个方法�
 
 ## 二进制操作应用
 判断一个二进制数bit的n位是否为1
-```
+```c#
 (bit & (1 << n)) != 0
 ```
 将n位设置为1
-```
+```c#
 bit |= (1 << n)
 ```
 
@@ -177,7 +177,7 @@ bool,byte,char,decimal,double,float,int,sbyte,short,uint,ulong,ushort
 当整形和浮点型相除时，会将整形隐式转换为浮点型
 
 #### 字符串转为整型的几种方法
-```
+```c#
 int some = Convert.ToInt32("1000"); //当str无法转换为整形时会报错
 
 int some2 = Int32.Parse("1000");    //当str无法转化为整形时会报错
@@ -219,7 +219,7 @@ bool isPrase = Int32.TryParse("aaa", out some3);    //尝试转换str并给out�
 
 ### struct
 用于打包封装比较小的数据集，可完成class的大部分内容，是值类型\
-```
+```c#
 struct student
 {
 public int id;
@@ -232,7 +232,7 @@ public student(int id, string name)
 }
 }
 ```
-```
+```c#
 student a = new student(1,"ss");
 student b = new student(2, "dd");
 a = b;  //struct类型是值类型，所以a = b 相当于 重新创建了a中的数据而非更改了引用
@@ -243,7 +243,7 @@ Console.WriteLine(b.id);    //2
 ```
 
 不能包含无参构造器，只能使用有参数的显式构造器\
-```
+```c#
 struct student
 {
 public int id;
@@ -267,18 +267,18 @@ public student(){   //这个构造函数无法编译
 在栈中存放值的地址，在堆中存放值
 较值类型存储较慢
 变更引用类型会影响所有引用了这个值的对象，下面举两例
-```
+```c#
 Vector3 pos = transform.position;
 pos = Vecotr3.zero; //由于Vector3是值类型，所以transform.position 不会改变
 ```
-```
+```c#
 Material mat = transform.GetComponent<MeshRender>().material;
 mat.color = Color.red;//此时MeshRender的颜色也被改变
 ```
 ### class
 相较于interface可多包含字段、成员、变量、抽象方法
 只能继承一个类，可继承多个接口
-```
+```c#
 public class Person    //默认为internal
 {
     int a = 1;  //字段，无访问修饰默认为private
@@ -327,7 +327,7 @@ public class Person    //默认为internal
 #### 构造函数
 字段的初始化在调用构造函数之前\
 当一个类有多个构造函数时，将字段初始化放入公共构造函数中运行，可以减少IL代码的生成提高性能\
-```
+```c#
 class Person{
 int x;  //若将初始化放在这，则会根据构造函数数量进行多次初始化
 int y;
@@ -349,7 +349,7 @@ public Person(int mx) : this(){
 static readonly通常用于替换const，使字段可以被其它程序集引用，性能较const略差，因为需要加载到内存中\
 readonly字段只可以在实例构造器中更改\
 引用类型的readonly字段不可改变只是引用，而不是引用对象\
-```
+```c#
 public class AType{
     public static readonly Char[] CharsArray = new Char[] {'A','B','C'};
 }
@@ -374,7 +374,7 @@ public class program{
 * 方法设计
 参数尽量使用弱类型，扩展方法复用性\
 返回值尽量使用强类型，明确返回内容\
-```
+```c#
 public void Items<T>(IEnumerable<T> collection){    //较好
 
 }
@@ -386,7 +386,7 @@ public void Items<T>(List<T> collection){   //不好，限制了方法对其它�
 
 #### 抽象类
 一个不完整的类，相当于类的模板，因此不能被实例化
-```
+```c#
 abstract public class Person    //默认为internal
 {
 abstract public void Zzz();
@@ -410,7 +410,7 @@ public sealed override int zzzz(){   //sealed 用在方法上时必须用于over
 ```
 
 #### 密封类
-```
+```c#
 sealed class Selfme  //sealed 无法被继承
 {
 
@@ -420,7 +420,7 @@ sealed class Selfme  //sealed 无法被继承
 #### 匿名类
 匿名类的字段、属性是只读的无法被修改\
 匿名类是根据每个字段的哈希码生成自己的哈希码，因此如果修改匿名类的字段会导致这个匿名类有可能无法被找到\
-```
+```c#
 var a = new {fistrname = "ss",lastname = "bb"};
 
 String Name = "ss";
@@ -440,7 +440,7 @@ var b = new {Name, Year}    //会生成一个包含Name及Year属性的匿名类
 * 浅复制  只复制引用
 * 深复制  复制引用的对象
 类可以通过提供方法来提供自己的新实例\
-```
+```c#
 public Circle Clone()
 {
     Circle clone = new Circle();
@@ -454,7 +454,7 @@ public Circle Clone()
 类继承的实例化的顺序，会先调用父类的构造函数，后调用子类的构造函数
 一个类可以拥有多个构造函数
 继承类时叫实现继承
-```
+```c#
 public class Person    //默认为internal
 {
     public Person()
@@ -483,7 +483,7 @@ public class FromPerson : Person
 ```
 
 #### new 和 override的区别
-```
+```c#
 public class Person    //默认为internal
 {
     virtual public void DoA()
@@ -510,7 +510,7 @@ public class FromPerson : Person
     }
 }
 ```
-```
+```c#
 Person newPerson = new FromPerson();
 
 newPerson.DoA();    //调用子方法DoA，因为已经被重写
@@ -527,7 +527,7 @@ newPerson.DoB();    //调用父方法DoB，因为DoB没有被重写，只是被�
 * 无法在接口中定义析构器
 * 无法在接口方法中指定修饰符，必须为public
 * 无法在接口中嵌套枚举、结构、类或其它接口
-```
+```c#
 interface IPerson   //一般interface用大写I开头
 {
     public int a();
@@ -554,7 +554,7 @@ public class FromInterface : IPerson
 
 #### 接口的显式实现
 用于解决继承多个接口时方法冲突的问题
-```
+```c#
 interface IAir{
     public int eat();
 }
@@ -562,7 +562,7 @@ interface ISea{
     public int eat();
 }
 ```
-```
+```c#
 Class Animal : IAir, ISea{
     public int eat(){   //如果这样定义，则eat实际同时实现了2个接口中的要求
         return 1;
@@ -574,7 +574,7 @@ Class Animal : IAir, ISea{
 }
 ```
 ##### 调用
-```
+```c#
 Animal animal = new Animal();
 IAir air = animal;
 ISea sea = animal;
@@ -589,7 +589,7 @@ air.eat()   //调用指定接口的方法
 为了使一个类实现类似数组的操作方式\
 索引器在编译时默认为一个名为item的属性，相关方法是get_item|set_item\
 可以添加[IndexerName("")]特性来定义编译器编译时的属性名\
-```
+```c#
 public class Person    //默认为internal
 {
     private string[] arr;
@@ -641,7 +641,7 @@ public class Person    //默认为internal
     }
 }
 ```
-```
+```c#
 Person person = new Person();
 
 person[0] = "ss";
@@ -660,7 +660,7 @@ console.WriteLine(person["ss"]);
 
 ### 泛型在Class内的实现
 极大提高代码重用性，且数据类型是安全的，且提高性能，有助于减少程序体积
-```
+```c#
 class MyClass<T>
 {
     public T[] array;
@@ -681,7 +681,7 @@ class MyClass<T>
     }
 }
 ```
-```
+```c#
 MyClass<int> myClassInt = new MyClass<int>(5);
 
 for (i = 0; i < myClassInt.Size; i++)
@@ -707,13 +707,13 @@ for(i = 0; i < myClassString.Size; i++)
 }
 ```
 * 多重泛型类
-```
+```c#
 class MyClass<T,K> where T : struct where K : class  //可通过where 限制泛型的类型，struct 限制只能是值类型，class 限定只能是class 或子类
 {
 }
 ```
 * 泛型类的继承
-```
+```c#
 class MyClass<T,K> where T : struct where K : class
 {
 }
@@ -723,7 +723,7 @@ class MyClassChild<K> : MyClass<int,K> where K : class  //可直接指定父类�
 }
 ```
 * 泛型方法的实现
-```
+```c#
 class MyClass<T,K>
 {
     public void Action(T value)    //T继承类的泛型，在类创建时已经确定
@@ -739,7 +739,7 @@ class MyClass<T,K>
     }
 }
 ```
-```
+```c#
 MyClass<int, string>.Action2<int>();
 
 string a = "v";
@@ -747,7 +747,7 @@ string b = "d";
 MyClass<int, int>.Action<string> (ref a,ref b);        //使用引用传递时，必须带ref一起进行变量的引用传递
 ```
 * 通过反射，使用变量的类型创建泛型方法
-```
+```c#
 class Program
 {
     static void Main()
@@ -787,7 +787,7 @@ class Method
 # 隐式转换和显式转换
 ## 隐式转换
 一般用于小的向大的转换，例如int向long，子类向基类转换等
-```
+```c#
 int i = 0;
 long l = i; //int向long隐式转换
 
@@ -797,7 +797,7 @@ Person p = fp;  //FromPerson向Person隐式转换
 ## 显式转换
 一般用于大的向小的转换
 显式转换一般伴随着数据丢失
-```
+```c#
 double n = 1.1;
 int m = (int)n; //double向int显式转换，转换完后m为10，丢失了小数点后的精度
 
@@ -814,7 +814,7 @@ catch(Exception e)
 ### as
 只能用于引用类型或非空类型
 对于显式转换，try catch是比较消耗资源的方法，因此一般会用as代替，当无法转换时返回null
-```
+```c#
 FromPerson fp3 = p2 as FromPerson;
 ```
 
@@ -822,7 +822,7 @@ FromPerson fp3 = p2 as FromPerson;
 
 # 可空值类型|Nullable
 声明变量时可以声明其可能为空，这样在赋值其他可能为空也可能为值类型时就不会报错
-```
+```c#
 object obj = null;
 
 int? nullableValue = (int)obj;
@@ -865,7 +865,7 @@ Console.WriteLine( nullableValue.GetValueOrDefault() ); //当nullableValue为nul
 在编译时已经实现的多态功能
 
 * 方法多态
-```
+```c#
 public class Person    //默认为internal
 {
     public static void DoA()    //根据参数不同实现多态
@@ -877,14 +877,14 @@ public class Person    //默认为internal
     }
 }
 ```
-```
+```c#
 Person.DoA();
 
 Person.DoA(1);
 ```
 
 * 运算符多态
-```
+```c#
 public class Person    //默认为internal
 {
     public int Value { get; set; }
@@ -897,7 +897,7 @@ public class Person    //默认为internal
     }
 }
 ```
-```
+```c#
 Person newPerson1 = new Person();
 Person newPerson2 = new Person();
 
@@ -909,7 +909,7 @@ Person ss = newPerson1 + newPerson2;
 运算符多态时应注意，==和!=，<=和>=，必须一起成对定义
 
 * 转换符多态
-```
+```c#
 class Example{
     private int value;
 
@@ -926,7 +926,7 @@ class Example{
     }
 }
 ```
-```
+```c#
 Example e = 5;
 int num = (int) e;
 int num = e as int; //0 使用as或is时不会调用转换符
@@ -941,12 +941,12 @@ toString方法可以被重写
 
 # 参数数组
 解决传多个参数时的方法重载问题
-```
+```c#
 public static Min(params int[] parmList){
 
 }
 ```
-```
+```c#
 int min = Min(int1, int2, int3);
 ```
 * 只能使用一维数组
@@ -960,12 +960,12 @@ int min = Min(int1, int2, int3);
 
 # 装箱|拆箱
 装箱就是把值类型转为引用类型的操作，当需要获取值类型的引用地址时就会发生装箱，下面代码就是i的装箱操作\
-```
+```c#
 int i = 0;
 System.Object obj = i;
 ```
 当需要对一个值类型反复装箱时，应手动执行装箱\
-```
+```c#
 int i = 0;
 Object o = i;
 Object z = i.ToString();
@@ -977,7 +977,7 @@ Console.WriteLine("{0}, {1}, {2}", z, z, z);    //不装箱
 * 当把值类型传递给需要引用类型的方法\
 * 调用从Object继承的需要实例的方法时，例如GetType，因为需要获取堆中类型的引用就必须获取堆中类型实例的引用，而ToString已经在int类型中重写避免了装箱\
 * 成为接口变量时，因为接口变量必须包含对堆对象的引用
-```
+```c#
 Point : IComparable{
     int x,y;
     public Point(int mx, int my){
@@ -990,7 +990,7 @@ Point p = new Point(1, 2);
 IComparable i = p;  //p装箱
 ```
 改变值类型的值容易引发的问题
-```
+```c#
 internal interface IChange{
     void ChangeMe (int mx, int my)
 }
@@ -1029,19 +1029,19 @@ Console.WriteLine(o)    // 3, 3
 ```
 
 拆箱就是把引用类型转为值类型的操作，下面代码就是obj的拆箱操作\
-```
+```c#
 int i = 0;
 System.Object obj = i;
 int j = (int)obj;
 ```
 拆箱时只能把对象转为最初未装箱的值类型\
-```
+```c#
 Int32 i = 0;
 Object p = i;
 Int16 x = (Int16)(Int32)p
 ```
 拆箱时的内存复制\
-```
+```c#
 int i = 0;
 Object p = i;
 i = (int) p;    //拆箱p后，将p引用指向的堆中的未装箱值复制到栈中
@@ -1050,7 +1050,7 @@ p = i;      //将i的值装箱后复制到堆中，p指向新的地址
 ```
 
 ## 泛型集合及非泛型集合的对比
-```
+```c#
 struct Point{
     public int x,y;
 }
@@ -1115,7 +1115,7 @@ dateType[] name
 数组定义需要用fixed关键字\
 数组必须是一维0基数组\
 数组的元素类型必须是基元值类型\
-```
+```c#
 internal unsafe struct CharArray{
     public fixed Char Characters[20];   //将数组嵌入结构，这样结构创建在栈上，数组也创建在栈上
 }
@@ -1225,7 +1225,7 @@ Count   集合中包含的元素个数
 * 字符串是一个不可变的数据类型，一旦创建就不可以再改变内容了
 
 ### 在string前加@可防止其转为Unicode编码
-```
+```c#
 string str1 = @"C:\path\file";
 string str2 = "C:\\path\\file";
 ```
@@ -1272,12 +1272,12 @@ string.Format("{0[ ,m ][ :[C|D|E|F|G|N|P|R|X][0-9]*? ] }")
 
 ### 字符串插值
 比+高效，是string.format的语法糖
-```
+```c#
 string ssss = "sss";
 $"ddd{ssss}";    //dddsss
 ```
 以上代码相当于
-```
+```c#
 object[] args = new object[] { ssss };
 string.Format("ddd{0}", args);
 ```
@@ -1320,7 +1320,7 @@ string.Format("ddd{0}", args);
 * int LengthInTextElements    获取字符串的文本个数
 * string SubstringByTextElements    截取字符串中的文本
 * TextElementEnumerator GetTextElementEnumerator    获取一个对象，其中包含了字符串中的所有文本
-```
+```c#
 String s = "a\u0304";
 TextElementEnumerator charEnum = StringInfo.GetTextElementEnumerator(s);
 while(charEnum.nextMove()){
@@ -1338,7 +1338,7 @@ Console.WriteLine("text element {0} is {1}{2}", charEnum.ElementIndex, charEnum.
 * 本质是维护一个字符数组
 
 ## Append | AppendFormat
-```
+```c#
 StringBuilder sb = new StringBuilder(20);    //创建一个20字符大小的StringBuilder，避免申请新内存
 StringBuilder sb2 = new StringBuilder("ssss",20);
 
@@ -1347,11 +1347,11 @@ builder.Append("dd"); //sssdd
 builder.AppendFormat("aaa{0}", "bb"); //sssddaaabb
 ```
 ## Insert(index,string)
-```
+```c#
 sb.Insert(0, "sss");
 ```
 ## Remove(index,length)
-```
+```c#
 sb.Remove(0, 3);
 ```
 ## Replace(char, char)|Replace(string,string)
@@ -1390,13 +1390,13 @@ CLR通过以下两点进行优化\
 * 主要约束：约束了泛型的父类或类型（class表示引用类型，struct表示值类型），可以有0-1个主要约束
 * 次要约束：约束了泛型实现的接口，可以有0-多个
 * 类型参数约束：特殊的次要约束，当泛型有多个类型参数时可以使用
-```
+```c#
 public void Con<T,TBase>(T t, TBase tb) where T : TBase{    //表示T必须是TBase或其派生类
 
 } 
 ```
 * 构造器约束：约束了必须是可以提供公共无参构造器的类型
-```
+```c#
 public class test<T> where T : new(){
 
 }
@@ -1404,7 +1404,7 @@ public class test<T> where T : new(){
 
 ## 泛型变量的转型
 泛型变量只能转为与约束兼容的类型，如无约束则只能显式转型为Object类型\
-```
+```c#
 public void test<T>(T data){
     int zz = (int)(Object) data;
     int zz = data as int;   //可以通过as尝试转型
@@ -1413,7 +1413,7 @@ public void test<T>(T data){
 
 ## 泛型变量默认值
 泛型变量若没有约束为值类型或引用类型变不能设为null或0，因为值类型默认是0，引用类型默认是null，可通过default方法获取默认值\
-```
+```c#
 public void test<T>(){
     T ss = default(T);
 }
@@ -1427,7 +1427,7 @@ public void test<T>(){
 ## 泛型接口的优势
 * 出色的类型保护
 * 针对值类型装箱次数减少
-```
+```c#
 public void Main(){
     int x=1, y=2;
     IComparable c = x;
@@ -1469,7 +1469,7 @@ FlieStream
 推荐在using内使用FileStream，using等效于try{}finally{}，并在finally内调用的Dispose方法清理资源
 using( FileStream fs = File.Open(path,FileMode,FileAccess,FileShare) ){}
 或者可按需使用StreamReader或StreamWriter
-```
+```c#
 using (FileStream fs = File.Open(@"path", FileMode.Open, FileAccess.Read))
 {
     byte[] buffer = new byte[4096];
@@ -1515,7 +1515,7 @@ Close   fs.Close() 关闭文件
 
 ## xml
 xml文件读取与解析
-```
+```c#
 <skills>
     <skill
         id ="1"
@@ -1525,7 +1525,7 @@ xml文件读取与解析
     </skill>
 </skills>
 ```
-```
+```c#
 class Program
 {
 static void Main()
@@ -1586,7 +1586,7 @@ class Skill
 C#解析json一般安装LitJson
 
 ### JSON解析
-```
+```c#
 {
     "skills": [
         {
@@ -1597,7 +1597,7 @@ C#解析json一般安装LitJson
     ]
 }
 ```
-```
+```c#
 class Program
 {
     static void Main()
@@ -1641,7 +1641,7 @@ class Skill
 ```
 
 ### 更简单的解析方法
-```
+```c#
 [
     {
         "id": 1,
@@ -1650,14 +1650,14 @@ class Skill
     }
 ]
 ```
-```
+```c#
 Skill[] skill_array = JsonMapper.ToObject<Skill[]>(File.ReadAllText("json2.json"));     //转换成数组
 
 skills = JsonMapper.ToObject<List<Skill>>(File.ReadAllText("json2.json"));      //转换成List
 ```
 
 ### 对对象的解析
-```
+```c#
 {
     "Name": "h2o",
     "Age": 20,
@@ -1675,7 +1675,7 @@ skills = JsonMapper.ToObject<List<Skill>>(File.ReadAllText("json2.json"));      
     ]
 }
 ```
-```
+```c#
 class Skill
 {
     public int id { get; set; }
@@ -1700,14 +1700,14 @@ class Person
     }
 }
 ```
-```
+```c#
 Person person = JsonMapper.ToObject<Person>(File.ReadAllText("json3.json"));
 
 Console.WriteLine(person);
 ```
 
 ### 打包JSON对象
-```
+```c#
 Player player = new Player();
 player.Name = "h2o";
 player.Age = 20;
@@ -1803,10 +1803,10 @@ Regex.[Match|Matches|isMatch|Replace|Split](str,partten,Regex.RegexOptions|..*)
 委托的调用实际就是Invoke(_target, _method)\
 
 ### 委托的静态调用
-```
+```c#
 delegate int numberChange(int n);
 ```
-```
+```c#
 static int num;
 
 public static int AddNum(int n)
@@ -1824,7 +1824,7 @@ void main
 ```
 
 ### 委托调用实例化方法
-```
+```c#
 delegate int numberChange(int n);
 
 public class Mc
@@ -1837,7 +1837,7 @@ public class Mc
     }
 }
 ```
-```
+```c#
 Mc mc = new Mc();
 numberChange nc = new numberChange(mc.AddNum);
 nc(25);
@@ -1847,7 +1847,7 @@ nc(25);
 匿名委托
 
 #### Action  当没有返回参数时使用
-```
+```c#
 static void ThreadMethod(object obj)
 {
     Console.WriteLine("做点什么");
@@ -1861,7 +1861,7 @@ static void main()
 ```
 
 #### Func  当有返回参数时使用
-```
+```c#
 static string ThreadMethod(object obj)
 {
     Console.WriteLine("做点什么");
@@ -1879,7 +1879,7 @@ static void main()
 多个同类委托可以相加减，会依次执行委托\
 若有返回值，多重委托只能获得最后一个委托的返回值，因此多重委托一般只用于没有返回值的时候\
 +=|-+ 实质是语法糖，调用了Delegate.Combine|Remove方法\
-```
+```c#
 public class Mc
 {
     static int num;
@@ -1896,7 +1896,7 @@ public class Mc
     }
 }
 ```
-```
+```c#
 numberChange nc1 = new numberChange(Mc.AddNum);
 numberChange nc2 = new numberChange(Mc.AddNum2);
 numberChange nc3 = nc1;    //nc3 nc1引用同一个委托实例
@@ -1924,17 +1924,17 @@ nc3(25); //当委托列表为空时报错
 
 ### 泛型在委托上的实现
 匿名委托也是泛型委托的一种\
-```
+```c#
 delegate T NumberChange<T>(T obj);
 ```
-```
+```c#
 NumberChange<int> nc = new NumberChange<int>(Mc.AddNum);
 nc(25);
 ```
 
 ## event 事件
 一种特殊的委托，只能在类内部触发，为委托提供了一种发布订阅的模式
-```
+```c#
 public class Mc
 {
     static int num;
@@ -1974,7 +1974,7 @@ public class Mc
     }
 }
 ```
-```
+```c#
 Mc mc = new Mc(5);  //事件未绑定，输出信息
 mc.NC += new Mc.numberChange(Mc.AddNum);
 mc.SetNumber(10);   //触发事件
@@ -1984,7 +1984,7 @@ mc.SetNumber(10);   //触发事件
 ## 事件的线程争用问题
 首先事件主要在单线程模式下运行，因此线程安全不是问题\
 事件的线程争用是由于以下代码在判断是否包含委托时，可能事件的委托链已经被别的线程修改\
-```
+```c#
 protected virtual void OnNumChange()
     {
         if(NC != null)
@@ -1998,7 +1998,7 @@ protected virtual void OnNumChange()
     }
 ```
 解决方法，将事件的引用复制到一个新变量中，这样临时变量存储的是赋值发生时的变量，但这样仍有可能导致方法的重复触发\
-```
+```c#
 protected virtual void OnNumChange()
     {
     var temp = NC;  //如果编译器在这里优化了temp变量，就需要使用Volatile.Read(ref NC)来强迫引用真的复制到temp变量中了
@@ -2016,7 +2016,7 @@ protected virtual void OnNumChange()
 
 ## 显式实现事件
 使用字典创建委托列表并添加相关的增删及引发事件的方法\
-```
+```c#
 public sealed class Program
 {
     public static void Main()
@@ -2119,12 +2119,12 @@ public sealed class EventSet {
 
 
 # 匿名函数
-```
+```c#
 delegate(string s){
     Console.WriteLine(s);
 }
 ```
-```
+```c#
 (x) => {
     Console.WriteLine(s);
 }
@@ -2134,13 +2134,13 @@ delegate(string s){
 
 # lambda
 () => expression
-```
+```c#
 Func<string, bool> func = x => x == "ss";
 
 Console.WriteLine(func("ss"));
 Console.WriteLine(func("dd"));
 ```
-```
+```c#
 Func<string, bool> func = (x) => {  //当参数为一个时可以省略()
     return x == "ss";   //当函数只有一行时可以省略{}和return
 };
@@ -2162,7 +2162,7 @@ catch 异常非常消耗性能，因此一般只捕获对应异常
 >> 深入学习：其他异常类型
 
 ## 异常处理
-```
+```c#
 int x = 0;
 try
 {
@@ -2189,7 +2189,7 @@ finally
 在源代码中创建特性，通过编译器编译在程序集中，当编译器/CLR/浏览器 访问程序集时会消费特性
 ## 常见内置Attribute
 * Conditional 按宏，如果宏被定义则运行，没用被定义则不运行，常见宏有[DEBUG|PRODUCTION]
-```
+```c#
 #define ISTEST
 
 [Conditional("DEBUG")]
@@ -2199,7 +2199,7 @@ public static void Message(string msg)   //此方法只在DEBUG模式中才会�
 }
 ```
 * Obsolete 弃用
-```
+```c#
 [Obsolete("message",false)]
 public static void Message2(string msg)     //标记此方法已经弃用，message为提示信息，bool为是否报错，为false则是该方法仍可被使用
 {
@@ -2207,7 +2207,7 @@ public static void Message2(string msg)     //标记此方法已经弃用，mess
 }
 ```
 * debugerStepThrough
-```
+```c#
 [DebuggerStepThrough]      //当断点调试时，单步运行会直接跳过该方法，不会进入该方法逐一调试
 public void callTest(string str)
 {
@@ -2219,7 +2219,7 @@ public void callTest(string str)
 * CallerFilePath string    获取调用的文件路径
 * CallerLineNumber int     获取调用的行数
 * CallerMemberName string      获取调用的方法名
-```
+```c#
 public void callTest(string str, [CallerFilePath] string callPath = "")    //变量会由系统进行自动传递，需要给一个默认值且放置在其他参数后
 {
     Console.WriteLine(callPath);
@@ -2233,7 +2233,7 @@ public void callTest(string str, [CallerFilePath] string callPath = "")    //变
 一般情况下声明为sealed
 调用时可以通过命名时的自定义部分调用，或者通过全名调用
 可在Attribute内设置的属性类型有限，可以是所有内置的值类型、System.Type、object、enum等
-```
+```c#
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 class HelpAttribute: Attribute
 {
@@ -2254,7 +2254,7 @@ class HelpAttribute: Attribute
     public string Name { get; set; }
 }
 ```
-```
+```c#
 [Help("ddd",Name = "ssss")]  //可以用Help或HelpAttribute调用，当设置其他参数时，可以用在后面跟随的方式传递
 public static void myFun()
 {
@@ -2269,7 +2269,7 @@ public static void myFun()
 
 ## Attribute的信息获取
 通过反射获取Attribute内的信息
-```
+```c#
 static void main(string[] arg)
 {
     HelpAttribute help;
@@ -2299,7 +2299,7 @@ type只存储类的成员，只能获得公有的数据即public定义的成员
 * obj.GetType
 * Type.GetType("type_name", [true|false], [true|false])  第一参数为type命例如stystem.string，第二个参数是是否报错，第三个参数是是否忽略type名大小写
 * typeof(obj)
-```
+```c#
 string ss;
 ss.GetType();  //GetType 实际返回的是CLR保存在堆中的类型引用的地址，这里要区别于类型实例的引用地址
 Type.GetType("System.Sting", false, true);
@@ -2314,7 +2314,7 @@ typeof(ss);
 * <Type>t.GetFields("method_name")  获取指定字段
 * <Type>t.GetProperties("BindFlags.pram")  获取所有属性
 * <Type>t.GetPropertie("method_name")  获取指定属性
-```
+```c#
 Type type = typeof(int);
 type.GetMethods();   //获取int类型的所有方法
 type.GetMethods(BindingFlags.Public);   //获取int类型的所有public方法
@@ -2327,14 +2327,14 @@ type.GetMethods(BindingFlags.Public);   //获取int类型的所有public方法
 * Assembly.Load("assemblyString")  通过程序集名称加载
 * Assembly.LoadFrom("path")  通过程序集路径加载
 * Type.Assembly  通过类的对象获取
-```
+```c#
 Assembly assembly;
 assembly = Assembly.Load("assemblyString");
 Type[] types = assembly.GetTypes();
 ```
 
 ### 推迟绑定
-```
+```c#
 class Program
 {
     public void main()
@@ -2379,7 +2379,7 @@ class myClass
 
 # 预处理指令
 为了让编译器[VS]在编译前预先处理指令
-```
+```c#
 #define DEBUG //定义为DEBUG模式
 namespace MyProject;
 
@@ -2416,7 +2416,7 @@ from in => join in on equals => let => orderBy => where => group => select => in
 * Data Source  数据源
 * Query Creation  query语句创建
 * Query excution  query执行
-```
+```c#
 int[] numbers = { 1, 2, 3, 8, 6, 10 };
 
 var numberQuery = from num in numbers   //获取数据源
@@ -2430,7 +2430,7 @@ foreach(var i in numberQuery)   //调用LINQ时，才会执行
 }
 ```
 ### join、group、into、let
-```
+```c#
 public class customer
 {
     public string Name { get; set; }
@@ -2455,7 +2455,7 @@ public class office
     }
 }
 ```
-```
+```c#
 List<customer> customers = new List<customer>();
 
 customers.Add(new customer("li lei","beijing"));
@@ -2517,7 +2517,7 @@ foreach(var d in queryStr)
 ```
 
 ## method方法
-```
+```c#
 int[] numbers = { 1, 2, 3, 8, 6, 10 };
 
 numbers.Where(x=>x%2 == 0).OrderBy(x => x);   //method方法实现，是在system.Linq定义的string的扩展方法
@@ -2553,7 +2553,7 @@ customers
 >> 深入学习：集合操作符 分区操作符
 
 ## PLINQ
-```
+```c#
 var queryCustomerInto = from customer in customers.AsParallel()   //指定为ParallelQuery对象 
                         group customer by customer.Place into intoGroup
                         where intoGroup.Count() >= 2
@@ -2567,7 +2567,7 @@ var queryCustomerInto = from customer in customers.AsParallel()   //指定为Par
 * 将静态类引入作用域即可生效
 
 ## 在class上实现
-```
+```c#
 public static class myStr
 {
     public static int thisCount(this string str)  //需在非继承静态类中定义静态方法，string可替换成其它任意的class
@@ -2576,13 +2576,13 @@ public static class myStr
     }
 }
 ```
-```
+```c#
 string str = "ss zz dd.bb";
 Console.Write(str.thisCount());
 ```
 
 ## 在枚举类型上实现
-```
+```c#
 public enum Grade { F = 0, E, D, C, B, A }
 
 public static class GradeExtension
@@ -2595,7 +2595,7 @@ public static class GradeExtension
     }
 }
 ```
-```
+```c#
 Grade[] grades = { Grade.A, Grade.F, Grade.B };
 
 foreach(Grade g in grades)
@@ -2608,7 +2608,7 @@ foreach(Grade g in grades)
 
 # 分部方法
 想覆盖原有类型的时候可以使用\
-```
+```c#
 class partial Base{
 private string name;
 
@@ -2623,7 +2623,7 @@ public String Name{
 }
 }
 ```
-```
+```c#
 class partial Base{
 partial void NameChange(string value){
     if(String.IsNullOrEmpty(value)){
@@ -2698,7 +2698,7 @@ C#中提供了一层抽象以方便线程优先级的设置\
 ## ExecutionContext|执行上下文的控制
 一般在父线程开启子线程的情况下，会将自身的线程情况自动传递给子线程\
 ExecutionContext用以控制执行上下文的传递\
-```
+```c#
 CallContext.LogicalSetData("Name", "H2o");
 TheradPool.QueueUseWorkItem(state => Console.WriteLine("Name={0}", CallContext.LogicalGetData("Name")));    //Name=H2o
 ExecutionContext.SuppressFlow();
@@ -2711,7 +2711,7 @@ TheradPool.QueueUseWorkItem(state => Console.WriteLine("Name={0}", CallContext.L
 创建线程有4种方式，begingInvoke(委托)、Thread类、ThreadPool(线程池)、Task(任务)\
 
 ## BeginInvoke  委托开启线程
-```
+```c#
 static int ThreadMethod(int i)
 {
     Console.WriteLine("做点什么");
@@ -2732,7 +2732,7 @@ static void main()
 
 ### 监听委托结束的方法
 通过 ar.AsyncWaitHandle.WaitOne()等待线程结束
-```
+```c#
 Func<int,int> a = ThreadMethod;
 IAsyncResult ar = a.BeginInvoke(100, Callback, null); //ar
 
@@ -2743,7 +2743,7 @@ if (isEnded)
 }
 ```
 通过回调函数
-```
+```c#
 a.BeginInvoke(100,ar => {
     int res = a.EndInvoke(ar); //获取函数处理完成结果
 },null);
@@ -2759,7 +2759,7 @@ a.BeginInvoke(100,ar => {
 * Normal
 * BelowNormal
 * Lowest
-```
+```c#
 static void ThreadMethod(object obj)
 {
     Console.WriteLine("做点什么");
@@ -2775,7 +2775,7 @@ static void main()
 }
 ```
 通过类方法创建
-```
+```c#
 //类
 class MyThread
 {
@@ -2794,7 +2794,7 @@ class MyThread
     }
 }
 ```
-```
+```c#
 //创建Thread
 static void main()
 {
@@ -2810,7 +2810,7 @@ static void main()
 
 ### Join()
 在线程内调用Join会暂停当前线程等待其他线程执行完毕
-```
+```c#
 t.Join() //等待t线程执行完毕后，当前线程才会继续执行
 ```
 
@@ -2821,11 +2821,11 @@ t.Join() //等待t线程执行完毕后，当前线程才会继续执行
 可配置最大线程数\
 线程池主要是节约了销毁线程带来的开销\
 
-```
+```c#
 //线程池的回调方法必须匹配这个委托类
 delegate void WaitCallback(Object state);
 ```
-```
+```c#
 static void ThreadMethod(object obj) //必须带有object参数
 {
     Console.WriteLine("做点什么");
@@ -2845,7 +2845,7 @@ static void main()
 
 ## Task 任务
 任务开启
-```
+```c#
 static void ThreadMethod()
 {
 int? id = Task.CurrentId; //可通过Task.CUrrentId获取当前任务id
@@ -2856,6 +2856,7 @@ static void main()
 {
 //通过Task类创建
 Task t = new Task(ThreadMethod);
+Task.Start();
 
 //通过TaskFactory类创建
 TaskFactory fac = new TaskFactory();
@@ -2863,9 +2864,9 @@ Task tt = fac.StartNew(ThreadMethod);
 }
 ```
 
-## 连续任务
+### 连续任务
 当任务1需要等待任务2完成后才能开始时，可以使用连续任务
-```
+```c#
 static void ThreadMethod_1()
 {
     Console.WriteLine("做点什么");
@@ -2884,7 +2885,7 @@ static void main()
 }
 ```
 #### 连续任务的重载
-```
+```c#
 static void main()
 {
     Task t1 = new Task(ThreadMethod_1);
@@ -2897,17 +2898,57 @@ static void main()
 * NotOnCanceled | OnlyOnCanceled 上个任务执行[未取消|取消]异常时才执行
 * NotOnRanToCompletion | OnlyOnRanToCompletion 上个任务执行[未完成|完成]异常时才执行，NotOnRanToCompletion => NotOnFaulted || NotOnCanceled
 
-## 任务的其它控制
+### 任务的其它控制
 * Task.WaitAll(task1,task2)    等1和2都执行完
 * Task.WaitAny(task1,task2)    等1或2执行完
 
-## 任务的层次结构
+### 任务的层次结构
 如果在一个任务中启动新任务，则构建为父子任务，当子任务还没有完成时，父任务即使已经执行完也会处于WaitingForChildrenToComplete状态，当子任务执行完毕，父任务会改为RunToCompletion
+
+### 任务的状态
+可以通过task.status返回一个任务的状态\
+```c#
+public enum TaskStatus{
+    Created,    //显示创建，可以手动开始
+    WaitingForActivation,   //隐式创建，会自动开始，连续任务就是隐式创建
+    WaitingToRun,   //被调度还未运行
+    Running,    //任务已经运行
+    WaitingForChildrenToComplete,   //等待子任务完成
+    RanToCompletion,    //运行完成，判断任务是否运行成果使用这个状态判断
+    Canceled,   //被取消
+    Faulted     //出错，但任务的isCompleted属性为true
+}
+```
+
+### 取消任务
+可以通过构建一个CancellationTokenRource进行任务取消的控制\
+当任务还未被调度就取消时，任务永远不会执行，但当任务已经执行再取消时，只能在任务内部监视取消状态主动取消任务
+```c#
+private static int sum(CancellationToken ct, int n){
+    int sum = 0;
+    for(; n>0; n--){
+        ct.ThrowIfCancellationRequested();      //当任务取消时已经被调度，可以通过对CancellationToken的监视主动进行任务的取消
+        sum += n;
+    }
+    return sum;
+}
+CancellationTokenRource ctr = new CancellationTokenRource();
+Task<int> t = Task.Run(() => sum(ctr.Token, 1000000), ctr.token);
+
+ctr.Cancel();
+
+try{
+    Console.Writeline("The result is " + t.Result);
+}catch(AggregateException x){
+    Console.Writeline("Task is Canceled");
+}
+```
 
 ## 线程争用
 当多个线程同时对一个引用类型进行操作时，会出现线程争用情况
+
 ### 出现原理
-```
+```c#
 class MyThread
 {
     private int id = 5;
@@ -2923,7 +2964,7 @@ class MyThread
     }
 }
 ```
-```
+```c#
 static void ChangeState(object obj)
 {
     MyThread m = obj as MyThread;
@@ -2944,7 +2985,7 @@ static void main()
 
 ### 解决方案
 添加线程锁
-```
+```c#
 static void ChangeState(object obj)
 {
     MyThread m = obj as MyThread;
@@ -2967,7 +3008,7 @@ static void main()
 ```
 
 ## 死锁
-```
+```c#
 //ThreadMethod_1 抢到m1锁，ThreadMethod_2抢到m2锁，导致无人可以继续执行，从而死锁
 static void ThreadMethod_1()
 {
@@ -3140,7 +3181,7 @@ GC有内置代的概念，供0|1|2三代，越高的代默认存活时间越久�
 ### 服务器
 针对服务器应用进行GC优化，主要优化\
 通过GCSettings中的Boolean属性的IsServerGC来设置是否在服务器模式中运行\
-```
+```c#
 using System;
 using System.Runtime;  //GCSettings 在这个命名空间内
 
@@ -3176,14 +3217,14 @@ CollectionCount(Int32 generation)\
 
 ### 逻辑上的实现
 继承IDisposable接口并实现Dispose方法
-```
+```c#
 class Person : IDisposable{
 public void Dispose(){
 
 }
 }
 ```
-```
+```c#
 Person p = new Person();
 try
 {
@@ -3201,7 +3242,7 @@ finally
 ### 推荐的实现方法
 using() 可以将实现IDisposable的引用对象在作用域结束后释放\
 实际using是一个try{}finally{}结构\
-```
+```c#
 using(Person p = new Person())
 {
     //doSomething
@@ -3210,7 +3251,7 @@ using(Person p = new Person())
 
 ### 优化Dispose所产生的GC问题
 当清理方法被调用后，GC在启用时仍会重复执行类的清理动作，包括执行析构方法，因此在调用清理方法后可调用GC.SuppressFinalize方法以让GC后续处理之间跳过该对象
-```
+```c#
 class Person : IDisposable
 {
     private Boolean disposed = false;
@@ -3239,7 +3280,7 @@ class Person : IDisposable
 实际是包装了一个GCHandle对象的的包装器\
 当一个对象被设为弱引用时应该将原强引用设置为null，不然弱引用无法生效\
 弱引用在垃圾回收时会立即被回收，未发生垃圾回收时则存放在托管堆内\
-```
+```c#
 WeakReference<Object> o = new WeakReference<Object> (new Object(), true);  //Boolean trackResurrection 用于标识是否启用终结器(Finalize)，设置为false时即使对象有终结器也不会执行终结器而被直接回收
 Object z = o.Target;   //设为强引用
 if(z != null){
@@ -3284,7 +3325,7 @@ if(z != null){
 错误处理\
 由结构构成的数组\
 
-```
+```c#
 internal static class QuickStart{
 public static void Main(){
     var objectGraph = new List<String> {"jeff","kirito"};
@@ -3343,7 +3384,7 @@ private static DeserializeFromMemory(Stream stream){
 可应用于方法
 使方法在序列化字段之后调用\
 
-```
+```c#
 [Serializable]
 class Circle
 {
@@ -3392,7 +3433,7 @@ class Circle
 数据流中含有损坏数据，原因是序列化时不会对对象图中的所有引用进行验证，如果序列化过程中发现有无法序列化的类型就会报错，已经序列化并存入流中的内容就会变成损坏数据\
 
 ## 自定义类的序列化
-```
+```c#
 //使用特性标明这个类可以序列化
 [Serializable]
 class Test{
@@ -3408,7 +3449,7 @@ SerializationInfo.SetType(Type type)    设置序列化的类\
 * IDeserializationCallback
 实现OnDeserialization在序列化完成时执行，可以执行一些在构造完毕后需要调用的方法\
 
-```
+```c#
 [Serializable]
 class Test : ISerializable,IDeserializationCallback
 {
@@ -3450,7 +3491,7 @@ class Test : ISerializable,IDeserializationCallback
 ```
 
 ### 序列化与单例
-```
+```c#
 [Serializable]
 class Singleon:ISerializable
 {
@@ -3494,7 +3535,7 @@ class SingleHelper : IObjectReference
 ## ISerializationSurrogate 序列化代理器
 序列化代理器会在序列化时检测需要序列化的对象是否符合代理器要求的类型，符合类型时会使用代理器中定义的方法进行对象的序列化、反序列化\
 有点类似于扩展方法，相当于为类定义了序列化的方法\
-```
+```c#
 public interfasce ISerializationSurrogate{
     //与ISerializable接口不同，这里需要获取一个Object对象代表要序列化的对象
     void GetObjectData(Object obj, SerialzationInfo info, StreamContext context);
@@ -3503,7 +3544,7 @@ public interfasce ISerializationSurrogate{
     void SetObjectData(Object obj, SerialzationInfo info, StreamContext context, ISurrogateSelector selector);
 }
 ```
-```
+```c#
 public sealed class UniversalToLocalTimeSerializationSurrogate : ISerializationSurrogate
 {
     public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
@@ -3550,7 +3591,7 @@ class Program
 
 ## SerialzationBinder 序列化绑定器
 用于处理不同版本的程序间类型版本不一致的问题，可以将一个类型序列化成另一个类型\
-```
+```c#
 public class myBinder : SerializationBinder
 {
     public override Type? BindToType(string assemblyName, string typeName)
