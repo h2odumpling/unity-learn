@@ -363,7 +363,7 @@ MM^-1 = I\
 
 ### 正交矩阵
 如果一个矩阵和他的转置矩阵相乘是单位矩阵，那么这个矩阵是正交矩阵\
-$(M^T)M = M(M^T) = I$
+$(M^T)M = M(M^T) = E  $
 
 ```math
 M=
@@ -400,6 +400,21 @@ V3·V1 & V3·V2 & V3·V3
   矩阵每一行或列表示的向量都是单位向量
 * 特性3：
   矩阵每一行或列表示的向量都相互垂直
+* 特性4：
+  若A为正交阵，则$|A|=\pm 1$
+* 特性5：
+  若A为正交阵，则$A^{-1}$也为正交阵
+* 特性6：
+  若A、B皆为正交阵，则AB也为正交阵
+
+#### 正交变换
+若P为正交阵，则线性变换Y=PX为正交变换
+
+* 特性1：
+  正交变换不改变向量內积
+* 特性2：
+  正交变换不改变向量的长度与夹角，称为几何不变性
+
 
 ## 非齐次线性方程组
 $$
@@ -1232,6 +1247,18 @@ $
 #### 向量空间的规范正交基
 若n维向量$e_1,e_2,\cdots,e_r$是向量空间V的一组基，若$e_1,e_2,\cdots,e_r$两两正交且长度为1，则称$e_1,e_2,\cdots,e_r$是V的一组规范正交基
 
+## 方阵特征值与特征向量
+对于n阶方阵A，若存在数$\lambda$与非零向量$\alpha$使得$A\alpha = \lambda \alpha$，则称$\lambda$是矩阵A的特征值，非零向量$\alpha$是A对应特征值$\lambda$的特征向量\
+几何意义：非零向量$\alpha$经过A处理后，变为一个与$\alpha$平行，且拉伸$\lambda$倍的向量
+
+### 计算方法
+$A \alpha = \lambda \alpha \Leftarrow \Rightarrow A \alpha - \lambda \alpha = 0 \Leftarrow \Rightarrow (A - \lambda E) \alpha = 0 \Leftarrow \Leftarrow \Rightarrow (A - \lambda E) X = 0 有非零解 \Leftarrow \Rightarrow R(A - \lambda E) < n \Leftarrow \Rightarrow |A - \lambda E| = 0 $
+
+1. 特征值求解
+   $ |A - \lambda E| = 0 $
+   其中$ |A - \lambda E| = 0 $为A的特征方程，$ |A - \lambda E| $为A的特征多项式
+2. 特征向量求解
+   对于特征值$\lambda_1,\lambda_2 \cdots \lambda_n$可得方程式$(A-\lambda_i E)X = 0$，其中X即为特征值为$\lambda_i$时对应的特征向量
 
 ## 平移矩阵
 用以表示向量或点的平移的矩阵
